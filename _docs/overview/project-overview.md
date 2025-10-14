@@ -604,871 +604,881 @@ If you didn’t verify earlier:
 
 # Client Information Reference Schema JSON **(NEED TO ADD A SECTION FOR EXTRA CLIENT NOTES OR FEEDBACK)**
 
+```json
 {
-"user_profile": {
-"user_name": "",
-"business_name": "",
-"description": "",
-"website": ""
-},
-"brand_identity": {
-"vibe_tags": [],
-"primary_colors": [],
-"fonts": [],
-"dislikes": [],
-"differentiators": []
-},
-"target_audience": {
-"personas": [],
-"custom_description": ""
-},
-"business_model": {
-"focus": [],
-"products": [],
-"offers": [],
-"sales_channels": [],
-"run_promos": ""
-},
-"content_presence": {
-"platforms": [],
-"post_types": [],
-"content_preferences": [],
-"shows_face_or_voice": "",
-"competitors": [],
-"vibe_inspo": []
-},
-"marketing_goals": {
-"top_goals": [],
-"growth_mode": "",
-"automation_goals": [],
-"past_successes": [],
-"past_failures": ""
-},
-"constraints": {
-"weekly_marketing_time_hours": "",
-"budget_level": "",
-"monthly_ad_budget": "",
-"tech_stack": [],
-"team_type": "",
-"brand_nos": [],
-"additional_notes": ""
+  "user_profile": {
+    "user_name": "",
+    "business_name": "",
+    "description": "",
+    "website": ""
+  },
+  "brand_identity": {
+    "vibe_tags": [],
+    "primary_colors": [],
+    "fonts": [],
+    "dislikes": [],
+    "differentiators": []
+  },
+  "target_audience": {
+    "personas": [],
+    "custom_description": ""
+  },
+  "business_model": {
+    "focus": [],
+    "products": [],
+    "offers": [],
+    "sales_channels": [],
+    "run_promos": ""
+  },
+  "content_presence": {
+    "platforms": [],
+    "post_types": [],
+    "content_preferences": [],
+    "shows_face_or_voice": "",
+    "competitors": [],
+    "vibe_inspo": []
+  },
+  "marketing_goals": {
+    "top_goals": [],
+    "growth_mode": "",
+    "automation_goals": [],
+    "past_successes": [],
+    "past_failures": ""
+  },
+  "constraints": {
+    "weekly_marketing_time_hours": "",
+    "budget_level": "",
+    "monthly_ad_budget": "",
+    "tech_stack": [],
+    "team_type": "",
+    "brand_nos": [],
+    "additional_notes": ""
+  }
 }
-}
+```
 
 # Master Marketing Plan JSON
 
+```json
 {
-"plan": {
-"client_id": "",
-"window_start": "",
-"window_end": "",
-"weekly_capacity_hours": "",
-"timezone": ""
-},
-"tasks": [
-{
-"id": "",
-"title": "",
-"desc": "",
-"channel": "",
-"effort": "",
-"estimated_minutes": "",
-"due_at": "",
-"status": "",
-"tags": [],
-"priority": "",
-"source": {
-"module": "",
-"module_task_id": ""
-},
-"external_refs": {
-"gcal_event_id": "",
-"clickup_task_id": ""
+  "plan": {
+    "client_id": "",
+    "window_start": "",
+    "window_end": "",
+    "weekly_capacity_hours": "",
+    "timezone": ""
+  },
+  "tasks": [
+    {
+      "id": "",
+      "title": "",
+      "desc": "",
+      "channel": "",
+      "effort": "",
+      "estimated_minutes": "",
+      "due_at": "",
+      "status": "",
+      "tags": [],
+      "priority": "",
+      "source": {
+        "module": "",
+        "module_task_id": ""
+      },
+      "external_refs": {
+        "gcal_event_id": "",
+        "clickup_task_id": ""
+      }
+    }
+  ],
+  "meta": {
+    "generated_at": "",
+    "governance_version": "",
+    "resolution_log": [
+      {
+        "type": "",
+        "week": "",
+        "count": ""
+      }
+    ]
+  }
 }
-}
-],
-"meta": {
-"generated_at": "",
-"governance_version": "",
-"resolution_log": [
-{
-"type": "",
-"week": "",
-"count": ""
-}
-]
-}
-}
+```
 
 # PPC Marketing Plan JSON
 
+```json
 {
-"plan_type": "ppc",
-"version": "1.0",
-"duration": "12 months",
-"review_intervals": [
-"Monthly",
-"Quarterly"
-],
-"revision_logic": "Update this structure based on client constraints, wins, losses, or channel shifts.",
-"client_data_linked": true,
-"phases": [
-{
-"phase": "Phase 1",
-"label": "Foundation & Strategy",
-"months": [1],
-"objectives": [
-"Define business goals and KPIs",
-"Audit competitors",
-"Determine platforms and campaigns",
-"Set tracking and analytics infrastructure"
-],
-"tasks": [
-"Set testing vs. scale budget",
-"Choose platforms (Google, Meta, YouTube, etc.)",
-"Install Google Tag Manager and GA4",
-"Configure conversion tracking"
-]
-},
-{
-"phase": "Phase 2",
-"label": "Setup & Pre-Launch",
-"months": [2],
-"objectives": [
-"Build PPC campaigns and ad groups",
-"Create ad variants",
-"Optimize landing pages",
-"QA and test full funnel"
-],
-"tasks": [
-"Create campaign/ad group structure",
-"Upload creative and assign to LPs",
-"Verify pixel/conversion firing",
-"Set up reporting dashboards"
-]
-},
-{
-"phase": "Phase 3",
-"label": "Launch & Early Learning",
-"months": [3, 4],
-"objectives": [
-"Launch campaigns with conservative budgets",
-"Gather baseline performance data",
-"Begin early optimizations"
-],
-"tasks": [
-"Monitor delivery and disapprovals",
-"Pause low performers",
-"Start weekly reporting (CTR, CPC, ROAS)"
-]
-},
-{
-"phase": "Phase 4",
-"label": "Performance Optimization",
-"months": [5, 6, 7],
-"objectives": [
-"Scale best-performing elements",
-"Deepen funnel and remarketing",
-"A/B and multivariate testing"
-],
-"tasks": [
-"Test bid strategies",
-"Build email or CRM integrations",
-"Expand keyword sets or geos"
-]
-},
-{
-"phase": "Phase 5",
-"label": "Expansion & Full Funnel",
-"months": [8, 9, 10],
-"objectives": [
-"Add upper funnel campaigns",
-"Test new ad formats",
-"Apply smart automation"
-],
-"tasks": [
-"Launch YouTube and Meta Awareness",
-"Evaluate GA4 vs. platform reporting",
-"Reassign budget based on journey"
-]
-},
-{
-"phase": "Phase 6",
-"label": "Peak Performance & Seasonal Strategy",
-"months": [11, 12],
-"objectives": [
-"Maximize seasonal ROI",
-"Re-engage past customers",
-"Plan next-year PPC roadmap"
-],
-"tasks": [
-"Launch holiday offers",
-"Build win-back campaigns",
-"Final performance review"
-]
+  "plan_type": "ppc",
+  "version": "1.0",
+  "duration": "12 months",
+  "review_intervals": [
+    "Monthly",
+    "Quarterly"
+  ],
+  "revision_logic": "Update this structure based on client constraints, wins, losses, or channel shifts.",
+  "client_data_linked": true,
+  "phases": [
+    {
+      "phase": "Phase 1",
+      "label": "Foundation & Strategy",
+      "months": [1],
+      "objectives": [
+        "Define business goals and KPIs",
+        "Audit competitors",
+        "Determine platforms and campaigns",
+        "Set tracking and analytics infrastructure"
+      ],
+      "tasks": [
+        "Set testing vs. scale budget",
+        "Choose platforms (Google, Meta, YouTube, etc.)",
+        "Install Google Tag Manager and GA4",
+        "Configure conversion tracking"
+      ]
+    },
+    {
+      "phase": "Phase 2",
+      "label": "Setup & Pre-Launch",
+      "months": [2],
+      "objectives": [
+        "Build PPC campaigns and ad groups",
+        "Create ad variants",
+        "Optimize landing pages",
+        "QA and test full funnel"
+      ],
+      "tasks": [
+        "Create campaign/ad group structure",
+        "Upload creative and assign to LPs",
+        "Verify pixel/conversion firing",
+        "Set up reporting dashboards"
+      ]
+    },
+    {
+      "phase": "Phase 3",
+      "label": "Launch & Early Learning",
+      "months": [3, 4],
+      "objectives": [
+        "Launch campaigns with conservative budgets",
+        "Gather baseline performance data",
+        "Begin early optimizations"
+      ],
+      "tasks": [
+        "Monitor delivery and disapprovals",
+        "Pause low performers",
+        "Start weekly reporting (CTR, CPC, ROAS)"
+      ]
+    },
+    {
+      "phase": "Phase 4",
+      "label": "Performance Optimization",
+      "months": [5, 6, 7],
+      "objectives": [
+        "Scale best-performing elements",
+        "Deepen funnel and remarketing",
+        "A/B and multivariate testing"
+      ],
+      "tasks": [
+        "Test bid strategies",
+        "Build email or CRM integrations",
+        "Expand keyword sets or geos"
+      ]
+    },
+    {
+      "phase": "Phase 5",
+      "label": "Expansion & Full Funnel",
+      "months": [8, 9, 10],
+      "objectives": [
+        "Add upper funnel campaigns",
+        "Test new ad formats",
+        "Apply smart automation"
+      ],
+      "tasks": [
+        "Launch YouTube and Meta Awareness",
+        "Evaluate GA4 vs. platform reporting",
+        "Reassign budget based on journey"
+      ]
+    },
+    {
+      "phase": "Phase 6",
+      "label": "Peak Performance & Seasonal Strategy",
+      "months": [11, 12],
+      "objectives": [
+        "Maximize seasonal ROI",
+        "Re-engage past customers",
+        "Plan next-year PPC roadmap"
+      ],
+      "tasks": [
+        "Launch holiday offers",
+        "Build win-back campaigns",
+        "Final performance review"
+      ]
+    }
+  ],
+  "sample_quarters": [
+    {
+      "name": "Q1 - Validation & Testing",
+      "goals": [
+        "Capture branded search",
+        "Retarget warm traffic",
+        "Test cold audiences"
+      ],
+      "campaigns": [
+        {
+          "name": "Branded Search",
+          "start_month": 1,
+          "end_month": 3,
+          "platform": "Google Ads",
+          "budget_pct": 40,
+          "bidding_strategy": "Target CPA",
+          "kpis": {
+            "CPA": 25,
+            "ROAS": 3.5
+          }
+        },
+        {
+          "name": "Display Retargeting",
+          "start_month": 1,
+          "end_month": 3,
+          "platform": "Google Display Network",
+          "budget_pct": 30,
+          "bidding_strategy": "Target ROAS",
+          "kpis": {
+            "ROAS": 4,
+            "Frequency Cap": 3
+          }
+        },
+        {
+          "name": "Cold Interest Testing",
+          "start_month": 2,
+          "end_month": 3,
+          "platform": "Meta Ads",
+          "budget_pct": 30,
+          "bidding_strategy": "Maximize Clicks",
+          "kpis": {
+            "CTR": 2.5
+          }
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "monthly_total": 3000,
+    "allocation_basis": "percentage",
+    "example_allocation": {
+      "Search - High Intent": 1500,
+      "Retargeting - Branded": 800,
+      "Awareness - Cold Lookalike": 700
+    }
+  },
+  "generic_campaigns": [
+    {
+      "name": "Search - High Intent",
+      "goal": "Capture bottom-funnel buyers",
+      "audience": [
+        "In-market searchers",
+        "Custom intent keywords"
+      ],
+      "ad_formats": [
+        "Responsive Search Ads"
+      ],
+      "budget": 1500,
+      "bidding_strategy": "Maximize conversions (Target CPA)",
+      "kpis": {
+        "cpa_goal": 25,
+        "ctr_goal": 5,
+        "conversion_rate_goal": 10
+      },
+      "messaging": [
+        "Ready to solve [pain point]?",
+        "Get [benefit] now -- no contract required."
+      ],
+      "timeline": "Month 1-3",
+      "watchouts": [
+        "Optimize negative keywords weekly"
+      ]
+    },
+    {
+      "name": "Retargeting - Branded",
+      "goal": "Re-engage brand-aware audiences",
+      "audience": [
+        "Website visitors",
+        "Social engagers"
+      ],
+      "ad_formats": [
+        "Image Ads",
+        "Carousel",
+        "Video"
+      ],
+      "budget": 800,
+      "bidding_strategy": "Target ROAS",
+      "kpis": {
+        "roas_goal": 4,
+        "frequency_cap": 3,
+        "cpm_goal": 10
+      },
+      "messaging": [
+        "Still thinking it over? We kept your offer ready."
+      ],
+      "timeline": "Always-on",
+      "watchouts": [
+        "Rotate creatives monthly"
+      ]
+    }
+  ]
 }
-],
-"sample_quarters": [
-{
-"name": "Q1 - Validation & Testing",
-"goals": [
-"Capture branded search",
-"Retarget warm traffic",
-"Test cold audiences"
-],
-"campaigns": [
-{
-"name": "Branded Search",
-"start_month": 1,
-"end_month": 3,
-"platform": "Google Ads",
-"budget_pct": 40,
-"bidding_strategy": "Target CPA",
-"kpis": {
-"CPA": 25,
-"ROAS": 3.5
-}
-},
-{
-"name": "Display Retargeting",
-"start_month": 1,
-"end_month": 3,
-"platform": "Google Display Network",
-"budget_pct": 30,
-"bidding_strategy": "Target ROAS",
-"kpis": {
-"ROAS": 4,
-"Frequency Cap": 3
-}
-},
-{
-"name": "Cold Interest Testing",
-"start_month": 2,
-"end_month": 3,
-"platform": "Meta Ads",
-"budget_pct": 30,
-"bidding_strategy": "Maximize Clicks",
-"kpis": {
-"CTR": 2.5
-}
-}
-]
-}
-],
-"budget": {
-"monthly_total": 3000,
-"allocation_basis": "percentage",
-"example_allocation": {
-"Search - High Intent": 1500,
-"Retargeting - Branded": 800,
-"Awareness - Cold Lookalike": 700
-}
-},
-"generic_campaigns": [
-{
-"name": "Search - High Intent",
-"goal": "Capture bottom-funnel buyers",
-"audience": [
-"In-market searchers",
-"Custom intent keywords"
-],
-"ad_formats": [
-"Responsive Search Ads"
-],
-"budget": 1500,
-"bidding_strategy": "Maximize conversions (Target CPA)",
-"kpis": {
-"cpa_goal": 25,
-"ctr_goal": 5,
-"conversion_rate_goal": 10
-},
-"messaging": [
-"Ready to solve [pain point]?",
-"Get [benefit] now -- no contract required."
-],
-"timeline": "Month 1-3",
-"watchouts": [
-"Optimize negative keywords weekly"
-]
-},
-{
-"name": "Retargeting - Branded",
-"goal": "Re-engage brand-aware audiences",
-"audience": [
-"Website visitors",
-"Social engagers"
-],
-"ad_formats": [
-"Image Ads",
-"Carousel",
-"Video"
-],
-"budget": 800,
-"bidding_strategy": "Target ROAS",
-"kpis": {
-"roas_goal": 4,
-"frequency_cap": 3,
-"cpm_goal": 10
-},
-"messaging": [
-"Still thinking it over? We kept your offer ready."
-],
-"timeline": "Always-on",
-"watchouts": [
-"Rotate creatives monthly"
-]
-}
-]
-}
+```
 
 # PPC LLM Prompt JSON
 
+```json
 {
-"module": "PPC Plan Generator",
-"version": "1.0",
-"type": "strategy*adaptation",
-"input_schema": [
-"client-profile.json",
-"ppc.json"
-],
-"output_schema": "\_business-name*\_ppc.json",
-"description": "Tailors a 12-month PPC strategy based on client profile and context.",
-"instructions": {
-"role": "You are a senior marketing strategist for small business PPC.",
-"task": "Update the 12-month PPC plan using the client profile and base plan provided.",
-"use_client_data": [
-"marketing_goals (especially past_failures and past_successes)",
-"monthly_ad_budget and weekly_marketing_time_hours",
-"team_type and business_model",
-"product type and average order value (if available)",
-"target_audience demographics and platform usage",
-"content_presence strengths and weaknesses"
-],
-"strategic_directives": [
-"Scale campaign budget and complexity based on monthly_ad_budget and weekly_marketing_time_hours",
-"Simplify campaign structure for solopreneurs (team_type: 'Just Me') -- no more than 2 active campaigns",
-"Adjust or remove platforms based on past_failures; favor those aligned with content_preferences and audience",
-"Eliminate channels not supported by tech stack or content ability (e.g., no video = no YouTube)",
-"Lean toward search/retargeting if product is niche or brand-aware; lean social if product is visual/lifestyle",
-"Prioritize ROAS bidding if budget is tight and AOV is high",
-"Reference run_promos to decide if seasonal bursts make sense",
-"Add a revision_notes field at the bottom summarizing major changes and why"
-],
-"format": "Return the updated PPC JSON with the exact same structure. Do not include any commentary outside the JSON."
-},
-"notes": "This module adapts the PPC plan to the client's current business context, constraints, and growth trajectory -- not just budget adjustments."
+  "module": "PPC Plan Generator",
+  "version": "1.0",
+  "type": "strategy*adaptation",
+  "input_schema": [
+    "client-profile.json",
+    "ppc.json"
+  ],
+  "output_schema": "\_business-name*\_ppc.json",
+  "description": "Tailors a 12-month PPC strategy based on client profile and context.",
+  "instructions": {
+    "role": "You are a senior marketing strategist for small business PPC.",
+    "task": "Update the 12-month PPC plan using the client profile and base plan provided.",
+    "use_client_data": [
+      "marketing_goals (especially past_failures and past_successes)",
+      "monthly_ad_budget and weekly_marketing_time_hours",
+      "team_type and business_model",
+      "product type and average order value (if available)",
+      "target_audience demographics and platform usage",
+      "content_presence strengths and weaknesses"
+    ],
+    "strategic_directives": [
+      "Scale campaign budget and complexity based on monthly_ad_budget and weekly_marketing_time_hours",
+      "Simplify campaign structure for solopreneurs (team_type: 'Just Me') -- no more than 2 active campaigns",
+      "Adjust or remove platforms based on past_failures; favor those aligned with content_preferences and audience",
+      "Eliminate channels not supported by tech stack or content ability (e.g., no video = no YouTube)",
+      "Lean toward search/retargeting if product is niche or brand-aware; lean social if product is visual/lifestyle",
+      "Prioritize ROAS bidding if budget is tight and AOV is high",
+      "Reference run_promos to decide if seasonal bursts make sense",
+      "Add a revision_notes field at the bottom summarizing major changes and why"
+    ],
+    "format": "Return the updated PPC JSON with the exact same structure. Do not include any commentary outside the JSON."
+  },
+  "notes": "This module adapts the PPC plan to the client's current business context, constraints, and growth trajectory -- not just budget adjustments."
 }
+```
 
 # Blog Marketing Plan JSON
 
+```json
 {
-"meta": {
-"name": "blog_workflow_schema",
-"version": "1.0.0",
-"description": "Deterministic JSON workflow to go from client profile + RankMath audit + notable events to published, SEO-optimized blog posts.",
-"author": "Alva System"
-},
-"inputs": {
-"client_profile": {
-"type": "object",
-"required": true,
-"ref": "client-info.json"
-},
-"base_prompt": {
-"type": "object",
-"required": true,
-"ref": "blog_prompt_module"
-},
-"seo_requirements": {
-"type": "object",
-"required": true,
-"ref": "rankmath_guidelines"
+  "meta": {
+    "name": "blog_workflow_schema",
+    "version": "1.0.0",
+    "description": "Deterministic JSON workflow to go from client profile + RankMath audit + notable events to published, SEO-optimized blog posts.",
+    "author": "Alva System"
+  },
+  "inputs": {
+    "client_profile": {
+      "type": "object",
+      "required": true,
+      "ref": "client-info.json"
+    },
+    "base_prompt": {
+      "type": "object",
+      "required": true,
+      "ref": "blog_prompt_module"
+    },
+    "seo_requirements": {
+      "type": "object",
+      "required": true,
+      "ref": "rankmath_guidelines"
+    }
+  },
+  "controls": {
+    "months_to_plan": {
+      "type": "integer",
+      "enum": [1, 2, 3, 6, 12],
+      "default": 3
+    },
+    "events_per_month": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 5,
+      "default": 4
+    },
+    "max_posts_per_month": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 8,
+      "default": 4
+    },
+    "tone": {
+      "type": "string",
+      "enum": [
+        "Professional",
+        "Conversational",
+        "Authoritative",
+        "Playful"
+      ],
+      "default": "Professional"
+    },
+    "reading_level": {
+      "type": "string",
+      "enum": [
+        "Grade 7-8",
+        "Grade 9-10",
+        "College"
+      ],
+      "default": "Grade 9-10"
+    },
+    "deterministic": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "derived_constraints": {
+    "seo_rules": {
+      "single_h1": true,
+      "require_focus_keyword": true,
+      "require_image_alt": true,
+      "opengraph_required": true,
+      "site_tagline_present": true,
+      "target_response_time_s": 0.8,
+      "max_page_requests": 80
+    },
+    "interlinking_rules": {
+      "min_internal_links_per_post": 3,
+      "min_external_links_per_post": 1,
+      "link_to_series_pages": true
+    }
+  },
+  "workflow": [
+    {
+      "id": "W1_collect_inputs",
+      "type": "ingest",
+      "outputs": [
+        "client_profile",
+        "base_prompt",
+        "seo_requirements"
+      ],
+      "notes": "Load JSON objects and normalize field names."
+    },
+    {
+      "id": "W2_apply_seo_rules",
+      "type": "transform",
+      "inputs": ["seo_requirements"],
+      "outputs": ["seo_checklist"],
+      "logic": "Inject RankMath '100/100' best practices as a required ruleset, even if no plugin audit is available.",
+      "determinism": "Pure function; fixed ruleset"
+    },
+    {
+      "id": "W3_generate_monthly_events",
+      "type": "generate",
+      "inputs": ["client_profile"],
+      "outputs": ["monthly_events"],
+      "llm_module": "events_finder_v1",
+      "constraints": {
+        "events_per_month": {
+          "min": 3,
+          "max": 5
+        }
+      },
+      "notes": "Use industry/seasonality derived from client profile to produce events per month (no PPC dependency)."
+    },
+    {
+      "id": "W4_map_events_to_topics",
+      "type": "map",
+      "inputs": [
+        "monthly_events",
+        "client_profile",
+        "seo_checklist"
+      ],
+      "outputs": ["topic_map"],
+      "logic": "For each event, produce 1-2 topic angles tailored to personas, product strengths, and SEO gaps."
+    },
+    {
+      "id": "W5_content_briefs",
+      "type": "generate",
+      "inputs": [
+        "topic_map",
+        "base_prompt"
+      ],
+      "outputs": ["briefs"],
+      "llm_module": "brief_generator_v1",
+      "determinism": "JSON only; validated against 'brief_schema'."
+    },
+    {
+      "id": "W6_outlines",
+      "type": "generate",
+      "inputs": ["briefs"],
+      "outputs": ["outlines"],
+      "llm_module": "outline_generator_v1",
+      "determinism": "JSON only; validated against 'outline_schema'."
+    },
+    {
+      "id": "W7_drafts",
+      "type": "generate",
+      "inputs": [
+        "outlines",
+        "seo_checklist"
+      ],
+      "outputs": ["drafts"],
+      "llm_module": "draft_writer_v1",
+      "post_processing": ["apply_onpage_requirements"]
+    },
+    {
+      "id": "W8_onpage_requirements",
+      "type": "validate_fix",
+      "inputs": [
+        "drafts",
+        "seo_checklist"
+      ],
+      "outputs": ["drafts_seo_passed"],
+      "logic": "Enforce single H1, focus keyword in title + first 100 words + slug, image ALT present, OG/Twitter tags list, schema.org Article payload."
+    },
+    {
+      "id": "W9_interlinking_plan",
+      "type": "generate",
+      "inputs": ["drafts_seo_passed"],
+      "outputs": ["interlinking_matrix"],
+      "logic": "Create per-post internal link targets and external references; ensure series/category pages are linked."
+    },
+    {
+      "id": "W10_publish_schedule",
+      "type": "schedule",
+      "inputs": ["briefs"],
+      "outputs": ["calendar"],
+      "rules": {
+        "cadence_per_week": {
+          "enum": [1, 2, 3],
+          "default": 1
+        },
+        "day_of_week_pref": {
+          "enum": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          "default": "Tue"
+        }
+      }
+    },
+    {
+      "id": "W11_analytics_tags",
+      "type": "emit",
+      "outputs": ["ga4_events"],
+      "logic": "Emit GA4 event names and parameters for blog engagement (scroll, time_on_page, CTA clicks)."
+    },
+    {
+      "id": "W12_revision_notes",
+      "type": "summarize",
+      "inputs": [
+        "briefs",
+        "drafts_seo_passed",
+        "interlinking_matrix"
+      ],
+      "outputs": ["audit_trail"],
+      "logic": "Explain choices, what gaps were addressed, and mapping to PPC funnel stages."
+    }
+  ],
+  "schemas": {
+    "event_schema": {
+      "month": {
+        "type": "string",
+        "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+      },
+      "event_name": {
+        "type": "string"
+      },
+      "event_type": {
+        "type": "string",
+        "enum": [
+          "seasonal",
+          "industry",
+          "promo",
+          "launch",
+          "holiday"
+        ]
+      },
+      "event_window": {
+        "type": "string"
+      },
+      "priority": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3
+      }
+    },
+    "topic_map_item": {
+      "event_name": {
+        "type": "string"
+      },
+      "topics": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "maxItems": 2
+      },
+      "target_persona": {
+        "type": "string"
+      },
+      "funnel_stage": {
+        "type": "string",
+        "enum": [
+          "Awareness",
+          "Consideration",
+          "Decision"
+        ]
+      },
+      "primary_keyword": {
+        "type": "string"
+      },
+      "secondary_keywords": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5
+      }
+    },
+    "brief_schema": {
+      "post_id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "angle": {
+        "type": "string"
+      },
+      "target_persona": {
+        "type": "string"
+      },
+      "search_intent": {
+        "type": "string",
+        "enum": [
+          "Informational",
+          "Commercial",
+          "Transactional",
+          "Navigational"
+        ]
+      },
+      "primary_keyword": {
+        "type": "string"
+      },
+      "semantic_terms": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 12
+      },
+      "cta": {
+        "type": "string"
+      },
+      "assets_needed": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "slug": {
+        "type": "string"
+      }
+    },
+    "outline_schema": {
+      "post_id": {
+        "type": "string"
+      },
+      "h1": {
+        "type": "string"
+      },
+      "h2": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "h3": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "faq": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5
+      }
+    },
+    "draft_schema": {
+      "post_id": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "h1": {
+        "type": "string"
+      },
+      "sections": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "type": "string"
+            },
+            "body_markdown": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "images": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "alt": {
+              "type": "string"
+            },
+            "caption": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "primary_keyword": {
+            "type": "string"
+          },
+          "secondary_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "schema_article": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "seo_requirements": {
+      "single_h1": {
+        "type": "boolean"
+      },
+      "focus_keyword_in_title": {
+        "type": "boolean"
+      },
+      "focus_keyword_in_first_100_words": {
+        "type": "boolean"
+      },
+      "focus_keyword_in_meta": {
+        "type": "boolean"
+      },
+      "image_alt_required": {
+        "type": "boolean"
+      },
+      "opengraph_required": {
+        "type": "boolean"
+      },
+      "schema_required": {
+        "type": "boolean"
+      },
+      "site_tagline_required": {
+        "type": "boolean"
+      },
+      "internal_links_min": {
+        "type": "integer"
+      },
+      "external_links_min": {
+        "type": "integer"
+      },
+      "response_time_s_max": {
+        "type": "number"
+      },
+      "page_requests_max": {
+        "type": "integer"
+      }
+    }
+  },
+  "llm_modules": {
+    "events_finder_v1": {
+      "role": "You are an editorial planner.",
+      "prompt": "Using client_profile and capacity controls, output 3-5 events per month for the next N months. JSON only, match event_schema."
+    },
+    "brief_generator_v1": {
+      "role": "You are an SEO content strategist.",
+      "prompt": "For each topic in topic_map, create a brief (brief_schema). Ensure the primary_keyword aligns with personas and the seo_checklist requirements."
+    },
+    "outline_generator_v1": {
+      "role": "You are a managing editor.",
+      "prompt": "Convert each brief into a clean outline (outline_schema). Enforce one H1 per post."
+    },
+    "draft_writer_v1": {
+      "role": "You are a senior copywriter.",
+      "prompt": "Write the article from the outline into draft_schema. Include internal link placeholders like [[INTERNAL:slug]] and ensure image ALT text is descriptive."
+    }
+  },
+  "outputs": {
+    "monthly_events": {
+      "type": "array",
+      "items_ref": "event_schema"
+    },
+    "topic_map": {
+      "type": "array",
+      "items_ref": "topic_map_item"
+    },
+    "briefs": {
+      "type": "array",
+      "items_ref": "brief_schema"
+    },
+    "outlines": {
+      "type": "array",
+      "items_ref": "outline_schema"
+    },
+    "drafts": {
+      "type": "array",
+      "items_ref": "draft_schema"
+    },
+    "interlinking_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "calendar": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ga4_events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "audit_trail": {
+      "type": "string"
+    }
+  }
 }
-},
-"controls": {
-"months_to_plan": {
-"type": "integer",
-"enum": [1, 2, 3, 6, 12],
-"default": 3
-},
-"events_per_month": {
-"type": "integer",
-"minimum": 3,
-"maximum": 5,
-"default": 4
-},
-"max_posts_per_month": {
-"type": "integer",
-"minimum": 2,
-"maximum": 8,
-"default": 4
-},
-"tone": {
-"type": "string",
-"enum": [
-"Professional",
-"Conversational",
-"Authoritative",
-"Playful"
-],
-"default": "Professional"
-},
-"reading_level": {
-"type": "string",
-"enum": [
-"Grade 7-8",
-"Grade 9-10",
-"College"
-],
-"default": "Grade 9-10"
-},
-"deterministic": {
-"type": "boolean",
-"default": true
-}
-},
-"derived_constraints": {
-"seo_rules": {
-"single_h1": true,
-"require_focus_keyword": true,
-"require_image_alt": true,
-"opengraph_required": true,
-"site_tagline_present": true,
-"target_response_time_s": 0.8,
-"max_page_requests": 80
-},
-"interlinking_rules": {
-"min_internal_links_per_post": 3,
-"min_external_links_per_post": 1,
-"link_to_series_pages": true
-}
-},
-"workflow": [
-{
-"id": "W1_collect_inputs",
-"type": "ingest",
-"outputs": [
-"client_profile",
-"base_prompt",
-"seo_requirements"
-],
-"notes": "Load JSON objects and normalize field names."
-},
-{
-"id": "W2_apply_seo_rules",
-"type": "transform",
-"inputs": ["seo_requirements"],
-"outputs": ["seo_checklist"],
-"logic": "Inject RankMath '100/100' best practices as a required ruleset, even if no plugin audit is available.",
-"determinism": "Pure function; fixed ruleset"
-},
-{
-"id": "W3_generate_monthly_events",
-"type": "generate",
-"inputs": ["client_profile"],
-"outputs": ["monthly_events"],
-"llm_module": "events_finder_v1",
-"constraints": {
-"events_per_month": {
-"min": 3,
-"max": 5
-}
-},
-"notes": "Use industry/seasonality derived from client profile to produce events per month (no PPC dependency)."
-},
-{
-"id": "W4_map_events_to_topics",
-"type": "map",
-"inputs": [
-"monthly_events",
-"client_profile",
-"seo_checklist"
-],
-"outputs": ["topic_map"],
-"logic": "For each event, produce 1-2 topic angles tailored to personas, product strengths, and SEO gaps."
-},
-{
-"id": "W5_content_briefs",
-"type": "generate",
-"inputs": [
-"topic_map",
-"base_prompt"
-],
-"outputs": ["briefs"],
-"llm_module": "brief_generator_v1",
-"determinism": "JSON only; validated against 'brief_schema'."
-},
-{
-"id": "W6_outlines",
-"type": "generate",
-"inputs": ["briefs"],
-"outputs": ["outlines"],
-"llm_module": "outline_generator_v1",
-"determinism": "JSON only; validated against 'outline_schema'."
-},
-{
-"id": "W7_drafts",
-"type": "generate",
-"inputs": [
-"outlines",
-"seo_checklist"
-],
-"outputs": ["drafts"],
-"llm_module": "draft_writer_v1",
-"post_processing": ["apply_onpage_requirements"]
-},
-{
-"id": "W8_onpage_requirements",
-"type": "validate_fix",
-"inputs": [
-"drafts",
-"seo_checklist"
-],
-"outputs": ["drafts_seo_passed"],
-"logic": "Enforce single H1, focus keyword in title + first 100 words + slug, image ALT present, OG/Twitter tags list, schema.org Article payload."
-},
-{
-"id": "W9_interlinking_plan",
-"type": "generate",
-"inputs": ["drafts_seo_passed"],
-"outputs": ["interlinking_matrix"],
-"logic": "Create per-post internal link targets and external references; ensure series/category pages are linked."
-},
-{
-"id": "W10_publish_schedule",
-"type": "schedule",
-"inputs": ["briefs"],
-"outputs": ["calendar"],
-"rules": {
-"cadence_per_week": {
-"enum": [1, 2, 3],
-"default": 1
-},
-"day_of_week_pref": {
-"enum": ["Mon", "Tue", "Wed", "Thu", "Fri"],
-"default": "Tue"
-}
-}
-},
-{
-"id": "W11_analytics_tags",
-"type": "emit",
-"outputs": ["ga4_events"],
-"logic": "Emit GA4 event names and parameters for blog engagement (scroll, time_on_page, CTA clicks)."
-},
-{
-"id": "W12_revision_notes",
-"type": "summarize",
-"inputs": [
-"briefs",
-"drafts_seo_passed",
-"interlinking_matrix"
-],
-"outputs": ["audit_trail"],
-"logic": "Explain choices, what gaps were addressed, and mapping to PPC funnel stages."
-}
-],
-"schemas": {
-"event_schema": {
-"month": {
-"type": "string",
-"pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
-},
-"event_name": {
-"type": "string"
-},
-"event_type": {
-"type": "string",
-"enum": [
-"seasonal",
-"industry",
-"promo",
-"launch",
-"holiday"
-]
-},
-"event_window": {
-"type": "string"
-},
-"priority": {
-"type": "integer",
-"minimum": 1,
-"maximum": 3
-}
-},
-"topic_map_item": {
-"event_name": {
-"type": "string"
-},
-"topics": {
-"type": "array",
-"items": {
-"type": "string"
-},
-"minItems": 1,
-"maxItems": 2
-},
-"target_persona": {
-"type": "string"
-},
-"funnel_stage": {
-"type": "string",
-"enum": [
-"Awareness",
-"Consideration",
-"Decision"
-]
-},
-"primary_keyword": {
-"type": "string"
-},
-"secondary_keywords": {
-"type": "array",
-"items": {
-"type": "string"
-},
-"maxItems": 5
-}
-},
-"brief_schema": {
-"post_id": {
-"type": "string"
-},
-"title": {
-"type": "string"
-},
-"angle": {
-"type": "string"
-},
-"target_persona": {
-"type": "string"
-},
-"search_intent": {
-"type": "string",
-"enum": [
-"Informational",
-"Commercial",
-"Transactional",
-"Navigational"
-]
-},
-"primary_keyword": {
-"type": "string"
-},
-"semantic_terms": {
-"type": "array",
-"items": {
-"type": "string"
-},
-"maxItems": 12
-},
-"cta": {
-"type": "string"
-},
-"assets_needed": {
-"type": "array",
-"items": {
-"type": "string"
-}
-},
-"slug": {
-"type": "string"
-}
-},
-"outline_schema": {
-"post_id": {
-"type": "string"
-},
-"h1": {
-"type": "string"
-},
-"h2": {
-"type": "array",
-"items": {
-"type": "string"
-}
-},
-"h3": {
-"type": "array",
-"items": {
-"type": "string"
-}
-},
-"faq": {
-"type": "array",
-"items": {
-"type": "string"
-},
-"maxItems": 5
-}
-},
-"draft_schema": {
-"post_id": {
-"type": "string"
-},
-"title": {
-"type": "string"
-},
-"h1": {
-"type": "string"
-},
-"sections": {
-"type": "array",
-"items": {
-"type": "object",
-"properties": {
-"heading": {
-"type": "string"
-},
-"body_markdown": {
-"type": "string"
-}
-}
-}
-},
-"images": {
-"type": "array",
-"items": {
-"type": "object",
-"properties": {
-"alt": {
-"type": "string"
-},
-"caption": {
-"type": "string"
-}
-}
-}
-},
-"metadata": {
-"type": "object",
-"properties": {
-"primary_keyword": {
-"type": "string"
-},
-"secondary_keywords": {
-"type": "array",
-"items": {
-"type": "string"
-}
-},
-"og_title": {
-"type": "string"
-},
-"og_description": {
-"type": "string"
-},
-"schema_article": {
-"type": "object"
-}
-}
-}
-},
-"seo_requirements": {
-"single_h1": {
-"type": "boolean"
-},
-"focus_keyword_in_title": {
-"type": "boolean"
-},
-"focus_keyword_in_first_100_words": {
-"type": "boolean"
-},
-"focus_keyword_in_meta": {
-"type": "boolean"
-},
-"image_alt_required": {
-"type": "boolean"
-},
-"opengraph_required": {
-"type": "boolean"
-},
-"schema_required": {
-"type": "boolean"
-},
-"site_tagline_required": {
-"type": "boolean"
-},
-"internal_links_min": {
-"type": "integer"
-},
-"external_links_min": {
-"type": "integer"
-},
-"response_time_s_max": {
-"type": "number"
-},
-"page_requests_max": {
-"type": "integer"
-}
-}
-},
-"llm_modules": {
-"events_finder_v1": {
-"role": "You are an editorial planner.",
-"prompt": "Using client_profile and capacity controls, output 3-5 events per month for the next N months. JSON only, match event_schema."
-},
-"brief_generator_v1": {
-"role": "You are an SEO content strategist.",
-"prompt": "For each topic in topic_map, create a brief (brief_schema). Ensure the primary_keyword aligns with personas and the seo_checklist requirements."
-},
-"outline_generator_v1": {
-"role": "You are a managing editor.",
-"prompt": "Convert each brief into a clean outline (outline_schema). Enforce one H1 per post."
-},
-"draft_writer_v1": {
-"role": "You are a senior copywriter.",
-"prompt": "Write the article from the outline into draft_schema. Include internal link placeholders like [[INTERNAL:slug]] and ensure image ALT text is descriptive."
-}
-},
-"outputs": {
-"monthly_events": {
-"type": "array",
-"items_ref": "event_schema"
-},
-"topic_map": {
-"type": "array",
-"items_ref": "topic_map_item"
-},
-"briefs": {
-"type": "array",
-"items_ref": "brief_schema"
-},
-"outlines": {
-"type": "array",
-"items_ref": "outline_schema"
-},
-"drafts": {
-"type": "array",
-"items_ref": "draft_schema"
-},
-"interlinking_matrix": {
-"type": "array",
-"items": {
-"type": "object"
-}
-},
-"calendar": {
-"type": "array",
-"items": {
-"type": "object"
-}
-},
-"ga4_events": {
-"type": "array",
-"items": {
-"type": "object"
-}
-},
-"audit_trail": {
-"type": "string"
-}
-}
-}
+```
 
 # Blog LLM Prompt JSON
 
-| {
+# Blog LLM Prompt JSON
 "meta": {
 "filename": "blog_plan_generator_v1.json",
 "version": "1.0",
@@ -1586,7 +1596,7 @@ If you didn’t verify earlier:
 
 # Governance Logic for Merging Modules into a unified Master JSON
 
-## TLDR:
+# Governance Logic for Merging Modules into a unified Master JSON
 
 Think of it as **three main steps**:
 
@@ -1603,7 +1613,7 @@ Think of it as **three main steps**:
 
 ## JSON Files
 
-- **`client_info.json`** → Raw onboarding input.
+## JSON Files
 - **`base_marketing_plan.json`** → Static “template” plan.
 - **`custom_plan.json`** → Tailored version with right cadence, enabled channels, and priority seasons.
 - **`modules.json`** → Just the task lists from each marketing module, without dates.
@@ -1671,184 +1681,194 @@ The **dashboard** only ever touches `master.json` to show:
 
 ## Onboarding
 
+```json
 {
-"client_id": "scent-sparkle",
-"business_name": "Scent & Sparkle Freshies",
-"site": "https://ssfreshies.com",
-"timezone": "America/Los_Angeles",
-"team_type": "Just Me",
-"weekly_marketing_time_hours": 5,
-"monthly_ad_budget": 50,
-"growth_mode": "steady",
-"audience": {
-"personas": ["Teen/Gen Z", "New Parent"],
-"notes": "IG/TikTok heavy; video OK; no face on camera."
-},
-"content_presence": {
-"platforms": ["Instagram", "TikTok", "Email"],
-"constraints": ["No live video", "Limited editing time"]
-},
-"constraints": {
-"brand_nos": ["Neon colors"],
-"tech_stack": ["Shopify", "Mailchimp"],
-"past_failures": ["FB Ads scale"],
-"past_successes": ["IG Reels BTS", "Craft fair promos"]
-},
-"seasonality": [
-"Back-to-school",
-"Halloween",
-"BFCM",
-"Christmas"
-]
+  "client_id": "scent-sparkle",
+  "business_name": "Scent & Sparkle Freshies",
+  "site": "https://ssfreshies.com",
+  "timezone": "America/Los_Angeles",
+  "team_type": "Just Me",
+  "weekly_marketing_time_hours": 5,
+  "monthly_ad_budget": 50,
+  "growth_mode": "steady",
+  "audience": {
+    "personas": ["Teen/Gen Z", "New Parent"],
+    "notes": "IG/TikTok heavy; video OK; no face on camera."
+  },
+  "content_presence": {
+    "platforms": ["Instagram", "TikTok", "Email"],
+    "constraints": ["No live video", "Limited editing time"]
+  },
+  "constraints": {
+    "brand_nos": ["Neon colors"],
+    "tech_stack": ["Shopify", "Mailchimp"],
+    "past_failures": ["FB Ads scale"],
+    "past_successes": ["IG Reels BTS", "Craft fair promos"]
+  },
+  "seasonality": [
+    "Back-to-school",
+    "Halloween",
+    "BFCM",
+    "Christmas"
+  ]
 }
+```
 
 ## Base Marketing Plan
 
+```json
 {
-"version": "1.0",
-"channels": ["Instagram", "TikTok", "Email"],
-"content_pillars": [
-{"name": "Behind the Scenes"},
-{"name": "Product Features"},
-{"name": "Lifestyle & Community"}
-],
-"default_cadence": {
-"social_posts_per_week": 2,
-"emails_per_month": 2,
-"blogs_per_month": 1
-},
-"acquisition": {
-"lead_capture": ["Email sign-up", "Giveaways"],
-"discount_first_purchase": true
-},
-"measurement": {
-"weekly": ["engagement", "open_rate"],
-"monthly": ["sales_by_channel", "repeat_rate"]
+  "version": "1.0",
+  "channels": ["Instagram", "TikTok", "Email"],
+  "content_pillars": [
+    {"name": "Behind the Scenes"},
+    {"name": "Product Features"},
+    {"name": "Lifestyle & Community"}
+  ],
+  "default_cadence": {
+    "social_posts_per_week": 2,
+    "emails_per_month": 2,
+    "blogs_per_month": 1
+  },
+  "acquisition": {
+    "lead_capture": ["Email sign-up", "Giveaways"],
+    "discount_first_purchase": true
+  },
+  "measurement": {
+    "weekly": ["engagement", "open_rate"],
+    "monthly": ["sales_by_channel", "repeat_rate"]
+  }
 }
-}
+```
 
 ## Generate Custom Marketing Plan
 
+```json
 {
-"client_id": "scent-sparkle",
-"window": {
-"start": "2025-09-01",
-"end": "2025-11-30"
-},
-"cadence": {
-"social_posts_per_week": 2,
-"emails_per_month": 2,
-"blogs_per_month": 0
-},
-"channel_enables": {
-"Instagram": true,
-"TikTok": true,
-"Email": true,
-"Blog": false
-},
-"priority_seasons": [
-"Halloween",
-"BFCM",
-"Christmas"
-],
-"strategy_notes": [
-"No FB scale; focus IG/TikTok Reels.",
-"Weekly time cap=5h → keep tasks to <=75 min each; daily quick wins 15-20 min."
-]
+  "client_id": "scent-sparkle",
+  "window": {
+    "start": "2025-09-01",
+    "end": "2025-11-30"
+  },
+  "cadence": {
+    "social_posts_per_week": 2,
+    "emails_per_month": 2,
+    "blogs_per_month": 0
+  },
+  "channel_enables": {
+    "Instagram": true,
+    "TikTok": true,
+    "Email": true,
+    "Blog": false
+  },
+  "priority_seasons": [
+    "Halloween",
+    "BFCM",
+    "Christmas"
+  ],
+  "strategy_notes": [
+    "No FB scale; focus IG/TikTok Reels.",
+    "Weekly time cap=5h → keep tasks to <=75 min each; daily quick wins 15-20 min."
+  ]
 }
+```
 
 ## Run Modules as add‑ons (after custom plan)
 
+```json
 {
-"module_key": "ppc",
-"version": "1.0",
-"tasks": [
-{
-"module_task_id": "ppc_001",
-"title": "Configure conversion tracking",
-"desc": "GTM + GA4; verify purchase event.",
-"channel": "ppc",
-"tags": ["setup", "evergreen"],
-"effort": 2, // 1=30m, 2=75m, 3=210m
-"suggested_week": 1, // relative to window.start
-"due_hint": "before_first_launch"
-},
-{
-"module_task_id": "ppc_002",
-"title": "Branded Search campaign build",
-"desc": "RSA x3; SKAGs minimized; neg lists.",
-"channel": "ppc",
-"tags": ["launch", "priority"],
-"effort": 3,
-"suggested_week": 2
+  "module_key": "ppc",
+  "version": "1.0",
+  "tasks": [
+    {
+      "module_task_id": "ppc_001",
+      "title": "Configure conversion tracking",
+      "desc": "GTM + GA4; verify purchase event.",
+      "channel": "ppc",
+      "tags": ["setup", "evergreen"],
+      "effort": 2, // 1=30m, 2=75m, 3=210m
+      "suggested_week": 1, // relative to window.start
+      "due_hint": "before_first_launch"
+    },
+    {
+      "module_task_id": "ppc_002",
+      "title": "Branded Search campaign build",
+      "desc": "RSA x3; SKAGs minimized; neg lists.",
+      "channel": "ppc",
+      "tags": ["launch", "priority"],
+      "effort": 3,
+      "suggested_week": 2
+    }
+  ]
 }
-]
-}
+```
 
 ## Governance merge
 
+```json
 {
-"plan": {
-"client_id": "scent-sparkle",
-"window_start": "2025-09-01",
-"window_end": "2025-11-30",
-"weekly_capacity_hours": 5,
-"timezone": "America/Los_Angeles"
-},
-"tasks": [
-{
-"id": "tsk_f3d91a1b7c",
-"title": "Configure conversion tracking",
-"desc": "GTM + GA4; verify purchase event.",
-"channel": "ppc",
-"effort": 2,
-"estimated_minutes": 75,
-"due_at": "2025-09-09T17:00:00-07:00",
-"status": "planned",
-"tags": ["setup", "evergreen"],
-"priority": 2,
-"source": {
-"module": "ppc",
-"module_task_id": "ppc_001"
-},
-"external_refs": {
-"gcal_event_id": "",
-"clickup_task_id": ""
+  "plan": {
+    "client_id": "scent-sparkle",
+    "window_start": "2025-09-01",
+    "window_end": "2025-11-30",
+    "weekly_capacity_hours": 5,
+    "timezone": "America/Los_Angeles"
+  },
+  "tasks": [
+    {
+      "id": "tsk_f3d91a1b7c",
+      "title": "Configure conversion tracking",
+      "desc": "GTM + GA4; verify purchase event.",
+      "channel": "ppc",
+      "effort": 2,
+      "estimated_minutes": 75,
+      "due_at": "2025-09-09T17:00:00-07:00",
+      "status": "planned",
+      "tags": ["setup", "evergreen"],
+      "priority": 2,
+      "source": {
+        "module": "ppc",
+        "module_task_id": "ppc_001"
+      },
+      "external_refs": {
+        "gcal_event_id": "",
+        "clickup_task_id": ""
+      }
+    },
+    {
+      "id": "tsk_9b0e431c2a",
+      "title": "Daily Quick Win: Record 20s BTS Reel",
+      "desc": "Stitch close-up; CTA: bio link.",
+      "channel": "social",
+      "effort": 1,
+      "estimated_minutes": 20,
+      "due_at": "2025-09-02T17:00:00-07:00",
+      "status": "planned",
+      "tags": ["quick_win"],
+      "priority": 1,
+      "source": {
+        "module": "social",
+        "module_task_id": "soc_qw"
+      },
+      "external_refs": {
+        "gcal_event_id": "",
+        "clickup_task_id": ""
+      }
+    }
+  ],
+  "meta": {
+    "generated_at": "2025-08-14T18:05:00-07:00",
+    "governance_version": "v1.0.0",
+    "resolution_log": [
+      {
+        "type": "defer_over_capacity",
+        "week": "2025-09-08",
+        "count": 1
+      }
+    ]
+  }
 }
-},
-{
-"id": "tsk_9b0e431c2a",
-"title": "Daily Quick Win: Record 20s BTS Reel",
-"desc": "Stitch close-up; CTA: bio link.",
-"channel": "social",
-"effort": 1,
-"estimated_minutes": 20,
-"due_at": "2025-09-02T17:00:00-07:00",
-"status": "planned",
-"tags": ["quick_win"],
-"priority": 1,
-"source": {
-"module": "social",
-"module_task_id": "soc_qw"
-},
-"external_refs": {
-"gcal_event_id": "",
-"clickup_task_id": ""
-}
-}
-],
-"meta": {
-"generated_at": "2025-08-14T18:05:00-07:00",
-"governance_version": "v1.0.0",
-"resolution_log": [
-{
-"type": "defer_over_capacity",
-"week": "2025-09-08",
-"count": 1
-}
-]
-}
-}
+```
 
 ## Governance rules:
 
