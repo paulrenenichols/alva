@@ -516,7 +516,7 @@ export class TokenService {
 
   async storeRefreshToken(userId: string, token: string, device: string) {
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    
+
     await db.insert(refreshTokens).values({
       userId,
       tokenHash,
@@ -1271,6 +1271,7 @@ export const planGenerationWorker = new Worker(
 5. **Run migrations**: `pnpm db:migrate`
 
 **Individual Service Development**:
+
 - Web only: `pnpm nx serve web` (requires API & Auth running)
 - API only: `pnpm nx serve api` (requires Postgres & Redis)
 - Auth only: `pnpm nx serve auth` (requires Postgres)
@@ -1317,15 +1318,19 @@ async function DashboardPage() {
   const session = await getServerSession(); // From cookie
   const plans = await fetch(`${process.env.API_URL}/plans`, {
     headers: { Authorization: `Bearer ${session.accessToken}` },
-  }).then(res => res.json());
-  
+  }).then((res) => res.json());
+
   return <Dashboard plans={plans} />;
 }
 
 // Client Component
 function GeneratePlanButton() {
   const { mutate, isLoading } = useGeneratePlan();
-  return <Button onClick={() => mutate(profile)} loading={isLoading}>Generate</Button>;
+  return (
+    <Button onClick={() => mutate(profile)} loading={isLoading}>
+      Generate
+    </Button>
+  );
 }
 ```
 
@@ -1340,7 +1345,7 @@ function GeneratePlanButton() {
 // Auto-refresh on 401
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const token = useAuthStore.getState().accessToken;
-  
+
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -1491,6 +1496,7 @@ export const plans = pgTable("plans", { ... }, { schema: "app" });
 ### Vertical Scaling
 
 **Start (MVP)**:
+
 - 1 web instance (Vercel)
 - 1 API instance
 - 1 Auth instance
@@ -1498,6 +1504,7 @@ export const plans = pgTable("plans", { ... }, { schema: "app" });
 - 1 Redis instance
 
 **Growth (1000+ users)**:
+
 - Auto-scaled web (Vercel handles)
 - 3-5 API instances (behind load balancer)
 - 2 Auth instances (with session affinity for refresh tokens)
@@ -1505,6 +1512,7 @@ export const plans = pgTable("plans", { ... }, { schema: "app" });
 - Postgres with read replicas
 
 **Scale (10,000+ users)**:
+
 - Global web deployment (Vercel edge)
 - 10-20 API instances (regional)
 - 5 Auth instances
@@ -1514,15 +1522,18 @@ export const plans = pgTable("plans", { ... }, { schema: "app" });
 ### Service-Specific Scaling
 
 **Auth Service** scales by:
+
 - Login frequency (peaks during launches)
 - Token refreshes (15-min intervals create predictable load)
 
 **API Service** scales by:
+
 - Plan generation requests (most expensive)
 - Chat message volume
 - Task updates
 
 **Web Service** scales by:
+
 - User traffic
 - Page views
 
@@ -1577,23 +1588,23 @@ We're starting with microservices, but if you wanted to start simpler:
 
 ## Final Stack Summary
 
-| Category       | Technology               | Why                                     | Service      |
-| -------------- | ------------------------ | --------------------------------------- | ------------ |
-| **Monorepo**   | NX                       | Advanced tooling, caching, generators   | All          |
-| **Language**   | TypeScript 5.3+          | Type safety, essential for AI workflows | All          |
-| **Frontend**   | React 18 + Next.js 14    | SSR, Server Components, proven at scale | Web          |
-| **Styling**    | Tailwind CSS 4.0         | Utility-first, matches design system    | Web          |
-| **Components** | Shadcn/UI + Radix        | Full control, accessible, customizable  | Web          |
-| **API Server** | Fastify 4.x              | High performance, TypeScript-first      | API          |
-| **Auth Server** | Fastify 4.x             | Fast, secure, focused service           | Auth         |
-| **Database**   | PostgreSQL 16            | JSONB support, robust, scalable         | API + Auth   |
-| **ORM**        | Drizzle                  | TypeScript-first, performant            | API + Auth   |
-| **Auth Strategy** | JWT + Refresh Token   | Stateless + revocable hybrid            | Auth         |
-| **AI/LLM**     | Vercel AI SDK + OpenAI   | Streaming, React hooks, JSON mode       | Web + API    |
-| **API Layer**  | REST + OpenAPI           | Universal, documented, stateless        | API + Auth   |
-| **State**      | Zustand + TanStack Query | UI state + server state                 | Web          |
-| **Deploy**     | Docker + Vercel/Railway  | Multi-service, independent scaling      | All          |
-| **Testing**    | Vitest + Playwright      | Fast, reliable, modern                  | All          |
-| **Jobs**       | BullMQ                   | Redis-backed, production-ready          | API          |
+| Category          | Technology               | Why                                     | Service    |
+| ----------------- | ------------------------ | --------------------------------------- | ---------- |
+| **Monorepo**      | NX                       | Advanced tooling, caching, generators   | All        |
+| **Language**      | TypeScript 5.3+          | Type safety, essential for AI workflows | All        |
+| **Frontend**      | React 18 + Next.js 14    | SSR, Server Components, proven at scale | Web        |
+| **Styling**       | Tailwind CSS 4.0         | Utility-first, matches design system    | Web        |
+| **Components**    | Shadcn/UI + Radix        | Full control, accessible, customizable  | Web        |
+| **API Server**    | Fastify 4.x              | High performance, TypeScript-first      | API        |
+| **Auth Server**   | Fastify 4.x              | Fast, secure, focused service           | Auth       |
+| **Database**      | PostgreSQL 16            | JSONB support, robust, scalable         | API + Auth |
+| **ORM**           | Drizzle                  | TypeScript-first, performant            | API + Auth |
+| **Auth Strategy** | JWT + Refresh Token      | Stateless + revocable hybrid            | Auth       |
+| **AI/LLM**        | Vercel AI SDK + OpenAI   | Streaming, React hooks, JSON mode       | Web + API  |
+| **API Layer**     | REST + OpenAPI           | Universal, documented, stateless        | API + Auth |
+| **State**         | Zustand + TanStack Query | UI state + server state                 | Web        |
+| **Deploy**        | Docker + Vercel/Railway  | Multi-service, independent scaling      | All        |
+| **Testing**       | Vitest + Playwright      | Fast, reliable, modern                  | All        |
+| **Jobs**          | BullMQ                   | Redis-backed, production-ready          | API        |
 
 This stack provides a solid foundation for building Alva as a scalable, maintainable, AI-first microservices marketing platform with clear service boundaries and independent deployment.

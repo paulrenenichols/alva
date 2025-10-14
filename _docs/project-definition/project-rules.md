@@ -1090,6 +1090,7 @@ throw new ValidationError("Invalid email format", "email", "INVALID_FORMAT");
 ### Naming Convention & Service-Specific Variables
 
 **Web Service** (.env.local):
+
 ```bash
 # Public (exposed to browser)
 NEXT_PUBLIC_API_URL=http://localhost:3001
@@ -1099,6 +1100,7 @@ NEXT_PUBLIC_ENVIRONMENT=development
 ```
 
 **API Service** (.env):
+
 ```bash
 # Server-only
 PORT=3001
@@ -1110,6 +1112,7 @@ AUTH_SERVICE_URL=http://localhost:3002  # For optional introspection
 ```
 
 **Auth Service** (.env):
+
 ```bash
 # Server-only
 PORT=3002
@@ -1136,6 +1139,7 @@ WEB_URL=http://localhost:3000  # For CORS and redirects
 ### Type-Safe Env Vars (Per Service)
 
 **Web Service**:
+
 ```typescript
 // apps/web/src/config/env.ts
 import { z } from "zod";
@@ -1151,6 +1155,7 @@ export const env = webEnvSchema.parse(process.env);
 ```
 
 **API Service**:
+
 ```typescript
 // apps/api/src/config/env.ts
 import { z } from "zod";
@@ -1168,6 +1173,7 @@ export const env = apiEnvSchema.parse(process.env);
 ```
 
 **Auth Service**:
+
 ```typescript
 // apps/auth/src/config/env.ts
 import { z } from "zod";
@@ -1201,7 +1207,7 @@ export async function sendMagicLink(email: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
-  
+
   if (!response.ok) throw new Error("Failed to send magic link");
   return response.json();
 }
@@ -1213,7 +1219,7 @@ export async function verifyMagicLink(token: string) {
     body: JSON.stringify({ token }),
     credentials: "include", // Include cookies for refresh token
   });
-  
+
   if (!response.ok) throw new Error("Invalid token");
   const { accessToken } = await response.json();
   return accessToken;
@@ -1226,12 +1232,9 @@ export async function verifyMagicLink(token: string) {
 // apps/web/src/lib/api-client.ts
 import { useAuthStore } from "@alva/ui/stores";
 
-export async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
+export async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const accessToken = useAuthStore.getState().accessToken;
-  
+
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -1275,7 +1278,7 @@ export async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {
     const decoded = jwt.verify(token, process.env.JWT_PUBLIC_KEY, {
       algorithms: ["RS256"],
     });
-    
+
     req.user = decoded; // Attach user to request
   } catch (err) {
     return reply.code(401).send({ error: "Invalid or expired token" });
