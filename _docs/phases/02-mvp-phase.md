@@ -53,7 +53,11 @@
    - Store email in database (unverified)
    - Redirect to `/onboarding/welcome`
 
-**Dependencies**: Phase 1 (auth system)
+**Backend Integration**:
+- Web → Auth Service: POST `/auth/register`
+- Store temp access token for onboarding
+
+**Dependencies**: Phase 1 (auth service running)
 
 **Acceptance Criteria**:
 
@@ -127,10 +131,10 @@
    - Section 4: Goals & Growth (5 cards)
    - Section 5: Constraints & Tools (5 cards)
 4. Implement state management
-   - Store responses in Zustand
-   - Auto-save every card completion
-   - Persist to localStorage
-   - Sync to database on section completion
+   - Store responses in Zustand (client state)
+   - Auto-save to localStorage for resume capability
+   - Sync to API Server on section completion: POST `/onboarding/save-section`
+   - Include temp access token in API requests
 5. Add validation and error handling
    - Required field validation
    - Format validation (URL, email)
@@ -176,7 +180,13 @@
    - Merge updates with existing profile
    - Maintain version history (optional)
 
-**Dependencies**: Onboarding card system, database setup
+**Backend Integration**:
+- Web → API Server: POST `/onboarding/finalize`
+- API compiles all sections into complete `client_info.json`
+- API validates against Zod schema
+- API stores in app.client_profiles table
+
+**Dependencies**: Onboarding card system, API server running
 
 **Acceptance Criteria**:
 
@@ -188,46 +198,63 @@
 
 ---
 
-### 5. Marketing Plan Generation (PPC Module)
+### 5. Marketing Plan Generation (PPC Module - API Service)
 
-**Objective**: Generate first marketing plan using LLM
+**Objective**: Generate first marketing plan using LLM in API server
 
 **Tasks**:
 
-1. Set up OpenAI integration
-   - Install OpenAI SDK
-   - Configure API client
-   - Add retry logic with exponential backoff
-   - Implement response caching (optional)
-2. Create PPC plan generator
+1. Set up OpenAI integration (in API service)
+   - Install OpenAI SDK in `apps/api`
+   - Create `src/lib/openai.client.ts`
+   - Configure API client with retry logic
+   - Implement response caching in Redis
+2. Create PPC plan generator service
+   - Create `src/services/plan-generation/ppc.generator.ts`
    - Load base PPC plan template from project-overview.md
    - Build prompt using client profile
    - Call OpenAI with JSON mode (temperature=0)
    - Validate response with Zod schema
-3. Implement plan storage
-   - Create `marketing_plans` table
-   - Store plan JSON in JSONB column
+3. Implement API routes
+   - POST `/plans/generate` - Queue plan generation job
+   - GET `/plans/:id/status` - Check generation status
+   - GET `/plans/:id` - Retrieve generated plan
+4. Implement plan storage
+   - Store plan in app.marketing_plans table (JSONB)
    - Link to user and client profile
-   - Add metadata (version, generated_at)
-4. Add error handling and fallbacks
-   - Retry failed LLM calls
-   - Provide generic plan if LLM fails
-   - Log errors for debugging
-   - Show user-friendly error messages
+   - Add metadata (version, generated_at, module)
 5. Create background job for generation
-   - Use BullMQ for async processing
-   - Queue plan generation job
-   - Update status in real-time (polling or SSE)
-   - Handle timeouts gracefully
+   - Set up BullMQ queue in `src/jobs/queues/plan-generation.queue.ts`
+   - Create worker in `src/jobs/workers/plan-generation.worker.ts`
+   - Handle job lifecycle (queued → processing → completed → failed)
+   - Implement retry logic (3 attempts)
+6. Add error handling and fallbacks
+   - Retry failed LLM calls with exponential backoff
+   - Provide generic plan if all retries fail
+   - Log errors with correlation IDs
+   - Return user-friendly error messages
+7. Create status polling endpoint for Web
+   - Web polls `/plans/:id/status` for progress
+   - API returns: queued, processing, completed, failed
+   - Alternative: Server-Sent Events for real-time updates
 
-**Dependencies**: Client profile generation, OpenAI API access
+**Backend Flow**:
+- Web → API: POST `/plans/generate` with client profile
+- API validates JWT, queues BullMQ job
+- API returns job ID immediately
+- Web polls for status
+- Worker processes job (calls OpenAI, validates, stores)
+- Web retrieves completed plan
+
+**Dependencies**: Client profile generation, API server, OpenAI API access
 
 **Acceptance Criteria**:
 
-- PPC plan generates successfully
+- PPC plan generates successfully via API
 - JSON response validates against schema
 - Plan stored in database correctly
-- User sees generation progress
+- Web can poll status and retrieve plan
+- BullMQ job processing works
 - Error states handled gracefully
 - Generation completes in <30 seconds
 
@@ -272,40 +299,58 @@
 
 ---
 
-### 7. Email Verification System
+### 7. Email Verification System (Auth Service Integration)
 
-**Objective**: Verify email ownership before full access
+**Objective**: Verify email ownership and exchange tokens for full access
 
 **Tasks**:
 
-1. Enhance email provider setup
-   - Configure Resend or similar service
-   - Create verification email template
-   - Add magic link with token
-2. Build verification flow
-   - Generate secure token
-   - Send email with verification link
-   - Create `/verify?token=xxx` route
-   - Validate token and mark email verified
-3. Implement access control
+1. Build verification flow in Web app
+   - Create `/verify?token=xxx` page
+   - Call Auth Service: POST `/auth/verify-magic-link` with token
+   - Handle response (access token + refresh token cookie)
+   - Store access token in Zustand
+   - Redirect to `/dashboard`
+2. Implement access control in Web
+   - Check for valid access token before rendering protected routes
    - Block unverified users from dashboard
-   - Allow summary view for unverified
-   - Redirect to verification prompt
+   - Allow summary view for users with temp tokens
    - Show verification status in UI
-4. Add resend verification option
-   - "Resend email" button
-   - Rate limit resend attempts
-   - Update token expiration
+3. Add resend verification option
+   - "Resend email" button calls Auth Service: POST `/auth/send-magic-link`
+   - Auth Service rate limits resend attempts (5 per hour)
+   - Show success/error messages
+4. Implement automatic token refresh
+   - Detect 401 responses from API
+   - Call Auth Service: POST `/auth/refresh` (uses httpOnly cookie)
+   - Update access token in Zustand
+   - Retry original request
+5. Add logout functionality
+   - Call Auth Service: POST `/auth/logout`
+   - Clear access token from Zustand
+   - Redirect to landing page
 
-**Dependencies**: Auth system from Phase 1
+**Backend Flow**:
+- User clicks magic link → Web calls Auth Service `/auth/verify-magic-link`
+- Auth Service validates token, marks email verified in database
+- Auth Service generates access JWT + refresh token
+- Auth Service sets refresh token as httpOnly cookie
+- Auth Service returns access token (JSON)
+- Web stores access token in Zustand
+- Web can now call API server with access token
+
+**Dependencies**: Auth service from Phase 1
 
 **Acceptance Criteria**:
 
-- Verification email sends reliably
+- Verification email sends reliably from Auth service
 - Token validation works securely
-- Verified users get full access
-- Unverified users see appropriate prompts
+- Verified users receive access + refresh tokens
+- Access token stored correctly (Zustand, memory only)
+- Refresh token stored in httpOnly cookie
+- Automatic token refresh works on 401
 - Resend functionality works with rate limiting
+- Logout clears tokens and redirects
 
 ---
 
@@ -340,7 +385,13 @@
    - "Alright - I've got the basics. Where would you like to start today?"
    - Suggested prompts/actions
 
-**Dependencies**: Plan generation, Vercel AI SDK
+**Backend Integration**:
+- Web → API Server: POST `/chat/message` (streaming)
+- API includes user's client profile and plan in context
+- API streams OpenAI response back to Web
+- API stores conversation history in database
+
+**Dependencies**: Plan generation, API server, Vercel AI SDK
 
 **Acceptance Criteria**:
 
@@ -381,7 +432,13 @@
    - Active state indicators
    - Mobile navigation drawer
 
-**Dependencies**: Plan generation, chat interface
+**Backend Integration**:
+- Web → API Server: GET `/tasks?status=planned&priority=1` (Quick Win)
+- Web → API Server: GET `/tasks?limit=3&sort=due_date` (Upcoming)
+- Web → API Server: GET `/plans/:id` (Plan overview)
+- Web → API Server: PATCH `/tasks/:id/complete` (Mark complete)
+
+**Dependencies**: Plan generation, chat interface, API server
 
 **Acceptance Criteria**:
 
@@ -434,25 +491,46 @@
 
 ## Technical Architecture
 
-### Data Flow
+### Data Flow (Microservices)
 
 ```
-User Input (Onboarding)
+User Input (Onboarding) - Web App
   ↓
-Zustand Store (client state)
+Zustand Store (client state) + localStorage
   ↓
-Auto-save to Database (per section)
+POST /onboarding/save-section → API Server
   ↓
-Generate Client Profile JSON
+API Server stores partial data in database
   ↓
-Queue Plan Generation Job
+POST /onboarding/finalize → API Server
   ↓
-LLM Generates PPC Plan
+API Server generates Client Profile JSON
   ↓
-Validate & Store Plan
+POST /plans/generate → API Server
   ↓
-Display Summary + Chat
+API Server queues BullMQ job → Returns job ID
+  ↓
+BullMQ Worker picks up job
+  ↓
+Worker calls OpenAI (LLM generates PPC plan)
+  ↓
+Worker validates with Zod schema
+  ↓
+Worker stores plan in database
+  ↓
+Web polls GET /plans/:id/status
+  ↓
+Web retrieves GET /plans/:id
+  ↓
+Display Summary + Chat in Web
 ```
+
+**Service Communication**:
+- **Web ↔ Auth**: Register, verify, refresh tokens
+- **Web ↔ API**: All business logic, protected with JWT
+- **API ↔ Database**: Direct via Drizzle
+- **Auth ↔ Database**: Direct via Drizzle (auth schema)
+- **API Workers**: Background jobs via BullMQ + Redis
 
 ### Key Schemas
 
@@ -495,38 +573,79 @@ interface MarketingPlan {
 
 ### API Routes
 
+**Auth Service (Port 3002)**:
 ```
-POST /api/onboarding/save-section
-POST /api/plans/generate
-GET  /api/plans/[id]
-POST /api/chat (streaming)
-GET  /api/auth/verify?token=xxx
+POST /auth/register             # Email registration, return temp token
+POST /auth/send-magic-link      # Send verification email
+POST /auth/verify-magic-link    # Verify token, return access + refresh
+POST /auth/refresh              # Refresh access token
+POST /auth/logout               # Revoke refresh token
+GET  /auth/me                   # Get current user
+```
+
+**API Server (Port 3001)**:
+```
+POST /onboarding/save-section   # Save onboarding section data
+POST /onboarding/finalize       # Finalize client profile
+POST /plans/generate            # Queue plan generation job
+GET  /plans/:id/status          # Check generation status
+GET  /plans/:id                 # Get generated plan
+GET  /tasks                     # List tasks (with filters)
+PATCH /tasks/:id/complete       # Mark task complete
+POST /chat/message              # Send chat message (streaming)
 ```
 
 ---
 
 ## Testing Strategy
 
-### Unit Tests
+### Unit Tests (Per Service)
 
+**Web**:
 - Onboarding card components
+- Auth client methods
+- API client methods
+- React hooks
+
+**API**:
 - Profile mapper logic
+- Plan generator (mocked LLM)
+- Governance logic
+- Route handlers
+
+**Auth**:
+- Token generation/validation
+- Email service
+- User service
+
+**Shared**:
 - Zod schema validation
 - Utility functions
 
 ### Integration Tests
 
-- Onboarding flow end-to-end
+**Web**:
+- Onboarding flow with mocked API responses
+
+**API**:
 - Profile generation pipeline
 - Plan generation (mocked LLM)
-- Chat functionality
+- Chat functionality (mocked OpenAI)
+- BullMQ job processing
 
-### E2E Tests (Playwright)
+**Auth**:
+- Full auth flow (register → verify → token issuance)
+- Token refresh flow
+- Logout and token revocation
 
-- Complete user journey: landing → onboarding → summary → dashboard
-- Email verification flow
+### E2E Tests (Playwright - Cross-Service)
+
+- Complete user journey: landing → register → onboarding → verify → dashboard
+- Email verification flow (requires email provider)
+- Token refresh on expiry
 - Chat interaction
 - Mobile responsive behavior
+- All 3 services running in Docker
 
 ---
 

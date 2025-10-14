@@ -14,20 +14,25 @@
 
 **Success Criteria**:
 
+- ✅ All modules implemented in API server
 - ✅ Blog module generates content calendars
 - ✅ Email module creates campaign schedules
 - ✅ Social module plans platform-specific content
 - ✅ Governance logic merges modules without conflicts
 - ✅ Tasks scheduled based on capacity
-- ✅ Dashboard shows Quick Wins and streaks
-- ✅ Action Board displays all tasks
+- ✅ Web dashboard shows Quick Wins and streaks
+- ✅ Web Action Board displays all tasks from API
 - ✅ Plan quality meets user needs
 
 ---
 
 ## Features & Tasks
 
-### 1. Blog Module Implementation
+**Note**: All module implementations are built in the API server (`apps/api/src/services/plan-generation/`). The Web app consumes these via REST endpoints.
+
+---
+
+### 1. Blog Module Implementation (API Service)
 
 **Objective**: Generate SEO-optimized blog content strategy
 
@@ -74,7 +79,7 @@
 
 ---
 
-### 2. Email Module Implementation
+### 2. Email Module Implementation (API Service)
 
 **Objective**: Create email marketing campaign strategy
 
@@ -115,7 +120,7 @@
 
 ---
 
-### 3. Social Media Module Implementation
+### 3. Social Media Module Implementation (API Service)
 
 **Objective**: Generate platform-specific social media content strategy
 
@@ -156,9 +161,9 @@
 
 ---
 
-### 4. Governance Logic & Plan Merging
+### 4. Governance Logic & Plan Merging (API Service)
 
-**Objective**: Combine all module outputs into unified, conflict-free master plan
+**Objective**: Combine all module outputs into unified, conflict-free master plan (in API server)
 
 **Tasks**:
 
@@ -241,9 +246,9 @@
 
 ---
 
-### 6. Enhanced Dashboard
+### 6. Enhanced Dashboard (Web Service)
 
-**Objective**: Display comprehensive plan overview with actionable insights
+**Objective**: Display comprehensive plan overview from API with actionable insights
 
 **Tasks**:
 
@@ -287,9 +292,9 @@
 
 ---
 
-### 7. Action Board (Kanban View)
+### 7. Action Board (Web Service - Kanban View)
 
-**Objective**: Provide full task management with filtering and drag-and-drop
+**Objective**: Provide full task management UI consuming API data
 
 **Tasks**:
 
@@ -322,22 +327,29 @@
    - Optimistic UI updates
    - Sync to database
 
-**Dependencies**: Enhanced dashboard
+**Backend Integration**:
+- GET `/tasks` with query params (channel, priority, status, date range, search)
+- PATCH `/tasks/:id` to update status on drag-and-drop
+- PATCH `/tasks/:id/defer` to defer tasks
+- DELETE `/tasks/:id` to delete tasks
+
+**Dependencies**: Enhanced dashboard, API task endpoints
 
 **Acceptance Criteria**:
 
-- Board displays all tasks correctly
-- Drag-and-drop works smoothly
-- Filters update results in real-time
+- Board displays all tasks correctly from API
+- Drag-and-drop updates via API
+- Filters update results in real-time (client-side + API)
 - Task cards show all relevant info
 - Mobile view functional (list format)
-- Persistence to database reliable
+- Optimistic UI updates before API confirms
+- Persistence to database reliable via API
 
 ---
 
-### 8. Module Configuration & Preferences
+### 8. Module Configuration & Preferences (Web + API)
 
-**Objective**: Allow users to enable/disable modules and customize settings
+**Objective**: Allow users to enable/disable modules via Web UI, settings stored in API
 
 **Tasks**:
 

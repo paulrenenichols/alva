@@ -37,7 +37,9 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 
 **State Transition**:
 
-- Email captured → Create anonymous session
+- Email captured → Send to Auth Service (POST `/auth/register`)
+- Auth Service creates unverified user, generates temporary session token
+- Store temp token in client state (Zustand)
 - Navigate to `/onboarding/welcome`
 
 ---
@@ -61,9 +63,17 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 - Click "Let's Go" → Navigate to `/onboarding/brand-clarity/1`
 - Click "Back" → Return to landing
 
+**Backend Processing**:
+
+- Web → Auth Service: POST `/auth/register` with email
+- Auth Service creates unverified user in database
+- Auth Service returns temporary access token
+- Web stores token in Zustand for onboarding session
+
 **Data Captured**:
 
-- Email stored in session
+- Email stored in Auth Service database (unverified)
+- Temporary token for onboarding
 - Onboarding start timestamp
 
 ---
@@ -136,7 +146,11 @@ Alva provides a seamless journey from discovery to active marketing plan executi
   - **No** → "Suggest for me later" button, optional brand reference upload, optional dislikes field
 - **Data Path**: `brand_identity.{primary_colors[], fonts[], dislikes[]}`
 
-**Section Completion**: Auto-save → Navigate to `/onboarding/products-offers/1`
+**Section Completion**:
+- Auto-save to API Server: POST `/onboarding/save-section`
+- Include temporary auth token in request
+- API stores partial profile data
+- Navigate to `/onboarding/products-offers/1`
 
 ### Section 2: Products & Offers (4 cards)
 
@@ -174,7 +188,9 @@ Alva provides a seamless journey from discovery to active marketing plan executi
   - Not Yet - But I'm open to it
 - **Data Path**: `business_model.run_promos`
 
-**Section Completion**: Auto-save → Navigate to `/onboarding/content-social/1`
+**Section Completion**:
+- Auto-save to API Server: POST `/onboarding/save-section`
+- Navigate to `/onboarding/content-social/1`
 
 ### Section 3: Content & Social (6 cards)
 
@@ -226,7 +242,9 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 - **Data Path**: `content_presence.vibe_inspo[]`
 - **Optional**: Can skip
 
-**Section Completion**: Auto-save → Navigate to `/onboarding/goals-growth/1`
+**Section Completion**:
+- Auto-save to API Server: POST `/onboarding/save-section`
+- Navigate to `/onboarding/goals-growth/1`
 
 ### Section 4: Goals & Growth (5 cards)
 
@@ -319,7 +337,10 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 - **Data Path**: `constraints.additional_notes`
 - **Optional**: Can skip
 
-**Section Completion**: Auto-save all data → Navigate to `/onboarding/processing`
+**Section Completion**:
+- Auto-save to API Server: POST `/onboarding/save-section`
+- Finalize client profile: POST `/onboarding/finalize`
+- Navigate to `/onboarding/processing`
 
 ---
 
@@ -339,9 +360,11 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 
 **Backend Processing**:
 
-- Compile onboarding responses into `client_info.json`
-- Store in database linked to email/session
-- Trigger initial plan generation (async)
+- Web → API Server: POST `/onboarding/finalize`
+- API compiles responses into `client_info.json`
+- API stores in database (linked to user from temp token)
+- API queues plan generation job (BullMQ)
+- API returns processing status
 
 **State Transition**: Auto-navigate to `/onboarding/summary`
 
@@ -378,10 +401,15 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 **User Actions**:
 
 - **Primary CTA**: "See My Plan" (gold button, black text)
-  - If email NOT verified → Show verification modal
+  - If email NOT verified → Show verification modal, send magic link
   - If email verified → Navigate to `/dashboard`
 - **Secondary Link**: "Edit my answers" (blue text)
   - Navigate back to specific onboarding section
+
+**Backend Flow**:
+- Check verification status: GET `/auth/me` (using temp token)
+- If not verified: POST `/auth/send-magic-link`
+- Auth Service sends verification email with magic link
 
 ---
 
@@ -401,11 +429,18 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 
 **Verification Flow**:
 
-1. User receives email
-2. Clicks verification link
-3. Link includes token: `/verify?token=xxx`
-4. Backend verifies token, marks email as verified
-5. Redirect to `/dashboard` with success message
+1. User receives email with magic link
+2. Clicks verification link: `/verify?token=xxx`
+3. Web calls Auth Service: POST `/auth/verify-magic-link` with token
+4. Auth Service validates token, marks email verified
+5. Auth Service returns access token + sets refresh token cookie
+6. Web stores access token in Zustand
+7. Redirect to `/dashboard` with success message
+
+**Token Exchange**:
+- Temporary onboarding token → Permanent access + refresh tokens
+- Access token (JWT, 15 min expiry) → Stored in Zustand
+- Refresh token (7 day expiry) → httpOnly cookie
 
 **Unverified State**:
 
@@ -630,26 +665,32 @@ Alva provides a seamless journey from discovery to active marketing plan executi
 
 ### Data Persistence
 
-**Session Storage** (temporary):
+**Client-Side (Browser)**:
 
-- Onboarding progress (current section/card)
-- Partially completed responses
-- Anonymous user data pre-verification
+- Access token in Zustand (memory, not persisted for security)
+- Onboarding progress in localStorage
+- Partially completed responses in localStorage
 
-**Database** (permanent):
+**Auth Service Database** (auth schema):
 
-- User account (post-verification)
-- Client profile JSON
-- Marketing plans (all versions)
-- Task completion history
-- Chat message history
+- Users table (id, email, verified, created_at)
+- Refresh tokens table (hashed, expiry, device)
+- Verification tokens table (magic link tokens)
+
+**API Server Database** (app schema):
+
+- Client profiles table (user_id, profile JSONB)
+- Marketing plans table (user_id, plan JSONB, version)
+- Tasks table (plan_id, task details)
+- Task history table (completions, updates)
+- Chat messages table (user_id, message, role, timestamp)
 
 **Auto-Save Triggers**:
 
-- Every card completion
-- Every section completion
-- On navigation away from onboarding
-- Every 30 seconds during text input
+- Every card completion → POST to API Server
+- Every section completion → POST to API Server
+- On navigation away from onboarding → localStorage (resume capability)
+- Every 30 seconds during text input → localStorage
 
 ---
 

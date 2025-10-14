@@ -14,14 +14,15 @@
 
 **Success Criteria**:
 
-- ✅ Performance metrics meet targets (LCP < 2.5s, FID < 100ms)
-- ✅ Test coverage > 80% on critical paths
-- ✅ Error monitoring and alerting configured
+- ✅ All 3 services meet performance targets
+- ✅ Test coverage > 80% per service on critical paths
+- ✅ Error monitoring configured for all services
 - ✅ All edge cases handled gracefully
-- ✅ Accessibility WCAG AA compliant
-- ✅ Documentation complete
-- ✅ Production deployment successful
+- ✅ Accessibility WCAG AA compliant (Web)
+- ✅ API documentation complete (OpenAPI)
+- ✅ Production deployment successful for all services
 - ✅ Zero critical bugs in staging
+- ✅ Service-to-service communication secure and reliable
 
 ---
 
@@ -118,50 +119,68 @@
 
 ---
 
-### 3. Monitoring & Observability
+### 3. Monitoring & Observability (All Services)
 
-**Objective**: Track application health and user experience in real-time
+**Objective**: Track application health across all microservices in real-time
 
 **Tasks**:
 
-1. Set up error tracking (Sentry)
-   - Install Sentry SDK
+1. Set up error tracking (Sentry - All Services)
+   - Install Sentry SDK in web, api, and auth
    - Configure for Next.js (client + server)
-   - Add user context to errors
-   - Set up alerting rules
-   - Create error budget (e.g., < 0.1% error rate)
+   - Configure for Fastify (both API and Auth)
+   - Tag errors by service (web, api, auth)
+   - Add user context and correlation IDs
+   - Set up alerting rules per service
+   - Create error budgets per service
 2. Implement performance monitoring
-   - Track Core Web Vitals with Vercel Analytics
-   - Monitor API response times
+   - **Web**: Track Core Web Vitals with Vercel Analytics
+   - **API**: Expose Prometheus metrics endpoint
+   - **Auth**: Expose Prometheus metrics endpoint
+   - Monitor service-to-service response times
    - Track LLM generation times
-   - Monitor database query performance
-   - Set up performance budgets
-3. Add custom event tracking
+   - Monitor database query performance (both schemas)
+   - Set up performance budgets per service
+3. Add distributed tracing
+   - Install tracing library (Jaeger or Datadog APM)
+   - Generate correlation IDs for requests
+   - Trace requests across services (Web → API → Database)
+   - Track auth flow (Web → Auth → Web → API)
+   - Visualize service dependencies
+4. Add custom event tracking
    - Track key user actions (onboarding complete, plan generated)
    - Monitor conversion funnel
    - Track feature usage
    - Monitor Quick Win completion rates
-4. Set up logging infrastructure
-   - Structured logging with pino or winston
+   - Tag events by service
+5. Set up logging infrastructure
+   - Structured logging with pino in all services
    - Log levels (debug, info, warn, error)
    - Log aggregation (Datadog, Logtail, or similar)
-   - Add request IDs for tracing
-5. Create monitoring dashboard
-   - Real-time error rates
-   - Performance metrics
+   - Include correlation IDs in all logs
+   - Service tags for filtering
+6. Create monitoring dashboard
+   - Service health status (up/down for each)
+   - Error rates per service
+   - Performance metrics per service
    - User activity
    - LLM usage and costs
-   - Database health
+   - Database health (connection pools, query times)
+   - Redis health (memory, queue lengths)
 
-**Dependencies**: Production deployment environment
+**Dependencies**: Production deployment environment for all services
 
 **Acceptance Criteria**:
 
-- Sentry catches and logs all errors
-- Performance metrics visible in dashboard
-- Alerts fire for critical issues
+- Sentry catches errors from all 3 services
+- Service tags distinguish error sources
+- Distributed tracing shows cross-service requests
+- Correlation IDs link related logs
+- Performance metrics visible per service
+- Alerts fire for critical issues (any service)
 - Logs queryable and searchable
-- Dashboard accessible to team
+- Dashboard shows all service health
+- Can trace a request from Web → API → Database
 
 ---
 
@@ -442,40 +461,51 @@
 
 ---
 
-### 10. Production Deployment & Launch Prep
+### 10. Production Deployment & Launch Prep (Multi-Service)
 
-**Objective**: Deploy to production infrastructure with zero downtime
+**Objective**: Deploy all services to production infrastructure with zero downtime
 
 **Tasks**:
 
-1. Set up production environment
-   - Configure production database
+1. Set up production environment (per service)
+   - Configure production database (with auth + app schemas)
    - Set up production Redis
-   - Configure production secrets
-   - Set up CDN (if not using Vercel)
-2. Implement blue-green deployment
-   - Set up staging environment
-   - Automate deployment pipeline
-   - Implement health checks
-   - Add rollback capability
+   - Deploy Web to Vercel
+   - Deploy API to Railway (or Kubernetes)
+   - Deploy Auth to Railway (or Kubernetes)
+   - Configure production secrets for each service
+   - Set up service discovery/networking
+   - Configure load balancers
+2. Implement blue-green deployment (per service)
+   - Set up staging environment (all 3 services)
+   - Automate deployment pipeline per service
+   - Implement health checks for each service
+   - Add rollback capability per service
+   - Support independent service deployments
 3. Create database migration strategy
-   - Test migrations on staging
+   - Test migrations on staging (both schemas)
    - Implement zero-downtime migrations
    - Add migration rollback scripts
    - Document migration process
-4. Set up monitoring and alerts
-   - Production error alerts (Slack/email)
+   - Coordinate migrations across services
+4. Set up monitoring and alerts (per service)
+   - Production error alerts per service (Slack/email)
    - Performance degradation alerts
-   - Database health alerts
-   - Uptime monitoring (UptimeRobot)
+   - Database health alerts (both schemas)
+   - Service connectivity alerts
+   - Uptime monitoring for each service (UptimeRobot or similar)
 5. Create incident response plan
-   - Define severity levels
+   - Define severity levels per service
    - Assign on-call rotation
-   - Document runbooks for common issues
+   - Document runbooks (service-specific)
    - Set up incident communication channels
-6. Conduct load testing
-   - Simulate launch traffic
-   - Test auto-scaling
+   - Practice failover scenarios
+6. Conduct load testing (per service)
+   - **Web**: Simulate user traffic
+   - **API**: Simulate concurrent plan generations
+   - **Auth**: Simulate login spikes
+   - Test auto-scaling for API and Auth
+   - Test service communication under load
    - Identify bottlenecks
    - Optimize hot paths
 7. Prepare launch materials
@@ -483,24 +513,30 @@
    - Social media posts prepared
    - Email templates ready
    - Blog post/announcement draft
-8. Perform final QA
+8. Perform final QA (all services)
    - Regression testing on all features
-   - Cross-browser testing
-   - Mobile device testing
-   - Performance validation
-   - Security scan
+   - Cross-service integration testing
+   - Cross-browser testing (Web)
+   - Mobile device testing (Web)
+   - API contract testing (OpenAPI validation)
+   - Performance validation (all services)
+   - Security scan (all services)
+   - Penetration testing (Auth service priority)
 
 **Dependencies**: All previous tasks complete
 
 **Acceptance Criteria**:
 
-- Production environment stable
-- Deployment pipeline automated
-- Monitoring and alerts active
-- Load tests pass
+- All 3 production environments stable
+- Deployment pipeline automated for each service
+- Independent deployment works (can deploy API without affecting Web)
+- Monitoring and alerts active for all services
+- Load tests pass for each service
+- Services can communicate in production
 - Final QA complete with zero critical bugs
 - Launch materials ready
-- Team trained on incident response
+- Team trained on incident response for all services
+- Runbooks exist for each service
 
 ---
 

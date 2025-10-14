@@ -30,19 +30,27 @@
 
 ```
 alva/
-├── apps/                    # Deployable applications
-│   ├── web/                # Next.js web application
-│   └── api/                # Standalone API (if needed, future)
+├── apps/                    # Deployable applications (microservices)
+│   ├── web/                # Next.js Frontend (Port 3000)
+│   ├── api/                # Fastify API Server (Port 3001)
+│   └── auth/               # Fastify Auth Service (Port 3002)
 ├── libs/                    # Shared libraries
-│   ├── ui/                 # UI components & design system
-│   ├── data-access/        # Database, API clients, tRPC
-│   ├── feature/            # Feature-specific logic
-│   ├── utils/              # Shared utilities
-│   └── types/              # Shared TypeScript types
+│   ├── ui/                 # React components & design system (web only)
+│   ├── database/           # Database schemas, migrations (api + auth)
+│   ├── shared-types/       # Types shared across services
+│   ├── validation/         # Zod schemas (shared)
+│   ├── api-client/         # API client for web → api
+│   ├── auth-client/        # Auth client for web → auth
+│   ├── feature/            # Feature-specific logic (may be service-specific)
+│   └── utils/              # Shared utilities
 ├── tools/                   # Build tools, scripts, generators
 ├── _docs/                   # Project documentation
 ├── .github/                 # GitHub workflows, templates
 ├── docker/                  # Docker configurations
+│   ├── web.Dockerfile
+│   ├── api.Dockerfile
+│   ├── auth.Dockerfile
+│   └── docker-compose.yml
 ├── nx.json                  # NX workspace configuration
 ├── package.json             # Workspace dependencies
 └── tsconfig.base.json       # Base TypeScript config
@@ -62,22 +70,24 @@ NX organizes libraries by **type** and **scope**:
 
 **Scopes** (examples):
 
-- `marketing`: Marketing plan logic
-- `onboarding`: Onboarding flow
-- `auth`: Authentication
-- `dashboard`: Dashboard features
-- `shared`: Cross-cutting concerns
+- `web`: Web application specific
+- `api`: API server specific
+- `auth`: Auth service specific
+- `marketing`: Marketing plan logic (API)
+- `onboarding`: Onboarding flow (Web)
+- `dashboard`: Dashboard features (Web)
+- `shared`: Cross-service shared code
 
 ---
 
 ## Directory Structure
 
-### apps/web/ (Next.js Application)
+### apps/web/ (Next.js Frontend - Port 3000)
 
 ```
 apps/web/
 ├── app/                     # Next.js App Router
-│   ├── (auth)/             # Auth route group
+│   ├── (auth)/             # Auth-related pages
 │   │   ├── login/
 │   │   │   └── page.tsx
 │   │   ├── verify/
@@ -85,8 +95,11 @@ apps/web/
 │   │   └── layout.tsx
 │   ├── (dashboard)/        # Protected dashboard routes
 │   │   ├── action-board/
+│   │   │   └── page.tsx
 │   │   ├── chat/
+│   │   │   └── page.tsx
 │   │   ├── settings/
+│   │   │   └── page.tsx
 │   │   ├── layout.tsx      # Dashboard layout with nav
 │   │   └── page.tsx        # Dashboard home
 │   ├── onboarding/
@@ -94,23 +107,123 @@ apps/web/
 │   │   │   └── [card]/
 │   │   │       └── page.tsx
 │   │   ├── summary/
+│   │   │   └── page.tsx
 │   │   ├── welcome/
+│   │   │   └── page.tsx
 │   │   └── layout.tsx
-│   ├── api/                # API routes
-│   │   ├── auth/
-│   │   ├── chat/
-│   │   ├── onboarding/
-│   │   └── plans/
 │   ├── layout.tsx          # Root layout
 │   ├── page.tsx            # Landing page
 │   └── globals.css         # Global styles
+├── src/
+│   ├── hooks/              # React hooks
+│   │   ├── use-auth.ts     # Auth state and methods
+│   │   ├── use-api.ts      # API client wrapper
+│   │   └── use-plans.ts    # Plan CRUD operations
+│   ├── lib/                # Client-side utilities
+│   │   ├── api-client.ts   # Fetch wrapper with auth
+│   │   └── auth-client.ts  # Auth service client
+│   └── config/
+│       └── env.ts          # Client env vars
 ├── public/                 # Static assets
 │   ├── images/
 │   ├── fonts/
 │   └── icons/
-├── middleware.ts           # Edge middleware (auth, redirects)
+├── middleware.ts           # Edge middleware (redirects only, NO auth)
+├── Dockerfile
 ├── next.config.js
 ├── tailwind.config.ts
+└── tsconfig.json
+```
+
+**Note**: No API routes in Next.js - all business logic in separate API server.
+
+---
+
+### apps/api/ (API Server - Port 3001)
+
+```
+apps/api/
+├── src/
+│   ├── routes/              # REST API routes
+│   │   ├── plans/
+│   │   │   ├── generate.route.ts
+│   │   │   ├── list.route.ts
+│   │   │   ├── update.route.ts
+│   │   │   └── index.ts
+│   │   ├── tasks/
+│   │   │   ├── list.route.ts
+│   │   │   ├── complete.route.ts
+│   │   │   └── index.ts
+│   │   ├── chat/
+│   │   │   └── message.route.ts
+│   │   └── index.ts
+│   ├── services/            # Business logic
+│   │   ├── plan-generation/
+│   │   │   ├── ppc.generator.ts
+│   │   │   ├── blog.generator.ts
+│   │   │   ├── governance.service.ts
+│   │   │   └── index.ts
+│   │   ├── llm/
+│   │   │   ├── openai.service.ts
+│   │   │   └── prompt.service.ts
+│   │   └── index.ts
+│   ├── jobs/                # BullMQ job processors
+│   │   ├── queues/
+│   │   │   └── plan-generation.queue.ts
+│   │   ├── workers/
+│   │   │   └── plan-generation.worker.ts
+│   │   └── index.ts
+│   ├── middleware/          # Middleware
+│   │   ├── auth.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   ├── validation.middleware.ts
+│   │   └── index.ts
+│   ├── plugins/             # Fastify plugins
+│   │   ├── db.plugin.ts
+│   │   ├── redis.plugin.ts
+│   │   ├── swagger.plugin.ts
+│   │   └── index.ts
+│   ├── lib/                 # External clients
+│   │   ├── openai.client.ts
+│   │   └── index.ts
+│   ├── config/
+│   │   └── env.ts           # Server env vars
+│   ├── app.ts               # Fastify app setup
+│   └── server.ts            # Server entry point
+├── Dockerfile
+└── tsconfig.json
+```
+
+---
+
+### apps/auth/ (Auth Service - Port 3002)
+
+```
+apps/auth/
+├── src/
+│   ├── routes/              # Auth API routes
+│   │   ├── auth.routes.ts   # Register, login, verify
+│   │   ├── token.routes.ts  # Refresh, revoke
+│   │   ├── user.routes.ts   # User CRUD
+│   │   └── index.ts
+│   ├── services/            # Auth business logic
+│   │   ├── token.service.ts     # JWT generation/validation
+│   │   ├── email.service.ts     # Magic link emails
+│   │   ├── user.service.ts      # User management
+│   │   └── index.ts
+│   ├── middleware/          # Middleware
+│   │   ├── rate-limit.middleware.ts
+│   │   ├── validation.middleware.ts
+│   │   └── index.ts
+│   ├── lib/                 # Auth utilities
+│   │   ├── jwt.ts           # JWT utilities
+│   │   ├── crypto.ts        # Hashing, token generation
+│   │   └── index.ts
+│   ├── config/
+│   │   └── env.ts           # Server env vars
+│   ├── app.ts               # Fastify app setup
+│   └── server.ts            # Server entry point
+├── Dockerfile
 └── tsconfig.json
 ```
 
@@ -158,40 +271,94 @@ libs/ui/
 └── tsconfig.json
 ```
 
-### libs/data-access/ (API & Database)
+### libs/database/ (Shared Database Schemas)
 
 ```
-libs/data-access/
+libs/database/
 ├── src/
-│   ├── trpc/               # tRPC setup
-│   │   ├── routers/
-│   │   │   ├── auth.router.ts
-│   │   │   ├── onboarding.router.ts
-│   │   │   ├── plan.router.ts
-│   │   │   └── index.ts
-│   │   ├── context.ts      # tRPC context
-│   │   ├── middleware.ts   # Auth middleware
-│   │   ├── router.ts       # App router
-│   │   └── index.ts
-│   ├── db/                 # Database layer
-│   │   ├── schemas/        # Drizzle schemas
+│   ├── schemas/            # Drizzle schemas
+│   │   ├── auth/           # Auth service schemas
 │   │   │   ├── user.schema.ts
+│   │   │   ├── refresh-token.schema.ts
+│   │   │   ├── verification-token.schema.ts
+│   │   │   └── index.ts
+│   │   ├── app/            # API service schemas
 │   │   │   ├── client-profile.schema.ts
 │   │   │   ├── plan.schema.ts
+│   │   │   ├── task.schema.ts
 │   │   │   └── index.ts
-│   │   ├── migrations/     # SQL migrations
-│   │   ├── client.ts       # DB connection
 │   │   └── index.ts
-│   ├── services/           # Business logic services
-│   │   ├── plan-generation.service.ts
-│   │   ├── onboarding.service.ts
-│   │   └── index.ts
-│   ├── lib/                # External API clients
-│   │   ├── openai.client.ts
-│   │   └── index.ts
+│   ├── migrations/         # SQL migrations
+│   │   ├── auth/           # Auth schema migrations
+│   │   └── app/            # App schema migrations
+│   ├── client.ts           # DB connection factory
 │   └── index.ts
 ├── drizzle.config.ts
 └── tsconfig.json
+```
+
+**Note**: Shared database with separate schemas for auth vs app concerns.
+
+---
+
+### libs/api-client/ (Web → API Communication)
+
+```
+libs/api-client/
+└── src/
+    ├── client.ts           # Base API client with auth
+    ├── endpoints/
+    │   ├── plans.client.ts
+    │   ├── tasks.client.ts
+    │   ├── chat.client.ts
+    │   └── index.ts
+    ├── hooks/              # React Query hooks
+    │   ├── use-plans.ts
+    │   ├── use-tasks.ts
+    │   └── index.ts
+    ├── types/              # API request/response types
+    │   └── index.ts
+    └── index.ts
+```
+
+---
+
+### libs/auth-client/ (Web → Auth Communication)
+
+```
+libs/auth-client/
+└── src/
+    ├── client.ts           # Auth service client
+    ├── hooks/              # Auth hooks
+    │   ├── use-auth.ts     # Main auth hook
+    │   ├── use-login.ts    # Login mutation
+    │   ├── use-logout.ts   # Logout mutation
+    │   └── index.ts
+    ├── providers/
+    │   └── AuthProvider.tsx
+    ├── types/
+    │   └── index.ts
+    └── index.ts
+```
+
+---
+
+### libs/shared-types/ (Cross-Service Types)
+
+```
+libs/shared-types/
+└── src/
+    ├── models/             # Domain models
+    │   ├── user.types.ts
+    │   ├── client-profile.types.ts
+    │   ├── plan.types.ts
+    │   ├── task.types.ts
+    │   └── index.ts
+    ├── api/                # API contracts
+    │   ├── auth.types.ts   # Auth API types
+    │   ├── plans.types.ts  # Plans API types
+    │   └── index.ts
+    └── index.ts
 ```
 
 ### libs/feature/ (Feature Libraries)
@@ -920,37 +1087,210 @@ throw new ValidationError("Invalid email format", "email", "INVALID_FORMAT");
 
 ## Environment Variables
 
-### Naming Convention
+### Naming Convention & Service-Specific Variables
 
+**Web Service** (.env.local):
 ```bash
-# .env.local (Next.js)
-NEXT_PUBLIC_APP_URL=http://localhost:3000    # Public (exposed to browser)
-DATABASE_URL=postgresql://...                # Private (server-only)
-OPENAI_API_KEY=sk-...                        # Private
-NEXT_PUBLIC_ENVIRONMENT=development          # Public
+# Public (exposed to browser)
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_AUTH_URL=http://localhost:3002
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_ENVIRONMENT=development
+```
+
+**API Service** (.env):
+```bash
+# Server-only
+PORT=3001
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/alva
+REDIS_URL=redis://localhost:6379
+JWT_PUBLIC_KEY=<public-key-content>
+OPENAI_API_KEY=sk-...
+AUTH_SERVICE_URL=http://localhost:3002  # For optional introspection
+```
+
+**Auth Service** (.env):
+```bash
+# Server-only
+PORT=3002
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/alva
+JWT_PRIVATE_KEY=<private-key-content>
+JWT_PUBLIC_KEY=<public-key-content>
+JWT_ACCESS_EXPIRY=15m
+JWT_REFRESH_EXPIRY=7d
+EMAIL_SERVER_HOST=smtp.resend.com
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER=resend
+EMAIL_SERVER_PASSWORD=<api-key>
+EMAIL_FROM=noreply@alva.app
+WEB_URL=http://localhost:3000  # For CORS and redirects
 ```
 
 **Rules**:
 
-- Prefix public vars with `NEXT_PUBLIC_`
+- Prefix public vars (web only) with `NEXT_PUBLIC_`
 - Use SCREAMING_SNAKE_CASE
-- Never commit `.env.local` (use `.env.example` for template)
+- Never commit `.env` files (use `.env.example` templates)
+- Generate JWT keys with: `pnpm generate:keys`
 
-### Type-Safe Env Vars
+### Type-Safe Env Vars (Per Service)
 
+**Web Service**:
 ```typescript
-// libs/utils/src/config/env.ts
+// apps/web/src/config/env.ts
 import { z } from "zod";
 
-const envSchema = z.object({
-  DATABASE_URL: z.string().url(),
-  OPENAI_API_KEY: z.string().min(1),
+const webEnvSchema = z.object({
+  NEXT_PUBLIC_API_URL: z.string().url(),
+  NEXT_PUBLIC_AUTH_URL: z.string().url(),
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NEXT_PUBLIC_ENVIRONMENT: z.enum(["development", "staging", "production"]),
 });
 
-export const env = envSchema.parse(process.env);
+export const env = webEnvSchema.parse(process.env);
 ```
+
+**API Service**:
+```typescript
+// apps/api/src/config/env.ts
+import { z } from "zod";
+
+const apiEnvSchema = z.object({
+  PORT: z.string().default("3001"),
+  DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url(),
+  JWT_PUBLIC_KEY: z.string().min(1),
+  OPENAI_API_KEY: z.string().min(1),
+  AUTH_SERVICE_URL: z.string().url().optional(),
+});
+
+export const env = apiEnvSchema.parse(process.env);
+```
+
+**Auth Service**:
+```typescript
+// apps/auth/src/config/env.ts
+import { z } from "zod";
+
+const authEnvSchema = z.object({
+  PORT: z.string().default("3002"),
+  DATABASE_URL: z.string().url(),
+  JWT_PRIVATE_KEY: z.string().min(1),
+  JWT_PUBLIC_KEY: z.string().min(1),
+  JWT_ACCESS_EXPIRY: z.string().default("15m"),
+  JWT_REFRESH_EXPIRY: z.string().default("7d"),
+  EMAIL_SERVER_HOST: z.string().min(1),
+  EMAIL_FROM: z.string().email(),
+  WEB_URL: z.string().url(),
+});
+
+export const env = authEnvSchema.parse(process.env);
+```
+
+---
+
+## Cross-Service Communication Patterns
+
+### Web → Auth Service
+
+```typescript
+// apps/web/src/lib/auth-client.ts
+export async function sendMagicLink(email: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/auth/send-magic-link`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  
+  if (!response.ok) throw new Error("Failed to send magic link");
+  return response.json();
+}
+
+export async function verifyMagicLink(token: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/auth/verify-magic-link`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+    credentials: "include", // Include cookies for refresh token
+  });
+  
+  if (!response.ok) throw new Error("Invalid token");
+  const { accessToken } = await response.json();
+  return accessToken;
+}
+```
+
+### Web → API Server
+
+```typescript
+// apps/web/src/lib/api-client.ts
+import { useAuthStore } from "@alva/ui/stores";
+
+export async function apiCall<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const accessToken = useAuthStore.getState().accessToken;
+  
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  // Auto-refresh on 401
+  if (response.status === 401) {
+    const newToken = await refreshAccessToken();
+    useAuthStore.getState().setAccessToken(newToken);
+    // Retry original request
+    return apiCall(endpoint, options);
+  }
+
+  if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+  return response.json();
+}
+```
+
+### API Server (JWT Validation)
+
+```typescript
+// apps/api/src/middleware/auth.middleware.ts
+import { FastifyRequest, FastifyReply } from "fastify";
+import jwt from "jsonwebtoken";
+
+export async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+
+  const token = authHeader.substring(7);
+
+  try {
+    // Validate JWT using public key (no network call to auth service)
+    const decoded = jwt.verify(token, process.env.JWT_PUBLIC_KEY, {
+      algorithms: ["RS256"],
+    });
+    
+    req.user = decoded; // Attach user to request
+  } catch (err) {
+    return reply.code(401).send({ error: "Invalid or expired token" });
+  }
+}
+```
+
+### Service-to-Service Best Practices
+
+- **Use Environment Variables**: Service URLs configured via env vars
+- **Health Checks**: Each service exposes `/health` endpoint
+- **Circuit Breakers**: Prevent cascading failures (use `opossum` library)
+- **Retries**: Implement exponential backoff for transient failures
+- **Timeouts**: Set request timeouts (e.g., 30s for LLM calls)
+- **Logging**: Include correlation IDs across service calls
 
 ---
 

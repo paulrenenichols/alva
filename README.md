@@ -27,25 +27,43 @@ Alva combines intelligent automation with personalized strategy to deliver:
 
 ## Tech Stack
 
-Alva is built as a modern, AI-first monorepo optimized for scalability and developer experience.
+Alva is built as a modern, AI-first microservices monorepo optimized for scalability and developer experience.
+
+### Architecture
+
+**3 Independent Services**:
+- **Web** (Next.js) - Frontend UI, port 3000
+- **API** (Fastify) - Business logic, LLM integration, port 3001
+- **Auth** (Fastify) - Authentication & user management, port 3002
 
 ### Core Technologies
 
+**All Services**:
 - **Monorepo**: NX for advanced dependency management and caching
 - **Language**: TypeScript 5.3+ (strict mode)
-- **Frontend**: React 18 + Next.js 14 App Router
+- **Database**: PostgreSQL 16 with JSONB support (shared, separate schemas)
+- **ORM**: Drizzle for type-safe queries
+- **Deployment**: Docker + multi-platform (Vercel for Web, Railway for API/Auth)
+
+**Web Service (Next.js)**:
+- **Frontend**: React 18 + Next.js 14 App Router (no API routes)
 - **Styling**: Tailwind CSS 4.0 with custom design system
 - **Components**: Shadcn/UI + Radix UI
-- **Database**: PostgreSQL 16 with JSONB support
-- **ORM**: Drizzle for type-safe queries
-- **Authentication**: NextAuth.js v5 (Auth.js)
-- **API**: tRPC for end-to-end type safety
-- **AI/LLM**: OpenAI SDK + Vercel AI SDK
 - **State Management**: Zustand (UI) + TanStack Query (server)
-- **Job Queue**: BullMQ with Redis
-- **Deployment**: Docker + Vercel/Railway
 
-[Full tech stack documentation →](_docs/project-definition/tech-stack.md)
+**API Service (Fastify)**:
+- **Framework**: Fastify 4.x (high performance)
+- **AI/LLM**: OpenAI SDK + Vercel AI SDK
+- **Job Queue**: BullMQ with Redis
+- **API Docs**: OpenAPI/Swagger
+
+**Auth Service (Fastify)**:
+- **Framework**: Fastify 4.x (lightweight)
+- **Auth Strategy**: JWT (RS256) + Refresh Tokens
+- **Email**: Resend for magic links
+
+[Full tech stack documentation →](_docs/project-definition/tech-stack.md)  
+[Architecture details →](_docs/project-definition/architecture.md)
 
 ---
 
@@ -53,18 +71,23 @@ Alva is built as a modern, AI-first monorepo optimized for scalability and devel
 
 ```
 alva/
-├── apps/                    # Deployable applications
-│   └── web/                # Next.js web application
+├── apps/                    # Deployable applications (microservices)
+│   ├── web/                # Next.js Frontend (Port 3000)
+│   ├── api/                # Fastify API Server (Port 3001)
+│   └── auth/               # Fastify Auth Service (Port 3002)
 ├── libs/                    # Shared libraries
-│   ├── ui/                 # Design system & components
-│   ├── data-access/        # Database, API, tRPC
+│   ├── ui/                 # React components (web only)
+│   ├── database/           # Database schemas (shared)
+│   ├── shared-types/       # Types across services
+│   ├── validation/         # Zod schemas (shared)
+│   ├── api-client/         # Web → API client
+│   ├── auth-client/        # Web → Auth client
 │   ├── feature/            # Feature-specific logic
-│   ├── utils/              # Shared utilities
-│   └── types/              # TypeScript types
+│   └── utils/              # Shared utilities
 ├── tools/                   # Build tools, generators
 ├── _docs/                   # Project documentation
 │   ├── overview/           # Project overview
-│   ├── project-definition/ # Core specifications
+│   ├── project-definition/ # Core specifications & architecture
 │   └── phases/             # Development phases
 ├── docker/                  # Docker configurations
 └── nx.json                  # NX configuration
@@ -95,68 +118,86 @@ alva/
    pnpm install
    ```
 
-3. **Set up environment variables**
+3. **Generate JWT keys** (for Auth service)
 
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your configuration
+   pnpm generate:keys
+   # Generates RS256 public/private key pair
    ```
 
-4. **Start Docker services** (PostgreSQL, Redis)
+4. **Set up environment variables**
 
    ```bash
-   docker-compose up -d
+   cp .env.example.web apps/web/.env.local
+   cp .env.example.api apps/api/.env
+   cp .env.example.auth apps/auth/.env
+   # Edit each .env file with your configuration
    ```
 
-5. **Run database migrations**
+5. **Start all services** (Docker Compose)
+
+   ```bash
+   pnpm docker:up
+   # or: docker-compose up
+   # Starts: Web, API, Auth, Postgres, Redis
+   ```
+
+6. **Run database migrations**
 
    ```bash
    pnpm db:migrate
+   # Runs migrations for both auth and app schemas
    ```
 
-6. **Seed database** (optional, for development)
+7. **Seed database** (optional, for development)
 
    ```bash
    pnpm db:seed
    ```
 
-7. **Start development server**
-
-   ```bash
-   pnpm dev
-   ```
-
 8. **Open browser**
    ```
-   http://localhost:3000
+   Web:  http://localhost:3000
+   API:  http://localhost:3001/docs (OpenAPI docs)
+   Auth: http://localhost:3002/health
    ```
 
 ### Development Scripts
 
 ```bash
-# Start all services
-pnpm dev
+# Docker & Services
+pnpm docker:up           # Start all services in Docker
+pnpm docker:down         # Stop all services
 
-# Run migrations
-pnpm db:migrate
+# Development (individual services)
+pnpm dev                 # Start all services (Docker Compose)
+pnpm dev:web             # Start Web only (requires API/Auth running)
+pnpm dev:api             # Start API only
+pnpm dev:auth            # Start Auth only
 
-# Seed database
-pnpm db:seed
+# Database
+pnpm db:migrate          # Run all migrations (auth + app schemas)
+pnpm db:seed             # Seed database with test data
+pnpm db:reset            # Reset and reseed
 
-# Reset database
-pnpm db:reset
+# Auth
+pnpm generate:keys       # Generate JWT key pair
 
-# Run tests
-pnpm test
+# Testing
+pnpm test                # Test all services
+pnpm test:web            # Test web only
+pnpm test:api            # Test API only
+pnpm test:auth           # Test Auth only
+pnpm test:e2e            # E2E tests (all services)
 
-# Run linting
-pnpm lint
+# Linting
+pnpm lint                # Lint all services
 
-# Build for production
-pnpm build
-
-# Serve production build
-pnpm start
+# Building
+pnpm build               # Build all services
+pnpm build:web           # Build web only
+pnpm build:api           # Build API only
+pnpm build:auth          # Build Auth only
 ```
 
 ---
@@ -387,31 +428,38 @@ nx g @nx/react:component --name=MyComponent --project=ui
 
 ## Environment Variables
 
-Required environment variables (see `.env.example`):
+Required environment variables per service:
 
+### Web Service (apps/web/.env.local)
 ```bash
-# App
+# Public (exposed to browser)
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_AUTH_URL=http://localhost:3002
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_ENVIRONMENT=development
-
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/alva
-
-# Authentication
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-here
-
-# Email
-EMAIL_SERVER_HOST=smtp.resend.com
-EMAIL_SERVER_PORT=587
-EMAIL_FROM=noreply@alva.app
-
-# AI
-OPENAI_API_KEY=sk-...
-
-# Redis (optional, for job queue)
-REDIS_URL=redis://localhost:6379
 ```
+
+### API Service (apps/api/.env)
+```bash
+PORT=3001
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/alva
+REDIS_URL=redis://localhost:6379
+JWT_PUBLIC_KEY=<from pnpm generate:keys>
+OPENAI_API_KEY=sk-...
+```
+
+### Auth Service (apps/auth/.env)
+```bash
+PORT=3002
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/alva
+JWT_PRIVATE_KEY=<from pnpm generate:keys>
+JWT_PUBLIC_KEY=<from pnpm generate:keys>
+EMAIL_SERVER_HOST=smtp.resend.com
+EMAIL_FROM=noreply@alva.app
+WEB_URL=http://localhost:3000
+```
+
+See `.env.example.web`, `.env.example.api`, and `.env.example.auth` for complete templates.
 
 ---
 
@@ -422,8 +470,23 @@ REDIS_URL=redis://localhost:6379
 **Database connection fails**
 
 - Ensure PostgreSQL is running: `docker-compose ps`
-- Check DATABASE_URL in .env.local
-- Verify database exists
+- Check DATABASE_URL in each service's .env file
+- Verify database and schemas exist
+- Check network connectivity between services
+
+**Service won't start**
+
+- Check port conflicts: `lsof -i :3000` (or 3001, 3002)
+- Check environment variables are set
+- Check Docker containers: `docker-compose ps`
+- Check logs: `docker-compose logs <service>`
+
+**Auth issues (401 errors)**
+
+- Verify JWT_PUBLIC_KEY matches in both API and Auth .env files
+- Check access token is being sent in Authorization header
+- Try refreshing token: `/auth/refresh`
+- Verify token hasn't expired (15 min)
 
 **Next.js build fails**
 
@@ -431,11 +494,25 @@ REDIS_URL=redis://localhost:6379
 - Clear node_modules: `rm -rf node_modules && pnpm install`
 - Check for TypeScript errors: `nx typecheck web`
 
+**Fastify service fails**
+
+- Check TypeScript errors: `nx typecheck api` or `nx typecheck auth`
+- Verify all dependencies installed
+- Check plugin registration order
+
 **Tests failing**
 
 - Ensure test database is set up
+- Ensure all services running for E2E tests
 - Check for port conflicts
 - Run tests in isolation: `nx test <project> --watch=false`
+
+**Services can't communicate**
+
+- Check Docker network: `docker network inspect alva_default`
+- Verify service URLs in environment variables
+- Check CORS configuration in API and Auth
+- Check firewall rules
 
 ### Getting Help
 

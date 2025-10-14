@@ -36,19 +36,33 @@ All foundational documentation has been created following the new-project-setup.
   - Mobile considerations
 - **Status**: Complete with acceptance criteria
 
-#### 3. Tech Stack Selection ✓
+#### 3. Architecture Definition ✓
+
+- **File**: `_docs/project-definition/architecture.md`
+- **Contents**:
+  - Microservices architecture overview (Web, API, Auth)
+  - Service communication patterns
+  - JWT authentication strategy (RS256 + refresh tokens)
+  - Framework recommendations (Fastify for API/Auth)
+  - Pros/cons of microservices vs monolith
+  - Implementation examples and best practices
+- **Status**: Complete with detailed recommendations
+
+#### 4. Tech Stack Selection ✓
 
 - **File**: `_docs/project-definition/tech-stack.md`
 - **Contents**:
-  - Technology decisions for all categories
+  - Technology decisions for all services
+  - Framework choices (Next.js, Fastify)
+  - REST APIs with OpenAPI documentation
   - Industry standard alternatives documented
   - Pros/cons comparisons
   - Best practices for each technology
-  - Integration patterns
+  - Service-specific integration patterns
   - Common pitfalls and mitigations
-- **Status**: Comprehensive with rationale
+- **Status**: Updated for microservices architecture
 
-#### 4. UI Design Rules ✓
+#### 5. UI Design Rules ✓
 
 - **File**: `_docs/project-definition/ui-rules.md`
 - **Contents**:
@@ -62,7 +76,7 @@ All foundational documentation has been created following the new-project-setup.
   - Accessibility requirements (WCAG AA)
 - **Status**: Detailed design system foundation
 
-#### 5. Theme & Design System ✓
+#### 6. Theme & Design System ✓
 
 - **File**: `_docs/project-definition/theme-rules.md`
 - **Contents**:
@@ -76,47 +90,50 @@ All foundational documentation has been created following the new-project-setup.
   - Brand voice guidelines
 - **Status**: Production-ready design tokens
 
-#### 6. Project Structure & Rules ✓
+#### 7. Project Structure & Rules ✓
 
 - **File**: `_docs/project-definition/project-rules.md`
 - **Contents**:
-  - NX monorepo structure
+  - NX monorepo structure (3 services + shared libs)
+  - Service-specific directory structures (Web, API, Auth)
   - File naming conventions
   - Code organization patterns
   - Function documentation standards
   - TypeScript patterns
+  - Cross-service communication patterns
   - NX-specific patterns
   - Testing conventions
   - Error handling guidelines
-  - Environment variables
+  - Environment variables (per service)
   - Code quality enforcement
-- **Status**: Comprehensive development standards
+- **Status**: Updated for microservices architecture
 
-#### 7. Development Phases ✓
+#### 8. Development Phases ✓
 
-All phase documents created with task breakdowns, dependencies, and acceptance criteria:
+All phase documents created with task breakdowns, dependencies, and acceptance criteria (updated for microservices):
 
 - **[01-setup-phase.md](_docs/phases/01-setup-phase.md)** ✓
 
-  - NX workspace initialization
-  - Database setup (Postgres + Drizzle)
-  - Next.js app structure
-  - Authentication scaffolding (NextAuth v5)
-  - tRPC configuration
-  - Docker containerization
-  - CI/CD pipeline
+  - NX workspace initialization (3 applications)
+  - Database setup with auth + app schemas
+  - Next.js frontend (NO API routes)
+  - Fastify Auth Service with JWT generation
+  - Fastify API Server with LLM integration
+  - Docker configuration for all 3 services
+  - CI/CD pipeline (multi-service)
   - Development environment setup
 
 - **[02-mvp-phase.md](_docs/phases/02-mvp-phase.md)** ✓
 
-  - Landing page with email capture
-  - 26-card onboarding flow
-  - Client profile generation
-  - PPC plan generation (LLM)
+  - Landing page (calls Auth Service)
+  - 26-card onboarding flow (saves to API Server)
+  - Client profile generation (API Server)
+  - PPC plan generation via LLM (API Server + BullMQ)
   - Summary preview
-  - Email verification
-  - Basic chat interface
-  - Dashboard home
+  - Email verification (Auth Service magic links)
+  - Token management (JWT + refresh tokens)
+  - Basic chat interface (streams from API Server)
+  - Dashboard home (consumes API data)
   - UI component library foundation
 
 - **[03-core-modules-phase.md](_docs/phases/03-core-modules-phase.md)** ✓
@@ -144,7 +161,7 @@ All phase documents created with task breakdowns, dependencies, and acceptance c
   - Documentation & help system
   - Production deployment & launch prep
 
-#### 8. README Update ✓
+#### 9. README Update ✓
 
 - **File**: `README.md`
 - **Contents**:
@@ -157,7 +174,7 @@ All phase documents created with task breakdowns, dependencies, and acceptance c
   - Contributing guidelines
 - **Status**: Comprehensive and professional
 
-#### 9. Documentation Organization ✓
+#### 10. Documentation Organization ✓
 
 - **File**: `_docs/README.md`
 - **Contents**:
@@ -182,13 +199,13 @@ All phase documents created with task breakdowns, dependencies, and acceptance c
 
 ## Project Statistics
 
-- **Total Documentation Files**: 12
-- **Total Pages**: ~150+ pages of content
-- **Total Lines of Documentation**: 5000+
-- **Phase Documents**: 4 (Setup, MVP, Core Modules, Polish)
-- **Definition Documents**: 5 (User Flow, Tech Stack, UI, Theme, Project Rules)
-- **Estimated Implementation Time**: 11-15 weeks
-  - Phase 1: 1-2 weeks
+- **Total Documentation Files**: 13
+- **Total Pages**: ~200+ pages of content
+- **Total Lines of Documentation**: 6500+
+- **Phase Documents**: 4 (Setup, MVP, Core Modules, Polish) - **Updated for microservices**
+- **Definition Documents**: 6 (Architecture, User Flow, Tech Stack, UI, Theme, Project Rules)
+- **Estimated Implementation Time**: 12-16 weeks
+  - Phase 1: 2-3 weeks (3 services to build)
   - Phase 2: 3-4 weeks
   - Phase 3: 4-5 weeks
   - Phase 4: 3-4 weeks
@@ -199,19 +216,32 @@ All phase documents created with task breakdowns, dependencies, and acceptance c
 
 **Selected Technologies**:
 
+**Architecture**:
+- 3 Microservices: Web (Next.js), API (Fastify), Auth (Fastify)
 - Monorepo: NX
-- Language: TypeScript 5.3+
-- Frontend: React 18 + Next.js 14 App Router
+- Language: TypeScript 5.3+ (all services)
+
+**Web Service**:
+- Frontend: React 18 + Next.js 14 App Router (no API routes)
 - Styling: Tailwind CSS 4.0
 - Components: Shadcn/UI + Radix UI
-- Database: PostgreSQL 16
-- ORM: Drizzle
-- Auth: NextAuth.js v5
-- AI: OpenAI SDK + Vercel AI SDK
-- API: tRPC
 - State: Zustand + TanStack Query
-- Jobs: BullMQ
-- Deploy: Docker + Vercel/Railway
+
+**API Service**:
+- Framework: Fastify 4.x
+- AI: OpenAI SDK + Vercel AI SDK
+- Jobs: BullMQ + Redis
+- API Docs: OpenAPI/Swagger
+
+**Auth Service**:
+- Framework: Fastify 4.x
+- Auth Strategy: JWT (RS256) + Refresh Tokens
+- Email: Resend
+
+**Shared**:
+- Database: PostgreSQL 16 (auth + app schemas)
+- ORM: Drizzle
+- Deploy: Docker + Vercel (Web) + Railway (API/Auth)
 - Testing: Vitest + Playwright
 
 ---
@@ -322,16 +352,46 @@ All major risks documented in phase files with mitigation strategies:
 
 ## Ready for Development
 
-**Status**: ✅ **Documentation Complete - Ready to Begin Phase 1**
+**Status**: ✅ **Documentation Complete - Updated for Microservices Architecture**
+
+## Recent Updates (Architecture Revision)
+
+**Major Changes**:
+1. **Architecture**: Shifted from monolithic Next.js to microservices (Web, API, Auth)
+2. **Auth**: Replaced NextAuth.js with custom Fastify auth service + JWT tokens
+3. **API**: Replaced tRPC with REST APIs (Fastify) + OpenAPI documentation
+4. **Communication**: JWT-based authentication between services (RS256)
+5. **Database**: Shared Postgres with separate schemas (auth + app)
+
+**Documents Updated**:
+- ✅ `architecture.md` - New document with microservices recommendations
+- ✅ `tech-stack.md` - Updated for Fastify, REST APIs, JWT auth
+- ✅ `project-rules.md` - Added service-specific structures and communication patterns
+- ✅ `user-flow.md` - Updated auth flow for separate auth service
+- ✅ `01-setup-phase.md` - Build all 3 services from start
+- ✅ `02-mvp-phase.md` - API server integration for business logic
+- ✅ `03-core-modules-phase.md` - Clarified all modules in API service
+- ✅ `04-polish-phase.md` - Multi-service deployment and monitoring
+- ✅ `README.md` - Updated getting started and architecture overview
+- ✅ `PROJECT_STATUS.md` - This file
+
+**Rationale for Changes**:
+- Better separation of concerns (auth, business logic, UI)
+- Independent scaling (auth vs API vs web have different needs)
+- Security isolation (auth breach doesn't compromise API)
+- Technology flexibility (different frameworks per service)
+- Clearer boundaries for team organization
+
+---
 
 The project has a solid foundation to begin implementation. All team members (developers, designers, product) have clear guidance on:
 
-- What to build (features and specs)
-- How to build it (tech stack and patterns)
-- Why decisions were made (rationale documented)
-- When to build what (phased approach)
+- What to build (features and specs) 
+- How to build it (microservices architecture, tech stack, patterns)
+- Why decisions were made (rationale documented, alternatives considered)
+- When to build what (phased approach with 3-service architecture)
 
-**Next Action**: Initialize NX workspace and begin Setup Phase
+**Next Action**: Initialize NX workspace with 3 applications and begin Setup Phase
 
 ---
 

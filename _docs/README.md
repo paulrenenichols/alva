@@ -22,6 +22,7 @@ High-level project vision and comprehensive specifications.
 
 Core specifications that guide development.
 
+- **[architecture.md](project-definition/architecture.md)** - Microservices architecture, service communication, and auth strategy
 - **[user-flow.md](project-definition/user-flow.md)** - Complete user journey from landing to active plan management
 - **[tech-stack.md](project-definition/tech-stack.md)** - Technology decisions, alternatives, and best practices
 - **[ui-rules.md](project-definition/ui-rules.md)** - UI design principles, component patterns, and interaction guidelines
@@ -74,10 +75,12 @@ Resources for getting started.
 
 ### Architecture & Infrastructure
 
+- [Architecture Overview](project-definition/architecture.md)
 - [Tech Stack](project-definition/tech-stack.md)
 - [Project Structure](project-definition/project-rules.md#monorepo-structure)
 - [Database Schema](overview/project-overview.md#client-information-reference-schema-json)
-- [API Design](project-definition/tech-stack.md#api-layer)
+- [API Design](project-definition/architecture.md#service-communication)
+- [Auth Strategy](project-definition/architecture.md#authentication-strategy)
 
 ### User Experience
 
