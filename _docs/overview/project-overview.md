@@ -1631,24 +1631,43 @@ The **dashboard** only ever touches `master.json` to show:
 
 ## Repo layout (MVP)
 
-/alva
-/specs
-client_info.schema.json
-marketing_plan.schema.json
-custom_marketing_plan.schema.json
-module_output.schema.json
-master_json.schema.json
-/data
-scent-sparkle_client_info.json
-base_marketing_plan.json
-/pipelines
-01_generate_custom_plan.py
-02_run_modules.py
-03_governance_merge.py
-/out
-scent-sparkle_custom_plan.json
-scent-sparkle_modules.json
-scent-sparkle_master.json
+```
+/alva (NX monorepo)
+├── apps/
+│   ├── api/                              # Fastify API Server
+│   │   ├── src/
+│   │   │   ├── services/
+│   │   │   │   └── plan-generation/
+│   │   │   │       ├── llm.service.ts
+│   │   │   │       ├── normalize-ppc.service.ts
+│   │   │   │       ├── ppc.generator.ts
+│   │   │   │       └── governance.service.ts
+│   │   │   └── routes/
+│   │   │       └── plans.routes.ts
+│   │   └── data/
+│   │       ├── prompts/
+│   │       │   └── ppc_prompt.json
+│   │       ├── templates/
+│   │       │   ├── base_marketing_plan.json
+│   │       │   └── ppc_base.json
+│   │       └── output/
+│   │           ├── scent-sparkle_custom_plan.json
+│   │           ├── scent-sparkle_modules.json
+│   │           └── scent-sparkle_master.json
+│   └── web/                              # Next.js Frontend
+├── libs/
+│   ├── shared-types/                     # TypeScript types
+│   │   └── src/
+│   │       ├── client-profile.types.ts
+│   │       ├── marketing-plan.types.ts
+│   │       └── ppc-plan.types.ts
+│   └── validation/                       # Zod schemas
+│       └── src/
+│           └── schemas/
+│               ├── client-info.schema.ts
+│               ├── marketing-plan.schema.ts
+│               └── ppc-plan.schema.ts
+```
 
 ## Onboarding
 
@@ -1854,184 +1873,227 @@ scent-sparkle_master.json
 
 ## Action plan
 
-1. Wrap the modules in a strict runner (schema‑validated)
+1. **Wrap the modules in a strict pipeline (schema‑validated)**
 
-- I created a project at `/mnt/data/deterministic_templates` with:
-  - [`runner.py`](http://runner.py) (orchestrates generate → validate → normalize → freeze)
-  - [`models.py`](http://models.py) (Pydantic models for PPC plan)
-  - `schemas/ppc_plan.schema.json` (JSON Schema validation)
-  - Your files copied in: `ppc_prompt.json`, `ppc.json`, `planning-rules.json`, `tag_guide.json`
-  - [`normalizer.py`](http://normalizer.py) (trampoline to your `normalize_ppc.py`)
-  - `Makefile`, [`README.md`](http://README.md), `VERSION`, `FREEZE.yaml`
-- It validates outputs twice: Pydantic and JSON Schema. If either fails, the run fails.
+The API server implements a plan generation pipeline with:
 
-1. Ban free‑text output
+- `llm.service.ts` (orchestrates generate → validate → normalize)
+- Zod schemas (`ppc-plan.schema.ts`) for runtime validation
+- TypeScript types from `@alva/shared-types`
+- JSON prompt templates: `ppc_prompt.json`, `ppc.json`, `planning-rules.json`, `tag_guide.json`
+- Normalization service: `normalize-ppc.service.ts`
+- Pipeline runner: `ppc.generator.ts`
+- Version control via git tags and semver
+- It validates outputs with Zod schemas. If validation fails, the pipeline throws an error.
 
-- [`runner.py`](http://runner.py) is set up to accept only JSON. In your real LLM call (stubbed in `generate_with_llm`), run temperature=0 and force JSON mode (e.g., response_format JSON). If any prose slips in, the extractor rejects it and the validator fails.
+2. **Ban free‑text output**
 
-1. Automate normalization
+- LLM service uses OpenAI JSON mode (`response_format: { type: "json_object" }`), temperature=0, and strict system prompts
+- Any non-JSON response causes the pipeline to fail
+- Zod validation ensures structure matches expected schema
 
-- [`normalizer.py`](http://normalizer.py) calls your `normalize_ppc.py` (already placed in the project). If that script doesn’t write an output, it pass‑throughs the JSON so the pipeline still runs.
-- Result is written to `artifacts/ppc.normalized.json`.
+3. **Automate normalization**
 
-1. Version and freeze (reproducibility)
+- `normalize-ppc.service.ts` runs automatically after LLM generation
+- Enforces tag standards, date alignment, and deterministic ordering
+- Result is written to database and optionally exported to JSON
 
-- `VERSION` holds the semver of your template logic.
-- `FREEZE.yaml` defines which files are hashed for content integrity.
-- [`runner.py`](http://runner.py) `freeze` writes `/dist/manifest.json` (version, UTC timestamp, content hash) and emits a frozen artifact named like `ppc.1.0.0.<hash8>.json`.
+4. **Version and reproducibility**
+
+- All prompts and templates are version-controlled in git
+- Database stores plan generation metadata (prompt version, LLM model, timestamp)
+- Git tags track releases: `v1.0.0`, etc.
+- CI/CD ensures consistent builds across environments
 
 ## How to run it (commands)
 
 ```bash
-# 1) Go to the project
-cd /mnt/data/deterministic_templates
+# 1) Navigate to API server
+cd apps/api
 
-# 2) (Optional) Edit client-profile.json, or swap in a real one
-#    The runner simulates generation offline if no API key is present.
+# 2) Set environment variables
+export OPENAI_API_KEY=your_key_here
 
-# 3) Generate (offline sim unless OPENAI_API_KEY is set)
-make generate
+# 3) Generate a plan via API endpoint
+curl -X POST http://localhost:3001/api/plans/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d @client-profile.json
 
-# 4) Validate (Pydantic + JSON Schema)
-make validate
+# Or run directly via CLI script
+pnpm run generate:plan --client-id scent-sparkle --module ppc
 
-# 5) Normalize via your normalize_ppc.py (or pass-through)
-make normalize
+# 4) Validate plan (runs automatically in pipeline)
+pnpm run validate:plan ./data/output/scent-sparkle_ppc.json
 
-# 6) Freeze (write manifest + hashed artifact)
-make freeze
+# 5) Normalize plan (runs automatically after generation)
+pnpm run normalize:plan ./data/output/scent-sparkle_ppc.json
+
+# 6) Run full pipeline (generate + validate + normalize)
+pnpm run pipeline:full --client-id scent-sparkle
 ```
 
-Artifacts land in `./artifacts/` and `./dist/`.  
+Output files land in `./data/output/`.  
 Hard truth: this is wiring, not theory. You need a real JSON‑only model call, strict schemas, and a normalizer that enforces your tag standard and ordering. Do it exactly like this.
 
-## 1\) Replace `generate_with_llm()` with a real JSON‑only call
+## 1\) Implement LLM Plan Generation in TypeScript
 
-Use JSON mode (a.k.a. structured outputs) so the model is _constrained_ to emit valid JSON. Then keep your regex guard as a backstop. Temperature stays at 0 for determinism.
+Use JSON mode (a.k.a. structured outputs) so the model is _constrained_ to emit valid JSON. Temperature stays at 0 for determinism.
 
-```python
-# runner.py (inside generate_with_llm)
-import os
-import json
-from openai import OpenAI
+```typescript
+// apps/api/src/services/plan-generation/llm.service.ts
+import OpenAI from "openai";
+import { readFile } from "fs/promises";
+import type { ClientProfile, PPCPlan, PromptModule } from "@alva/shared-types";
 
-def generate_with_llm(prompt_mod: str, base_plan: str, client_profile: str) -> dict:
-    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+/**
+ * @description Generates a marketing plan using OpenAI with JSON mode
+ *
+ * @param promptPath - Path to prompt module JSON
+ * @param basePlanPath - Path to base plan template
+ * @param clientProfile - Client profile object
+ * @returns Generated plan (validated)
+ */
+export async function generateWithLLM(
+  promptPath: string,
+  basePlanPath: string,
+  clientProfile: ClientProfile
+): Promise<PPCPlan> {
+  const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
-    # Load input files
-    prompt = json.load(open(prompt_mod))    # your ppc_prompt.json
-    base = json.load(open(base_plan))
-    profile = json.load(open(client_profile))
+  // Load input files
+  const prompt = JSON.parse(await readFile(promptPath, "utf-8"));
+  const basePlan = JSON.parse(await readFile(basePlanPath, "utf-8"));
 
-    # Build the messages you want (system + user). Keep it minimal + explicit.
-    system_msg = {
-        "role": "system",
-        "content": "You are a senior PPC strategist. Return ONLY valid JSON that exactly matches the base plan's structure."
-    }
+  // Build the messages - keep it minimal + explicit
+  const systemMsg = {
+    role: "system" as const,
+    content: "You are a senior PPC strategist. Return ONLY valid JSON that exactly matches the base plan's structure.",
+  };
 
-    user_msg = {
-        "role": "user",
-        "content": json.dumps({
-            "instructions": prompt,
-            "base_plan": base,
-            "client_profile": profile
-        })
-    }
+  const userMsg = {
+    role: "user" as const,
+    content: JSON.stringify({
+      instructions: prompt,
+      base_plan: basePlan,
+      client_profile: clientProfile,
+    }),
+  };
 
-    # JSON mode: force a JSON object back
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",              # or your chosen model
-        temperature=0,
-        messages=[system_msg, user_msg],
-        response_format={"type": "json_object"}  # JSON-only mode
-    )
+  // JSON mode: force a JSON object back
+  const resp = await client.chat.completions.create({
+    model: "gpt-4o-mini", // or your chosen model
+    temperature: 0,
+    messages: [systemMsg, userMsg],
+    response_format: { type: "json_object" }, // JSON-only mode
+  });
 
-    raw = resp.choices[0].message.content
+  const raw = resp.choices[0].message.content;
 
-    # Backstop extractor: if anything weird comes back, this will fail loudly.
-    parsed = json.loads(raw)
+  if (!raw) {
+    throw new Error("No response from OpenAI");
+  }
 
-    return parsed
+  // Backstop: if anything weird comes back, this will fail loudly
+  const parsed = JSON.parse(raw);
+
+  return parsed as PPCPlan;
+}
 ```
 
-Why this: JSON mode constrains the model to valid JSON via `response_format={"type":"json_object"}`; keep temp=0 for stable outputs. (OpenAI “structured outputs / JSON mode” docs confirm this pattern.) ([OpenAI Platform](https://platform.openai.com/docs/guides/structured-outputs?utm_source=chatgpt.com), [Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model?utm_source=chatgpt.com), [Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/json-mode?utm_source=chatgpt.com))
+Why this: JSON mode constrains the model to valid JSON via `response_format: { type: "json_object" }`; keep temp=0 for stable outputs. (OpenAI “structured outputs / JSON mode” docs confirm this pattern.) ([OpenAI Platform](https://platform.openai.com/docs/guides/structured-outputs?utm_source=chatgpt.com), [Stack Overflow](https://stackoverflow.com/questions/77434808/openai-api-how-do-i-enable-json-mode-using-the-gpt-4-vision-preview-model?utm_source=chatgpt.com), [Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/json-mode?utm_source=chatgpt.com))
 
-## 2\) Expand [`models.py`](http://models.py) to cover your full `ppc.json`
+## 2\) Define Validation Schemas with Zod
 
-Your current model is representative. To make it strict, mirror the entire shape of `ppc.json` (including nested campaign KPIs, budgets, etc.). Then generate JSON Schema from Pydantic and validate with both Pydantic and `jsonschema`.  
-Example pattern (add these fields and use `Literal`/enums where possible):
+Use Zod for runtime validation of LLM responses. This ensures type safety and validates the structure matches your expectations.
 
-```python
-# models.py (augment)
-from typing import List, Optional, Dict, Literal
-from pydantic import BaseModel, Field, conint, confloat
+```typescript
+// libs/validation/src/schemas/ppc-plan.schema.ts
+import { z } from "zod";
 
-class KPI(BaseModel):
-    CPA: Optional[confloat(ge=0)] = None
-    ROAS: Optional[confloat(ge=0)] = None
-    CTR: Optional[confloat(ge=0)] = None
-    cpa_goal: Optional[confloat(ge=0)] = None
-    roas_goal: Optional[confloat(ge=0)] = None
-    ctr_goal: Optional[confloat(ge=0)] = None
-    frequency_cap: Optional[conint(ge=0)] = None
-    cpm_goal: Optional[confloat(ge=0)] = None
-    conversion_rate_goal: Optional[confloat(ge=0)] = None
+const KPISchema = z.object({
+  CPA: z.number().min(0).optional(),
+  ROAS: z.number().min(0).optional(),
+  CTR: z.number().min(0).optional(),
+  cpa_goal: z.number().min(0).optional(),
+  roas_goal: z.number().min(0).optional(),
+  ctr_goal: z.number().min(0).optional(),
+  frequency_cap: z.number().int().min(0).optional(),
+  cpm_goal: z.number().min(0).optional(),
+  conversion_rate_goal: z.number().min(0).optional(),
+});
 
-class GenericCampaign(BaseModel):
-    name: str
-    goal: Optional[str] = None
-    audience: Optional[List[str]] = None
-    ad_formats: Optional[List[str]] = None
-    budget: Optional[confloat(ge=0)] = None
-    bidding_strategy: Optional[str] = None
-    kpis: Optional[KPI] = None
-    messaging: Optional[List[str]] = None
-    timeline: Optional[str] = None
-    watchouts: Optional[List[str]] = None
+const GenericCampaignSchema = z.object({
+  name: z.string(),
+  goal: z.string().optional(),
+  audience: z.array(z.string()).optional(),
+  ad_formats: z.array(z.string()).optional(),
+  budget: z.number().min(0).optional(),
+  bidding_strategy: z.string().optional(),
+  kpis: KPISchema.optional(),
+  messaging: z.array(z.string()).optional(),
+  timeline: z.string().optional(),
+  watchouts: z.array(z.string()).optional(),
+});
 
-class Campaign(BaseModel):
-    name: str
-    start_month: conint(ge=1, le=12)
-    end_month: conint(ge=1, le=12)
-    platform: Literal["Google Ads", "Google Display Network", "Meta Ads", "YouTube", "GA4", "GTM", "Other"]
-    budget_pct: Optional[confloat(ge=0, le=100)] = None
-    bidding_strategy: Optional[str] = None
-    kpis: Optional[KPI] = None
+const CampaignSchema = z.object({
+  name: z.string(),
+  start_month: z.number().int().min(1).max(12),
+  end_month: z.number().int().min(1).max(12),
+  platform: z.enum(["Google Ads", "Google Display Network", "Meta Ads", "YouTube", "GA4", "GTM", "Other"]),
+  budget_pct: z.number().min(0).max(100).optional(),
+  bidding_strategy: z.string().optional(),
+  kpis: KPISchema.optional(),
+});
 
-class SampleQuarter(BaseModel):
-    name: str
-    goals: List[str]
-    campaigns: List[Campaign]
+const SampleQuarterSchema = z.object({
+  name: z.string(),
+  goals: z.array(z.string()),
+  campaigns: z.array(CampaignSchema),
+});
 
-class Phase(BaseModel):
-    phase: str
-    label: str
-    months: List[conint(ge=1, le=12)]
-    objectives: List[str]
-    tasks: List[str]
+const PhaseSchema = z.object({
+  phase: z.string(),
+  label: z.string(),
+  months: z.array(z.number().int().min(1).max(12)),
+  objectives: z.array(z.string()),
+  tasks: z.array(z.string()),
+});
 
-class Budget(BaseModel):
-    monthly_total: confloat(ge=0)
-    allocation_basis: Literal["percentage", "absolute"]
-    example_allocation: Dict[str, confloat(ge=0)]
+const BudgetSchema = z.object({
+  monthly_total: z.number().min(0),
+  allocation_basis: z.enum(["percentage", "absolute"]),
+  example_allocation: z.record(z.number().min(0)),
+});
 
-class PPCPlan(BaseModel):
-    plan_type: Literal["ppc"]
-    version: str
-    duration: str
-    review_intervals: List[str]
-    revision_logic: Optional[str] = None
-    client_data_linked: Optional[bool] = None
-    phases: List[Phase]
-    sample_quarters: Optional[List[SampleQuarter]] = None
-    budget: Optional[Budget] = None
-    generic_campaigns: Optional[List[GenericCampaign]] = None
-    revision_notes: Optional[List[str]] = None
+export const PPCPlanSchema = z.object({
+  plan_type: z.literal("ppc"),
+  version: z.string(),
+  duration: z.string(),
+  review_intervals: z.array(z.string()),
+  revision_logic: z.string().optional(),
+  client_data_linked: z.boolean().optional(),
+  phases: z.array(PhaseSchema),
+  sample_quarters: z.array(SampleQuarterSchema).optional(),
+  budget: BudgetSchema.optional(),
+  generic_campaigns: z.array(GenericCampaignSchema).optional(),
+  revision_notes: z.array(z.string()).optional(),
+});
+
+// Export TypeScript type inferred from schema
+export type PPCPlan = z.infer<typeof PPCPlanSchema>;
+
+// Validation helper
+export function validatePPCPlan(data: unknown): PPCPlan {
+  return PPCPlanSchema.parse(data); // Throws if invalid
+}
 ```
 
-Tip: Pydantic v2 can emit JSON Schema you can store in `/schemas/*` for double validation (Pydantic and `jsonschema`). ([docs.pydantic.dev](https://docs.pydantic.dev/latest/concepts/json_schema/?utm_source=chatgpt.com))
+Tip: Zod schemas provide both runtime validation AND TypeScript types. Use `.parse()` to validate and throw on error, or `.safeParse()` for error handling without exceptions.
 
-## 3\) Flesh out `normalize_ppc.py`
+## 3\) Implement Plan Normalization in TypeScript
 
 Make it do three things: (A) enforce `alva_tags_v1`, (B) normalize windows/dates/fields, (C) output deterministic ordering.
 
@@ -2050,139 +2112,214 @@ Load `tag_guide.json`, verify required facets, add/repair tags on campaigns/phas
 - Sort arrays (e.g., phases by phase number; campaigns by start_month then name).
 - Serialize with `sort_keys=True` or use `orjson` with `OPT_SORT_KEYS`. ([Stack Overflow](https://stackoverflow.com/questions/34931386/how-do-i-keep-the-json-key-order-fixed-with-python-3-json-dumps?utm_source=chatgpt.com), [GitHub](https://github.com/ijl/orjson?utm_source=chatgpt.com))
 
-**Drop‑in implementation (replace your placeholder):**
+**TypeScript Implementation:**
 
-```python
-# normalize_ppc.py
-import sys
-import json
-import copy
-import datetime
-import re
-import pathlib
+```typescript
+// apps/api/src/services/plan-generation/normalize-ppc.service.ts
+import { readFile, writeFile } from "fs/promises";
+import type { PPCPlan, TagGuide } from "@alva/shared-types";
 
-def load_json(p):
-    return json.load(open(p, "r"))
+/**
+ * @description Slugify a string to snake_case
+ */
+function slugify(s: string): string {
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, "_");
+}
 
-def slugify(s: str) -> str:
-    return re.sub(r"[^a-z0-9_]+", "_", s.strip().lower())
+/**
+ * @description Add tags to an object safely (no duplicates)
+ */
+function addTags(obj: any, tags: string[]): void {
+  if (!obj.tags) obj.tags = [];
+  for (const tag of tags) {
+    if (!obj.tags.includes(tag)) {
+      obj.tags.push(tag);
+    }
+  }
+}
 
-def enforce_alva_tags(plan: dict, tag_guide: dict) -> dict:
-    # Extract standard + samples
-    std = tag_guide.get("standard", "alva_tags_v1")
-    examples = tag_guide.get("examples", [])
+/**
+ * @description Enforce Alva tag standards on plan
+ */
+function enforceAlvaTags(plan: PPCPlan, tagGuide: TagGuide): PPCPlan {
+  const std = tagGuide.standard || "alva_tags_v1";
 
-    # Ensure a 'tags' field at top-level (optional)
-    plan.setdefault("_tag_standard", std)
+  // Ensure _tag_standard field
+  (plan as any)._tag_standard = std;
 
-    # Helper to add tags safely
-    def add_tags(obj: dict, tags: list[str]):
-        t = obj.setdefault("tags", [])
-        for tag in tags:
-            if tag not in t:
-                t.append(tag)
+  // Derive plan version tags
+  const planVersionTags: string[] = [];
+  if (plan.plan_type && plan.version) {
+    const planVersion = `plan:${plan.plan_type}_v${plan.version.replace(/\./g, "_")}`;
+    planVersionTags.push(planVersion);
+  }
 
-    # Derive plan version tag if present
-    plan_version_tags = []
-    plan_version = None
-    if "plan_type" in plan and "version" in plan:
-        plan_version = f"plan:{plan['plan_type']}_v{plan['version'].replace('.', '_')}"
-        plan_version_tags.append(plan_version)
+  // Add tags to phases
+  for (const ph of plan.phases) {
+    const phaseSlug = slugify(ph.label || ph.phase);
+    addTags(ph, [plan.plan_type, "domain:phase", `phase:${phaseSlug}`, ...planVersionTags]);
+  }
 
-    # Phases → add domain + phase tags
-    for ph in plan.get("phases", []):
-        phase_slug = slugify(ph.get("label", ph.get("phase","")))
-        add_tags(ph, [plan.get("plan_type","ppc"), "domain:phase", f"phase:{phase_slug}"] + plan_version_tags)
+  // Add tags to sample_quarters campaigns
+  for (const sq of plan.sample_quarters || []) {
+    for (const camp of sq.campaigns) {
+      const platformSlug = slugify(camp.platform || "other");
+      addTags(camp, [plan.plan_type, "domain:campaign", `platform:${platformSlug}`, ...planVersionTags]);
+    }
+  }
 
-    # Sample quarters campaigns → add platform & domain:campaign tags
-    for sq in plan.get("sample_quarters", []) or []:
-        for camp in sq.get("campaigns", []):
-            platform_slug = slugify(camp.get("platform","other"))
-            add_tags(camp, [plan.get("plan_type","ppc"), "domain:campaign", f"platform:{platform_slug}"] + plan_version_tags)
+  // Add tags to generic_campaigns
+  for (const camp of plan.generic_campaigns || []) {
+    addTags(camp, [plan.plan_type, "domain:campaign", ...planVersionTags]);
+  }
 
-    # Generic campaigns → add domain:campaign
-    for camp in plan.get("generic_campaigns", []) or []:
-        add_tags(camp, [plan.get("plan_type","ppc"), "domain:campaign"] + plan_version_tags)
+  return plan;
+}
 
-    return plan
+/**
+ * @description Convert month number to date range
+ */
+function monthToDateRange(baseStart: Date, monthNum: number): [string, string] {
+  // Month '1' means baseStart's month; '2' next month, etc.
+  const year = baseStart.getFullYear() + Math.floor((baseStart.getMonth() + monthNum - 1) / 12);
+  const month = (baseStart.getMonth() + monthNum - 1) % 12;
 
-def month_to_date_range(base_start: datetime.date, m: int) -> tuple[str,str]:
-    # Month '1' means base_start's month; '2' next month, etc.
-    # Compute first day of target month
-    year = base_start.year + (base_start.month - 1 + (m-1)) // 12
-    month = (base_start.month - 1 + (m-1)) % 12 + 1
-    start = datetime.date(year, month, 1)
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0); // Last day of month
 
-    # End = last day of that month
-    if month == 12:
-        end = datetime.date(year+1, 1, 1) - datetime.timedelta(days=1)
-    else:
-        end = datetime.date(year, month+1, 1) - datetime.timedelta(days=1)
+  return [start.toISOString().split("T")[0], end.toISOString().split("T")[0]];
+}
 
-    return start.isoformat(), end.isoformat()
+/**
+ * @description Normalize phase windows with concrete dates
+ */
+function normalizePhaseWindows(plan: PPCPlan, baseStartIso: string): PPCPlan {
+  const baseStart = new Date(baseStartIso);
 
-def normalize_phase_windows(plan: dict, base_start_iso: str) -> dict:
-    base_start = datetime.date.fromisoformat(base_start_iso)
-    for ph in plan.get("phases", []):
-        months = ph.get("months", [])
-        if months:
-            start_iso, _ = month_to_date_range(base_start, min(months))
-            _, end_iso = month_to_date_range(base_start, max(months))
-            ph.setdefault("window", {})["start_date"] = start_iso
-            ph["window"]["end_date"] = end_iso
-    return plan
+  for (const ph of plan.phases) {
+    if (ph.months && ph.months.length > 0) {
+      const [startDate] = monthToDateRange(baseStart, Math.min(...ph.months));
+      const [, endDate] = monthToDateRange(baseStart, Math.max(...ph.months));
 
-def canonicalize_fields(plan: dict) -> dict:
-    # Ensure revision_notes exists
-    plan.setdefault("revision_notes", [])
+      (ph as any).window = {
+        start_date: startDate,
+        end_date: endDate,
+      };
+    }
+  }
 
-    # Ensure review_intervals entries are Title Case
-    if "review_intervals" in plan:
-        plan["review_intervals"] = [str(x).title() for x in plan["review_intervals"]]
+  return plan;
+}
 
-    return plan
+/**
+ * @description Canonicalize field formats
+ */
+function canonicalizeFields(plan: PPCPlan): PPCPlan {
+  // Ensure revision_notes exists
+  if (!plan.revision_notes) {
+    plan.revision_notes = [];
+  }
 
-def sort_arrays(plan: dict) -> dict:
-    # Sort phases by min(months), campaigns by (start_month, name), generic_campaigns by name
-    plan["phases"] = sorted(plan.get("phases", []), key=lambda ph: min(ph.get("months",[99])))
+  // Title case review_intervals
+  if (plan.review_intervals) {
+    plan.review_intervals = plan.review_intervals.map((x) => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase());
+  }
 
-    for sq in plan.get("sample_quarters", []) or []:
-        sq["campaigns"] = sorted(sq.get("campaigns", []), key=lambda c: (c.get("start_month", 99), c.get("name","")))
+  return plan;
+}
 
-    if "generic_campaigns" in plan and plan["generic_campaigns"]:
-        plan["generic_campaigns"] = sorted(plan["generic_campaigns"], key=lambda c: c.get("name",""))
+/**
+ * @description Sort arrays for deterministic output
+ */
+function sortArrays(plan: PPCPlan): PPCPlan {
+  // Sort phases by min month
+  plan.phases.sort((a, b) => Math.min(...a.months) - Math.min(...b.months));
 
-    return plan
+  // Sort campaigns in sample_quarters
+  for (const sq of plan.sample_quarters || []) {
+    sq.campaigns.sort((a, b) => {
+      if (a.start_month !== b.start_month) {
+        return a.start_month - b.start_month;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }
 
-def main():
-    if len(sys.argv) < 3:
-        print("usage: python normalize_ppc.py <input.json> <output.json> [base_start_date]")
-        sys.exit(2)
+  // Sort generic_campaigns by name
+  if (plan.generic_campaigns) {
+    plan.generic_campaigns.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-    inp, outp = sys.argv[1], sys.argv[2]
-    base = sys.argv[3] if len(sys.argv) > 3 else "2025-08-01"
+  return plan;
+}
 
-    plan = load_json(inp)
-    tag_guide = {}
-    tg_path = pathlib.Path("tag_guide.json")
-    if tg_path.exists():
-        tag_guide = load_json(tg_path.as_posix())
+/**
+ * @description Main normalization function
+ */
+export async function normalizePPCPlan(
+  inputPath: string,
+  outputPath: string,
+  baseStartDate: string = "2025-08-01",
+  tagGuidePath?: string
+): Promise<PPCPlan> {
+  // Load plan
+  const planData = JSON.parse(await readFile(inputPath, "utf-8"));
+  let plan = planData as PPCPlan;
 
-    plan = enforce_alva_tags(plan, tag_guide)
-    plan = normalize_phase_windows(plan, base)
-    plan = canonicalize_fields(plan)
-    plan = sort_arrays(plan)
+  // Load tag guide if available
+  let tagGuide: TagGuide = { standard: "alva_tags_v1", examples: [] };
+  if (tagGuidePath) {
+    tagGuide = JSON.parse(await readFile(tagGuidePath, "utf-8"));
+  }
 
-    # Deterministic key ordering for the file on disk
-    json.dump(plan, open(outp, "w"), indent=2, sort_keys=True)
+  // Apply normalizations
+  plan = enforceAlvaTags(plan, tagGuide);
+  plan = normalizePhaseWindows(plan, baseStartDate);
+  plan = canonicalizeFields(plan);
+  plan = sortArrays(plan);
 
-if __name__ == "__main__":
-    main()
+  // Write with deterministic key ordering
+  await writeFile(outputPath, JSON.stringify(plan, null, 2));
+
+  return plan;
+}
+```
+
+**Usage in API Server:**
+
+```typescript
+// apps/api/src/services/plan-generation/ppc.generator.ts
+import { generateWithLLM } from "./llm.service";
+import { normalizePPCPlan } from "./normalize-ppc.service";
+import { validatePPCPlan } from "@alva/validation";
+import type { ClientProfile } from "@alva/shared-types";
+
+export async function generatePPCPlan(clientProfile: ClientProfile): Promise<PPCPlan> {
+  // 1. Generate raw plan from LLM
+  const rawPlan = await generateWithLLM(
+    "./data/prompts/ppc_prompt.json",
+    "./data/templates/ppc_base.json",
+    clientProfile
+  );
+
+  // 2. Validate with Zod
+  const validatedPlan = validatePPCPlan(rawPlan);
+
+  // 3. Normalize (tags, dates, sorting)
+  const normalizedPlan = await normalizePPCPlan(validatedPlan, clientProfile.user_profile.business_name);
+
+  return normalizedPlan;
+}
 ```
 
 Notes:
 
-- `sort_keys=True` makes the on‑disk JSON order deterministic for hashing/tests. If you want speed, `orjson` has `OPT_SORT_KEYS` with similar semantics. ([Stack Overflow](https://stackoverflow.com/questions/34931386/how-do-i-keep-the-json-key-order-fixed-with-python-3-json-dumps?utm_source=chatgpt.com), [GitHub](https://github.com/ijl/orjson?utm_source=chatgpt.com))
+- TypeScript provides compile-time type safety
+- Zod provides runtime validation
+- JSON.stringify with `null, 2` creates deterministic, readable output
 
 # Normalization Scripts to Ensure All Tasks/Events are Date-Aligned and Tagged Consistently
 
@@ -2195,21 +2332,25 @@ Notes:
 ## Deliverables
 
 - normalized_events.json — 51 normalized events with start/end dates \+ tags
-- normalize_ppc.py — CLI script to rerun normalization on any plan
+- normalize-ppc.service.ts — TypeScript service to normalize plans
 - tag_guide.json — facet schema and examples for consistent tagging
 
 ## How to use
 
-Run locally (defaults to first day of current month):
+Run via API endpoint (defaults to first day of current month):
 
 ```bash
-python normalize_ppc.py --ppc ppc.json --module blog_promp.json
+# Via API endpoint
+curl -X POST http://localhost:3001/api/plans/normalize \
+  -H "Content-Type: application/json" \
+  -d '{"plan_id": "ppc-001", "client_id": "scent-sparkle"}'
 ```
 
-Start on a specific date:
+Run via CLI script:
 
 ```bash
-python normalize_ppc.py --ppc ppc.json --module blog_promp.json --start 2025-09-01 --out normalized_events.json
+# Using pnpm script
+pnpm run normalize:plan --plan-id ppc-001 --start-date 2025-09-01
 ```
 
 ## What’s normalized
@@ -2230,25 +2371,35 @@ python normalize_ppc.py --ppc ppc.json --module blog_promp.json --start 2025-09-
   - `plan:ppc_v{version}` (from your JSON)
   - `module:*`, `module_type:*` (from your module metadata)
 
-## Notes on your uploads
+## Notes on input files
 
 - `ppc.json` is the only file driving tasks/events.
-- `blog_promp.json` (misnamed) supplies module tags; I ingest that for traceability.
-- `ppc_prompt.json` contains YAML with an invalid alias (`*business-name*`). I safely skipped parsing; it isn’t needed for event dating.
+- `blog_prompt.json` supplies module tags for traceability.
+- `ppc_prompt.json` contains prompt instructions for LLM generation.
 
-## Nextext steps
+## Next steps
 
-1. **Set the real start date** for this client's plan and rerun the script:
+1. **Set the real start date** for this client's plan via API:
 
 ```bash
-python normalize_ppc.py --ppc ppc.json --module blog_promp.json --start YYYY-MM-DD
+# Using API endpoint
+curl -X POST http://localhost:3001/api/plans/normalize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "plan_id": "ppc-001",
+    "client_id": "scent-sparkle",
+    "start_date": "YYYY-MM-DD"
+  }'
+
+# Or via CLI
+pnpm run normalize:plan --plan-id ppc-001 --start-date YYYY-MM-DD
 ```
 
-1. **Wire the output**:
-   - If you’re using ClickUp/Jira: map `title`, `start_date`, `end_date`, and `tags`.
-   - If you’re bridging to Calendar: import only `type in {campaign, phase_window}` to avoid noise; keep tasks in PM.
-2. **Enforce inputs**: going forward, require `start_date` at intake. No “Month X–Y” talk in source—force ISO dates or a relative-month spec with a known base date.
-3. **Adopt the tag guide**: use `tag_guide.json` across modules so reporting, filters, and automations remain stable.
+2. **Wire the output**:
+   - If you're using ClickUp/Jira: map `title`, `start_date`, `end_date`, and `tags`.
+   - If you're bridging to Calendar: import only `type in {campaign, phase_window}` to avoid noise; keep tasks in PM.
+3. **Enforce inputs**: going forward, require `start_date` at intake. No "Month X–Y" talk in source—force ISO dates or a relative-month spec with a known base date.
+4. **Adopt the tag guide**: use `tag_guide.json` across modules so reporting, filters, and automations remain stable.
 
 # App Pages
 
