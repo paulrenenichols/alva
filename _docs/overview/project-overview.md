@@ -1883,22 +1883,22 @@ scent-sparkle_master.json
 ## How to run it (commands)
 
 ```bash
-# 1) Go to the project  
+# 1) Go to the project
 cd /mnt/data/deterministic_templates
 
-# 2) (Optional) Edit client-profile.json, or swap in a real one  
+# 2) (Optional) Edit client-profile.json, or swap in a real one
 #    The runner simulates generation offline if no API key is present.
 
-# 3) Generate (offline sim unless OPENAI_API_KEY is set)  
+# 3) Generate (offline sim unless OPENAI_API_KEY is set)
 make generate
 
-# 4) Validate (Pydantic + JSON Schema)  
+# 4) Validate (Pydantic + JSON Schema)
 make validate
 
-# 5) Normalize via your normalize_ppc.py (or pass-through)  
+# 5) Normalize via your normalize_ppc.py (or pass-through)
 make normalize
 
-# 6) Freeze (write manifest + hashed artifact)  
+# 6) Freeze (write manifest + hashed artifact)
 make freeze
 ```
 
