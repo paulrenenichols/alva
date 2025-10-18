@@ -22,9 +22,9 @@ export async function onboardingRoutes(fastify: FastifyInstance) {
           required: ['section', 'data'],
           properties: {
             section: { type: 'string' },
-            data: { type: 'object' }
-          }
-        }
+            data: { type: 'object' },
+          },
+        },
       },
       preHandler: (fastify as any).authenticate,
     },
@@ -57,9 +57,9 @@ export async function onboardingRoutes(fastify: FastifyInstance) {
           type: 'object',
           required: ['profileData'],
           properties: {
-            profileData: { type: 'object' }
-          }
-        }
+            profileData: { type: 'object' },
+          },
+        },
       },
       preHandler: (fastify as any).authenticate,
     },
