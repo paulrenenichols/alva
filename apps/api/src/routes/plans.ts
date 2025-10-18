@@ -15,7 +15,7 @@ export async function planRoutes(fastify: FastifyInstance) {
       schema: {
         body: generatePlanSchema,
       },
-      preHandler: fastify.authenticate,
+      preHandler: (fastify as any).authenticate,
     },
     async (
       request: FastifyRequest<{ Body: z.infer<typeof generatePlanSchema> }>,
@@ -50,7 +50,7 @@ export async function planRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/:id/status',
     {
-      preHandler: fastify.authenticate,
+      preHandler: (fastify as any).authenticate,
     },
     async (
       request: FastifyRequest<{ Params: { id: string } }>,
@@ -75,7 +75,7 @@ export async function planRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/:id',
     {
-      preHandler: fastify.authenticate,
+      preHandler: (fastify as any).authenticate,
     },
     async (
       request: FastifyRequest<{ Params: { id: string } }>,

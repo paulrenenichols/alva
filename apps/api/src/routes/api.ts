@@ -16,7 +16,7 @@ export async function apiRoutes(fastify: FastifyInstance) {
     schema: {
       body: generatePlanSchema
     },
-    preHandler: fastify.authenticate
+    preHandler: (fastify as any).authenticate
   }, async (request: FastifyRequest<{ Body: z.infer<typeof generatePlanSchema> }>, reply: FastifyReply) => {
     try {
       const { clientProfile } = request.body;
@@ -40,7 +40,7 @@ export async function apiRoutes(fastify: FastifyInstance) {
 
   // Get user plans
   fastify.get('/plans', {
-    preHandler: fastify.authenticate
+    preHandler: (fastify as any).authenticate
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const userId = (request as any).user.userId;
@@ -70,7 +70,7 @@ export async function apiRoutes(fastify: FastifyInstance) {
         data: z.any()
       })
     },
-    preHandler: fastify.authenticate
+    preHandler: (fastify as any).authenticate
   }, async (request: FastifyRequest<{ Body: { section: string; data: any } }>, reply: FastifyReply) => {
     try {
       const { section, data } = request.body;

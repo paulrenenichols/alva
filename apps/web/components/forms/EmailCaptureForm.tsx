@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { authClient } from '@alva/auth-client';
+// import { authClient } from '@alva/auth-client';
 
 export function EmailCaptureForm() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,12 @@ export function EmailCaptureForm() {
     setError('');
 
     try {
-      await authClient.register(email);
+      // TODO: Replace with actual API call when available
+      // await authClient.register(email);
+      
+      // Mock registration for now
+      console.log('Mock registration for:', email);
+      
       // Redirect to onboarding welcome
       window.location.href = '/onboarding/welcome';
     } catch (err) {

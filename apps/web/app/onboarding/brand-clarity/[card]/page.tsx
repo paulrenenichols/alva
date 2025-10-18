@@ -69,7 +69,7 @@ const brandClarityCards = [
 
 export default function BrandClarityCard() {
   const params = useParams();
-  const cardNumber = parseInt(params.card as string);
+  const cardNumber = parseInt(params['card'] as string);
   const card = brandClarityCards[cardNumber - 1];
 
   const { responses, updateResponse } = useOnboardingStore();
@@ -105,7 +105,7 @@ export default function BrandClarityCard() {
       case 'pill-selector':
         return (
           <PillSelector
-            options={card.options}
+            options={card.options || []}
             selected={currentResponse || []}
             onChange={handleResponseChange}
             maxSelections={card.maxSelections}
