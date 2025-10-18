@@ -13,12 +13,12 @@ const fastify = Fastify({
 export async function buildApp() {
   // Register plugins
   await fastify.register(cors, {
-    origin: process.env.WEB_URL || 'http://localhost:4200',
+    origin: process.env['WEB_URL'] || 'http://localhost:4200',
     credentials: true
   });
 
   await fastify.register(cookie, {
-    secret: process.env.COOKIE_SECRET || 'your-secret-key'
+    secret: process.env['COOKIE_SECRET'] || 'your-secret-key'
   });
 
   await fastify.register(rateLimit, {
@@ -27,7 +27,7 @@ export async function buildApp() {
   });
 
   // Register database
-  const db = createDbPool(process.env.DATABASE_URL!);
+  const db = createDbPool(process.env['DATABASE_URL']!);
   fastify.decorate('db', db);
 
   // Register routes
