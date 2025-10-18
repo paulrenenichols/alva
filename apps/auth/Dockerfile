@@ -23,6 +23,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
 COPY --from=builder --chown=nodejs:nodejs /app/dist/apps/auth ./dist
+COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 USER nodejs
 
