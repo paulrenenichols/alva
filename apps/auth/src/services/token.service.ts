@@ -11,15 +11,14 @@ export class TokenService {
   private publicKey: string;
 
   constructor() {
-    this.privateKey = process.env.JWT_PRIVATE_KEY!;
-    this.publicKey = process.env.JWT_PUBLIC_KEY!;
+    this.privateKey = process.env['JWT_PRIVATE_KEY']!;
+    this.publicKey = process.env['JWT_PUBLIC_KEY']!;
   }
 
   generateAccessToken(payload: TokenPayload): string {
     return jwt.sign(payload, this.privateKey, {
-      algorithm: 'RS256',
-      expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m'
-    });
+      expiresIn: process.env['JWT_ACCESS_EXPIRY'] || '15m'
+    } as any);
   }
 
   generateRefreshToken(): string {

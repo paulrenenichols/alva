@@ -2,7 +2,20 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
-
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "./*"
+      ],
+      "@alva/api-client": ["../../libs/api-client/src/index.ts"],
+      "@alva/auth-client": ["../../libs/auth-client/src/index.ts"],
+      "@alva/database": ["../../libs/database/src/index.ts"],
+      "@alva/shared-types": ["../../libs/shared-types/src/index.ts"],
+      "@alva/ui": ["../../libs/ui/src/index.ts"],
+      "@alva/utils": ["../../libs/utils/src/index.ts"],
+      "@alva/validation": ["../../libs/validation/src/index.ts"]
+    },
     "strict": true,
     "noEmit": true,
     "emitDeclarationOnly": false,
@@ -11,23 +24,37 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "plugins": [{ "name": "next" }]
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "target": "ES2017",
+    "skipLibCheck": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-
+    "**/*.ts",
+    "**/*.tsx",
     "../../apps/web/.next/types/**/*.ts",
     "../../dist/apps/web/.next/types/**/*.ts",
-
-    "next-env.d.ts"
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": [
+    "node_modules",
+    "jest.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }

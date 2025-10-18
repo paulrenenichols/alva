@@ -12,15 +12,21 @@
     "dev": "docker compose up",
     "build": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
+    "test:e2e": "nx e2e web-e2e",
+    "test:unit": "nx test web",
     "lint": "nx run-many --target=lint --all",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "docker:build": "docker compose build",
     "docker:restart": "docker compose restart",
+    "docker:dev": "docker compose up --build",
+    "docker:services": "docker compose up postgres redis -d",
+    "docker:menu": "./scripts/docker-dev.sh",
     "setup": "./scripts/setup-env.sh",
     "validate": "./scripts/validate-setup.sh",
-    "dev:full": "./scripts/dev.sh"
+    "dev:full": "./scripts/dev.sh",
+    "test:phase2": "./scripts/test-phase2.sh"
   },
   "private": true,
   "devDependencies": {
@@ -36,6 +42,8 @@
     "@swc/cli": "~0.6.0",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.10",
@@ -46,6 +54,7 @@
     "autoprefixer": "^10.4.21",
     "drizzle-kit": "^0.31.5",
     "esbuild": "^0.19.2",
+    "jest": "^30.2.0",
     "nx": "21.6.5",
     "postcss": "^8.5.6",
     "prettier": "^2.6.2",
@@ -62,6 +71,7 @@
     "@fastify/swagger-ui": "^5.2.3",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.61.0",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.6",
     "express": "^4.21.2",
     "fastify": "^5.6.1",
@@ -72,7 +82,9 @@
     "pg": "^8.16.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "tailwind-merge": "^3.3.1",
     "tslib": "^2.3.0",
-    "zod": "^4.1.12"
+    "zod": "^4.1.12",
+    "zustand": "^5.0.8"
   }
 }
