@@ -13,7 +13,33 @@ export async function planRoutes(fastify: FastifyInstance) {
     '/generate',
     {
       schema: {
-        body: generatePlanSchema,
+        body: {
+          type: 'object',
+          required: ['clientProfile'],
+          properties: {
+            clientProfile: {
+              type: 'object',
+              required: ['businessName', 'industry'],
+              properties: {
+                businessName: { type: 'string' },
+                industry: { type: 'string' },
+                businessDescription: { type: 'string' },
+                targetAudience: { type: 'string' },
+                goals: { type: 'array', items: { type: 'string' } },
+                budget: { type: 'number' },
+                timeline: { type: 'string' },
+                existingMarketing: { type: 'array', items: { type: 'string' } },
+                competitors: { type: 'array', items: { type: 'string' } },
+                uniqueValueProposition: { type: 'string' },
+                brandPersonality: { type: 'array', items: { type: 'string' } },
+                preferredChannels: { type: 'array', items: { type: 'string' } },
+                successMetrics: { type: 'array', items: { type: 'string' } },
+                constraints: { type: 'array', items: { type: 'string' } },
+                additionalInfo: { type: 'string' }
+              }
+            }
+          }
+        }
       },
       preHandler: (fastify as any).authenticate,
     },

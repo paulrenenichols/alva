@@ -44,9 +44,6 @@ services:
         condition: service_started
       auth:
         condition: service_started
-    volumes:
-      - .:/app
-      - /app/node_modules
     networks:
       - alva-network
 
@@ -68,9 +65,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
     networks:
       - alva-network
 
@@ -89,9 +83,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
     networks:
       - alva-network
 
