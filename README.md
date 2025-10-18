@@ -5,25 +5,30 @@ A modern, AI-first microservices application built with TypeScript, React, and F
 ## Architecture
 
 **3 Independent Services:**
+
 - **Web Service (Next.js)**: Frontend application on port 3000
-- **API Service (Fastify)**: Backend API on port 3001  
+- **API Service (Fastify)**: Backend API on port 3001
 - **Auth Service (Fastify)**: Authentication service on port 3002
 
 **All Services:**
+
 - TypeScript, Docker, PostgreSQL, Redis
 - NX monorepo for code sharing and management
 
 **Web Service (Next.js):**
+
 - React 19, Next.js 15, Tailwind CSS
 - App Router, Server Components
 - Zustand for state management
 
 **API Service (Fastify):**
+
 - Fastify 5, Drizzle ORM, PostgreSQL
 - OpenAI API integration, BullMQ for background jobs
 - OpenAPI/Swagger documentation
 
 **Auth Service (Fastify):**
+
 - JWT tokens (RS256), refresh tokens
 - Magic link authentication
 - Secure cookie management
@@ -40,6 +45,7 @@ A modern, AI-first microservices application built with TypeScript, React, and F
 ### Setup
 
 1. **Clone and install dependencies**
+
    ```bash
    git clone <repository-url>
    cd alva
@@ -47,22 +53,25 @@ A modern, AI-first microservices application built with TypeScript, React, and F
    ```
 
 2. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 3. **Generate JWT keys** (for Auth service)
+
    ```bash
    pnpm run generate:keys
    # Copy the generated keys to your .env file
    ```
 
 4. **Set up environment variables**
+
    ```bash
    # Copy .env.example to .env and update with your values
    cp .env.example .env
-   
+
    # Required variables:
    # - DATABASE_URL
    # - JWT_PUBLIC_KEY / JWT_PRIVATE_KEY
@@ -71,13 +80,14 @@ A modern, AI-first microservices application built with TypeScript, React, and F
    ```
 
 5. **Start all services**
+
    ```bash
    # Start database and Redis
    pnpm run docker:up
-   
+
    # Initialize database schemas
    pnpm run db:init
-   
+
    # Start all services
    pnpm run dev
    ```
@@ -118,12 +128,29 @@ pnpm test                # Run all tests
 pnpm lint                # Lint all code
 ```
 
+### E2E Testing
+
+```bash
+# Run E2E tests
+npx nx e2e web-e2e
+
+# Run E2E tests in headed mode (see browser)
+npx nx e2e web-e2e --headed
+
+# Run specific test file
+npx nx e2e web-e2e --grep "has title"
+
+# Run tests on specific browser
+npx nx e2e web-e2e --project=chromium
+```
+
 ## Project Structure
 
 ```
 alva/
 ├── apps/                    # Deployable applications (microservices)
 │   ├── web/                # Next.js Frontend (Port 3000)
+│   ├── web-e2e/            # Playwright E2E tests for web app
 │   ├── api/                # Fastify API Server (Port 3001)
 │   └── auth/               # Fastify Auth Service (Port 3002)
 ├── libs/                   # Shared libraries
@@ -176,21 +203,33 @@ COOKIE_SECRET=your-cookie-secret
 ## Services
 
 ### Web Service (Port 3000)
+
 - Next.js 15 with App Router
 - Tailwind CSS for styling
 - Authentication integration
 - Dashboard and onboarding flows
 
 ### API Service (Port 3001)
+
 - Fastify API server
 - OpenAI integration for plan generation
 - BullMQ for background jobs
 - Parallel module execution
 
-### Auth Service (Port  Proxies authentication requests
+### Auth Service (Port 3002)
+
+- Proxies authentication requests
 - JWT token management
 - Magic link verification
 - Refresh token handling
+
+### E2E Testing (apps/web-e2e)
+
+- Playwright-based end-to-end testing
+- Multi-browser support (Chrome, Firefox, Safari)
+- Automated web server startup
+- Cross-platform testing capabilities
+- Ready for mobile browser testing
 
 ## Development Workflow
 
@@ -206,8 +245,9 @@ COOKIE_SECRET=your-cookie-secret
 
 1. Follow the established project structure
 2. Use TypeScript strict mode
-3. Write tests for new features
+3. Write tests for new features (unit tests and E2E tests)
 4. Follow the coding standards in `_docs/project-definition/`
+5. Work with E2E tests in `apps/web-e2e/` for user flow validation
 
 ## License
 
