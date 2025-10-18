@@ -711,10 +711,7 @@ If you didn’t verify earlier:
   "plan_type": "ppc",
   "version": "1.0",
   "duration": "12 months",
-  "review_intervals": [
-    "Monthly",
-    "Quarterly"
-  ],
+  "review_intervals": ["Monthly", "Quarterly"],
   "revision_logic": "Update this structure based on client constraints, wins, losses, or channel shifts.",
   "client_data_linked": true,
   "phases": [
@@ -761,36 +758,20 @@ If you didn’t verify earlier:
         "Gather baseline performance data",
         "Begin early optimizations"
       ],
-      "tasks": [
-        "Monitor delivery and disapprovals",
-        "Pause low performers",
-        "Start weekly reporting (CTR, CPC, ROAS)"
-      ]
+      "tasks": ["Monitor delivery and disapprovals", "Pause low performers", "Start weekly reporting (CTR, CPC, ROAS)"]
     },
     {
       "phase": "Phase 4",
       "label": "Performance Optimization",
       "months": [5, 6, 7],
-      "objectives": [
-        "Scale best-performing elements",
-        "Deepen funnel and remarketing",
-        "A/B and multivariate testing"
-      ],
-      "tasks": [
-        "Test bid strategies",
-        "Build email or CRM integrations",
-        "Expand keyword sets or geos"
-      ]
+      "objectives": ["Scale best-performing elements", "Deepen funnel and remarketing", "A/B and multivariate testing"],
+      "tasks": ["Test bid strategies", "Build email or CRM integrations", "Expand keyword sets or geos"]
     },
     {
       "phase": "Phase 5",
       "label": "Expansion & Full Funnel",
       "months": [8, 9, 10],
-      "objectives": [
-        "Add upper funnel campaigns",
-        "Test new ad formats",
-        "Apply smart automation"
-      ],
+      "objectives": ["Add upper funnel campaigns", "Test new ad formats", "Apply smart automation"],
       "tasks": [
         "Launch YouTube and Meta Awareness",
         "Evaluate GA4 vs. platform reporting",
@@ -801,26 +782,14 @@ If you didn’t verify earlier:
       "phase": "Phase 6",
       "label": "Peak Performance & Seasonal Strategy",
       "months": [11, 12],
-      "objectives": [
-        "Maximize seasonal ROI",
-        "Re-engage past customers",
-        "Plan next-year PPC roadmap"
-      ],
-      "tasks": [
-        "Launch holiday offers",
-        "Build win-back campaigns",
-        "Final performance review"
-      ]
+      "objectives": ["Maximize seasonal ROI", "Re-engage past customers", "Plan next-year PPC roadmap"],
+      "tasks": ["Launch holiday offers", "Build win-back campaigns", "Final performance review"]
     }
   ],
   "sample_quarters": [
     {
       "name": "Q1 - Validation & Testing",
-      "goals": [
-        "Capture branded search",
-        "Retarget warm traffic",
-        "Test cold audiences"
-      ],
+      "goals": ["Capture branded search", "Retarget warm traffic", "Test cold audiences"],
       "campaigns": [
         {
           "name": "Branded Search",
@@ -873,13 +842,8 @@ If you didn’t verify earlier:
     {
       "name": "Search - High Intent",
       "goal": "Capture bottom-funnel buyers",
-      "audience": [
-        "In-market searchers",
-        "Custom intent keywords"
-      ],
-      "ad_formats": [
-        "Responsive Search Ads"
-      ],
+      "audience": ["In-market searchers", "Custom intent keywords"],
+      "ad_formats": ["Responsive Search Ads"],
       "budget": 1500,
       "bidding_strategy": "Maximize conversions (Target CPA)",
       "kpis": {
@@ -887,27 +851,15 @@ If you didn’t verify earlier:
         "ctr_goal": 5,
         "conversion_rate_goal": 10
       },
-      "messaging": [
-        "Ready to solve [pain point]?",
-        "Get [benefit] now -- no contract required."
-      ],
+      "messaging": ["Ready to solve [pain point]?", "Get [benefit] now -- no contract required."],
       "timeline": "Month 1-3",
-      "watchouts": [
-        "Optimize negative keywords weekly"
-      ]
+      "watchouts": ["Optimize negative keywords weekly"]
     },
     {
       "name": "Retargeting - Branded",
       "goal": "Re-engage brand-aware audiences",
-      "audience": [
-        "Website visitors",
-        "Social engagers"
-      ],
-      "ad_formats": [
-        "Image Ads",
-        "Carousel",
-        "Video"
-      ],
+      "audience": ["Website visitors", "Social engagers"],
+      "ad_formats": ["Image Ads", "Carousel", "Video"],
       "budget": 800,
       "bidding_strategy": "Target ROAS",
       "kpis": {
@@ -915,13 +867,9 @@ If you didn’t verify earlier:
         "frequency_cap": 3,
         "cpm_goal": 10
       },
-      "messaging": [
-        "Still thinking it over? We kept your offer ready."
-      ],
+      "messaging": ["Still thinking it over? We kept your offer ready."],
       "timeline": "Always-on",
-      "watchouts": [
-        "Rotate creatives monthly"
-      ]
+      "watchouts": ["Rotate creatives monthly"]
     }
   ]
 }
@@ -934,11 +882,8 @@ If you didn’t verify earlier:
   "module": "PPC Plan Generator",
   "version": "1.0",
   "type": "strategy*adaptation",
-  "input_schema": [
-    "client-profile.json",
-    "ppc.json"
-  ],
-  "output_schema": "\_business-name*\_ppc.json",
+  "input_schema": ["client-profile.json", "ppc.json"],
+  "output_schema": "_business-name*_ppc.json",
   "description": "Tailors a 12-month PPC strategy based on client profile and context.",
   "instructions": {
     "role": "You are a senior marketing strategist for small business PPC.",
@@ -1014,21 +959,12 @@ If you didn’t verify earlier:
     },
     "tone": {
       "type": "string",
-      "enum": [
-        "Professional",
-        "Conversational",
-        "Authoritative",
-        "Playful"
-      ],
+      "enum": ["Professional", "Conversational", "Authoritative", "Playful"],
       "default": "Professional"
     },
     "reading_level": {
       "type": "string",
-      "enum": [
-        "Grade 7-8",
-        "Grade 9-10",
-        "College"
-      ],
+      "enum": ["Grade 7-8", "Grade 9-10", "College"],
       "default": "Grade 9-10"
     },
     "deterministic": {
@@ -1056,11 +992,7 @@ If you didn’t verify earlier:
     {
       "id": "W1_collect_inputs",
       "type": "ingest",
-      "outputs": [
-        "client_profile",
-        "base_prompt",
-        "seo_requirements"
-      ],
+      "outputs": ["client_profile", "base_prompt", "seo_requirements"],
       "notes": "Load JSON objects and normalize field names."
     },
     {
@@ -1088,21 +1020,14 @@ If you didn’t verify earlier:
     {
       "id": "W4_map_events_to_topics",
       "type": "map",
-      "inputs": [
-        "monthly_events",
-        "client_profile",
-        "seo_checklist"
-      ],
+      "inputs": ["monthly_events", "client_profile", "seo_checklist"],
       "outputs": ["topic_map"],
       "logic": "For each event, produce 1-2 topic angles tailored to personas, product strengths, and SEO gaps."
     },
     {
       "id": "W5_content_briefs",
       "type": "generate",
-      "inputs": [
-        "topic_map",
-        "base_prompt"
-      ],
+      "inputs": ["topic_map", "base_prompt"],
       "outputs": ["briefs"],
       "llm_module": "brief_generator_v1",
       "determinism": "JSON only; validated against 'brief_schema'."
@@ -1118,10 +1043,7 @@ If you didn’t verify earlier:
     {
       "id": "W7_drafts",
       "type": "generate",
-      "inputs": [
-        "outlines",
-        "seo_checklist"
-      ],
+      "inputs": ["outlines", "seo_checklist"],
       "outputs": ["drafts"],
       "llm_module": "draft_writer_v1",
       "post_processing": ["apply_onpage_requirements"]
@@ -1129,10 +1051,7 @@ If you didn’t verify earlier:
     {
       "id": "W8_onpage_requirements",
       "type": "validate_fix",
-      "inputs": [
-        "drafts",
-        "seo_checklist"
-      ],
+      "inputs": ["drafts", "seo_checklist"],
       "outputs": ["drafts_seo_passed"],
       "logic": "Enforce single H1, focus keyword in title + first 100 words + slug, image ALT present, OG/Twitter tags list, schema.org Article payload."
     },
@@ -1168,11 +1087,7 @@ If you didn’t verify earlier:
     {
       "id": "W12_revision_notes",
       "type": "summarize",
-      "inputs": [
-        "briefs",
-        "drafts_seo_passed",
-        "interlinking_matrix"
-      ],
+      "inputs": ["briefs", "drafts_seo_passed", "interlinking_matrix"],
       "outputs": ["audit_trail"],
       "logic": "Explain choices, what gaps were addressed, and mapping to PPC funnel stages."
     }
@@ -1188,13 +1103,7 @@ If you didn’t verify earlier:
       },
       "event_type": {
         "type": "string",
-        "enum": [
-          "seasonal",
-          "industry",
-          "promo",
-          "launch",
-          "holiday"
-        ]
+        "enum": ["seasonal", "industry", "promo", "launch", "holiday"]
       },
       "event_window": {
         "type": "string"
@@ -1222,11 +1131,7 @@ If you didn’t verify earlier:
       },
       "funnel_stage": {
         "type": "string",
-        "enum": [
-          "Awareness",
-          "Consideration",
-          "Decision"
-        ]
+        "enum": ["Awareness", "Consideration", "Decision"]
       },
       "primary_keyword": {
         "type": "string"
@@ -1254,12 +1159,7 @@ If you didn’t verify earlier:
       },
       "search_intent": {
         "type": "string",
-        "enum": [
-          "Informational",
-          "Commercial",
-          "Transactional",
-          "Navigational"
-        ]
+        "enum": ["Informational", "Commercial", "Transactional", "Navigational"]
       },
       "primary_keyword": {
         "type": "string"
@@ -1479,6 +1379,7 @@ If you didn’t verify earlier:
 # Blog LLM Prompt JSON
 
 # Blog LLM Prompt JSON
+
 "meta": {
 "filename": "blog_plan_generator_v1.json",
 "version": "1.0",
@@ -1614,6 +1515,7 @@ Think of it as **three main steps**:
 ## JSON Files
 
 ## JSON Files
+
 - **`base_marketing_plan.json`** → Static “template” plan.
 - **`custom_plan.json`** → Tailored version with right cadence, enabled channels, and priority seasons.
 - **`modules.json`** → Just the task lists from each marketing module, without dates.
@@ -1705,12 +1607,7 @@ The **dashboard** only ever touches `master.json` to show:
     "past_failures": ["FB Ads scale"],
     "past_successes": ["IG Reels BTS", "Craft fair promos"]
   },
-  "seasonality": [
-    "Back-to-school",
-    "Halloween",
-    "BFCM",
-    "Christmas"
-  ]
+  "seasonality": ["Back-to-school", "Halloween", "BFCM", "Christmas"]
 }
 ```
 
@@ -1721,9 +1618,9 @@ The **dashboard** only ever touches `master.json` to show:
   "version": "1.0",
   "channels": ["Instagram", "TikTok", "Email"],
   "content_pillars": [
-    {"name": "Behind the Scenes"},
-    {"name": "Product Features"},
-    {"name": "Lifestyle & Community"}
+    { "name": "Behind the Scenes" },
+    { "name": "Product Features" },
+    { "name": "Lifestyle & Community" }
   ],
   "default_cadence": {
     "social_posts_per_week": 2,
@@ -1761,11 +1658,7 @@ The **dashboard** only ever touches `master.json` to show:
     "Email": true,
     "Blog": false
   },
-  "priority_seasons": [
-    "Halloween",
-    "BFCM",
-    "Christmas"
-  ],
+  "priority_seasons": ["Halloween", "BFCM", "Christmas"],
   "strategy_notes": [
     "No FB scale; focus IG/TikTok Reels.",
     "Weekly time cap=5h → keep tasks to <=75 min each; daily quick wins 15-20 min."
