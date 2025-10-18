@@ -1002,6 +1002,16 @@ export default function Error({ error, reset }) {
 
 ---
 
+## Visual Reference
+
+### Mockups & Designs
+
+- **[Mobile Mockups](../../mockups/mobile/)** - Complete onboarding flow (26 cards)
+- **[Desktop Mockups](../../mockups/web/)** - Application interface designs
+- **[Mockups README](../../mockups/README.md)** - Detailed breakdown and usage guidelines
+
+---
+
 ## Best Practices Summary
 
 ### Do's ✅
@@ -1014,6 +1024,7 @@ export default function Error({ error, reset }) {
 - Co-locate styles with components
 - Use design tokens (no magic numbers)
 - Implement loading states for all async actions
+- Reference mockups for accurate visual implementation
 
 ### Don'ts ❌
 

@@ -44,6 +44,14 @@ Resources for getting started.
 
 - **[new-project-setup.md](setup/new-project-setup.md)** - Step-by-step guide for creating project documentation from scratch
 
+### 🎨 Visual Design
+
+Design assets and mockups for reference.
+
+- **[mockups/](mockups/)** - Complete visual mockups for mobile and desktop interfaces
+  - **[mobile/](mockups/mobile/)** - Mobile onboarding flow mockups (26 cards)
+  - **[web/](mockups/web/)** - Desktop application mockups and UI designs
+
 ---
 
 ## Quick Links
@@ -88,6 +96,8 @@ Resources for getting started.
 - [Onboarding Cards](overview/project-overview.md#onboarding-cards)
 - [UI Patterns](project-definition/ui-rules.md)
 - [Accessibility](project-definition/ui-rules.md#accessibility-requirements)
+- [Mobile Mockups](mockups/mobile/) - Complete onboarding flow
+- [Desktop Mockups](mockups/web/) - Application interface designs
 
 ### Design System
 
@@ -158,6 +168,7 @@ Every Markdown file starts with:
 2. Study [ui-rules.md](project-definition/ui-rules.md) - Component patterns
 3. Reference [user-flow.md](project-definition/user-flow.md) - User journeys
 4. Check [project-overview.md](overview/project-overview.md) - Brand guide
+5. View [mockups/](mockups/) - Visual designs for mobile and desktop
 
 ### For Development
 

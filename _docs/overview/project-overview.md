@@ -2322,4 +2322,8 @@ Daily Quick Win
 
 Chat With Alva
 
-Visual mockups soon.
+**Visual mockups available:**
+
+- Mobile onboarding flow: [26 interactive cards](../mockups/mobile/)
+- Desktop application: [Complete interface designs](../mockups/web/)
+- See [mockups/README.md](../mockups/README.md) for detailed breakdown

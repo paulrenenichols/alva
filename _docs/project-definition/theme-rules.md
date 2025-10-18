@@ -1068,3 +1068,13 @@ Before shipping any component or page:
 - High contrast mode
 - Dyslexia-friendly font option
 - Enhanced focus indicators (beyond gold ring)
+
+---
+
+## Visual Reference
+
+### Mockups & Design Implementation
+
+- **[Mobile Mockups](../../mockups/mobile/)** - Complete onboarding flow implementing this design system
+- **[Desktop Mockups](../../mockups/web/)** - Application interfaces using these design tokens
+- **[Mockups README](../../mockups/README.md)** - Detailed breakdown of visual designs
