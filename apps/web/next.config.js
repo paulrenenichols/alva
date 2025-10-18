@@ -10,6 +10,7 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  output: 'standalone',
   env: {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],
