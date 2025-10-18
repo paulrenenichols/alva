@@ -4,25 +4,39 @@ import { useState, useEffect } from 'react';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { apiClient } from '@alva/api-client';
 
 export default function SummaryPreview() {
   const { responses } = useOnboardingStore();
   const [plan, setPlan] = useState<any>(null);
 
   useEffect(() => {
-    // TODO: Fetch generated plan
-    setPlan({
-      tasks: [
-        {
-          id: 'task_1',
-          title: 'Set up Google Ads account',
-          description: 'Create and configure Google Ads account',
-          estimated_hours: 2,
-          priority: 'high',
-          status: 'planned',
-        },
-      ],
-    });
+    // Fetch the latest generated plan
+    const fetchPlan = async () => {
+      try {
+        const plans = await apiClient.getUserPlans();
+        if (plans.length > 0) {
+          setPlan(plans[0]); // Get the most recent plan
+        }
+      } catch (error) {
+        console.error('Failed to fetch plan:', error);
+        // Fallback to mock data
+        setPlan({
+          tasks: [
+            {
+              id: 'task_1',
+              title: 'Set up Google Ads account',
+              description: 'Create and configure Google Ads account',
+              estimated_hours: 2,
+              priority: 'high',
+              status: 'planned',
+            },
+          ],
+        });
+      }
+    };
+
+    fetchPlan();
   }, []);
 
   const summarySections = [
@@ -34,26 +48,36 @@ export default function SummaryPreview() {
         'Brand Vibe': Array.isArray(responses['brand-vibe'])
           ? responses['brand-vibe'].join(', ')
           : 'Not provided',
+        'Dream Customers': responses['dream-customers'] || 'Not provided',
+        'Focus Areas': Array.isArray(responses['focus-areas'])
+          ? responses['focus-areas'].join(', ')
+          : 'Not provided',
       },
     },
     {
       title: 'Marketing Goals',
       data: {
-        'Top Goals': Array.isArray(responses['top-goals'])
-          ? responses['top-goals'].join(', ')
+        'Primary Goal': responses['primary-goal'] || 'Not provided',
+        'Secondary Goals': Array.isArray(responses['secondary-goals'])
+          ? responses['secondary-goals'].join(', ')
           : 'Not provided',
-        'Growth Focus': Array.isArray(responses['growth-focus'])
-          ? responses['growth-focus'].join(', ')
+        'Success Metrics': Array.isArray(responses['success-metrics'])
+          ? responses['success-metrics'].join(', ')
+          : 'Not provided',
+        'Current Challenges': Array.isArray(responses['current-challenges'])
+          ? responses['current-challenges'].join(', ')
           : 'Not provided',
       },
     },
     {
-      title: 'Resources',
+      title: 'Resources & Timeline',
       data: {
-        'Weekly Time': responses['weekly-time-commitment'] || 'Not provided',
-        Budget: responses['marketing-budget'] || 'Not provided',
-        'Existing Tools': Array.isArray(responses['existing-tools'])
-          ? responses['existing-tools'].join(', ')
+        'Monthly Budget': responses['monthly-budget'] || 'Not provided',
+        'Team Size': responses['team-size'] || 'Not provided',
+        'Time Commitment': responses['time-commitment'] || 'Not provided',
+        'Project Timeline': responses['project-timeline'] || 'Not provided',
+        'Priority Areas': Array.isArray(responses['priority-areas'])
+          ? responses['priority-areas'].join(', ')
           : 'Not provided',
       },
     },
@@ -131,7 +155,7 @@ export default function SummaryPreview() {
               <Button
                 variant="ghost"
                 onClick={() =>
-                  (window.location.href = '/onboarding/brand-clarity/1')
+                  (window.location.href = '/onboarding/1')
                 }
                 className="text-secondary-600"
               >

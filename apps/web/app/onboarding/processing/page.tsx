@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useOnboardingStore } from '@/stores/onboardingStore';
-// import { apiClient } from '@alva/api-client';
+import { apiClient } from '@alva/api-client';
 
 export default function ProcessingScreen() {
   const [progress, setProgress] = useState(0);
@@ -16,15 +16,13 @@ export default function ProcessingScreen() {
         setProgress(25);
         setStatus('Creating your profile...');
 
-        // TODO: Replace with actual API calls when available
-        // const profileResult = await apiClient.finalizeOnboarding(responses);
+        const profileResult = await apiClient.finalizeOnboarding(responses);
 
         // Step 2: Generate marketing plan
         setProgress(50);
         setStatus('Generating your marketing plan...');
 
-        // TODO: Replace with actual API calls when available
-        // const planResult = await apiClient.generatePlan(profileResult.profile);
+        const planResult = await apiClient.generatePlan(profileResult.profile);
 
         // Step 3: Processing complete
         setProgress(100);

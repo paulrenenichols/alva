@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-// import { authClient } from '@alva/auth-client';
+import { authClient } from '@alva/auth-client';
 import { useAuthStore } from '@/stores/authStore';
 
 function VerifyPageContent() {
@@ -23,12 +23,8 @@ function VerifyPageContent() {
 
     const verifyEmail = async () => {
       try {
-        // TODO: Replace with actual API call when available
-        // const result = await authClient.verifyMagicLink(token);
-        // setAccessToken(result.accessToken);
-        
-        // Mock verification for now
-        setAccessToken('mock-token');
+        const result = await authClient.verifyMagicLink(token!);
+        setAccessToken(result.accessToken);
         setStatus('success');
 
         // Redirect to dashboard after 2 seconds
@@ -120,7 +116,16 @@ function VerifyPageContent() {
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-primary-500 rounded-full flex items-center justify-center">
+            <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h1 className="text-2xl font-bold text-secondary-900 mb-2">Loading...</h1>
+        </div>
+      </div>
+    }>
       <VerifyPageContent />
     </Suspense>
   );

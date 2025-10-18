@@ -1,5 +1,5 @@
 const AUTH_BASE_URL =
-  process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:3002';
+  process.env['NEXT_PUBLIC_AUTH_URL'] || 'http://localhost:3002';
 
 export class AuthClient {
   async register(email: string) {
