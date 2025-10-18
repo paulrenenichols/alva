@@ -25,6 +25,8 @@ if [ ! -f .env ]; then
 fi
 
 echo "🔍 Checking required environment variables..."
+
+echo "🔍 Loading environment variables..."
 source .env
 
 required_vars=("JWT_PUBLIC_KEY" "JWT_PRIVATE_KEY" "COOKIE_SECRET" "OPENAI_API_KEY")
