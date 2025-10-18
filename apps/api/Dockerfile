@@ -11,7 +11,8 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN corepack enable pnpm && pnpm nx build api
+# Build shared libraries first, then the API service
+RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api
 
 # Production image
 FROM base AS runner
@@ -23,6 +24,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
 COPY --from=builder --chown=nodejs:nodejs /app/dist/apps/api ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/dist/libs ./dist/libs
 COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 USER nodejs
