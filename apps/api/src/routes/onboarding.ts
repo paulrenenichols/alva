@@ -17,7 +17,14 @@ export async function onboardingRoutes(fastify: FastifyInstance) {
     '/save-section',
     {
       schema: {
-        body: saveSectionSchema,
+        body: {
+          type: 'object',
+          required: ['section', 'data'],
+          properties: {
+            section: { type: 'string' },
+            data: { type: 'object' }
+          }
+        }
       },
       preHandler: (fastify as any).authenticate,
     },
@@ -46,7 +53,13 @@ export async function onboardingRoutes(fastify: FastifyInstance) {
     '/finalize',
     {
       schema: {
-        body: finalizeSchema,
+        body: {
+          type: 'object',
+          required: ['profileData'],
+          properties: {
+            profileData: { type: 'object' }
+          }
+        }
       },
       preHandler: (fastify as any).authenticate,
     },

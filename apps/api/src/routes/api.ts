@@ -14,7 +14,20 @@ export async function apiRoutes(fastify: FastifyInstance) {
   // Generate marketing plan
   fastify.post('/plans/generate', {
     schema: {
-      body: generatePlanSchema
+      body: {
+        type: 'object',
+        required: ['clientProfile'],
+        properties: {
+          clientProfile: {
+            type: 'object',
+            required: ['businessName', 'industry'],
+            properties: {
+              businessName: { type: 'string' },
+              industry: { type: 'string' }
+            }
+          }
+        }
+      }
     },
     preHandler: (fastify as any).authenticate
   }, async (request: FastifyRequest<{ Body: z.infer<typeof generatePlanSchema> }>, reply: FastifyReply) => {
@@ -65,10 +78,14 @@ export async function apiRoutes(fastify: FastifyInstance) {
   // Save onboarding section
   fastify.post('/onboarding/save-section', {
     schema: {
-      body: z.object({
-        section: z.string(),
-        data: z.any()
-      })
+      body: {
+        type: 'object',
+        required: ['section', 'data'],
+        properties: {
+          section: { type: 'string' },
+          data: { type: 'object' }
+        }
+      }
     },
     preHandler: (fastify as any).authenticate
   }, async (request: FastifyRequest<{ Body: { section: string; data: any } }>, reply: FastifyReply) => {

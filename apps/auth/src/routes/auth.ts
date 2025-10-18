@@ -16,7 +16,13 @@ export async function authRoutes(fastify: FastifyInstance) {
   // Register user
   fastify.post('/register', {
     schema: {
-      body: registerSchema
+      body: {
+        type: 'object',
+        required: ['email'],
+        properties: {
+          email: { type: 'string', format: 'email' }
+        }
+      }
     }
   }, async (request: FastifyRequest<{ Body: z.infer<typeof registerSchema> }>, reply: FastifyReply) => {
     const { email } = request.body;
@@ -44,7 +50,13 @@ export async function authRoutes(fastify: FastifyInstance) {
   // Verify magic link
   fastify.post('/verify-magic-link', {
     schema: {
-      body: verifySchema
+      body: {
+        type: 'object',
+        required: ['token'],
+        properties: {
+          token: { type: 'string' }
+        }
+      }
     }
   }, async (request: FastifyRequest<{ Body: z.infer<typeof verifySchema> }>, reply: FastifyReply) => {
     const { token } = request.body;
