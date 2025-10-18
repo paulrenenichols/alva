@@ -1,0 +1,21 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@alva/api-client": ["libs/api-client/src/index.ts"],
+      "@alva/auth-client": ["libs/auth-client/src/index.ts"],
+      "@alva/database": ["libs/database/src/index.ts"],
+      "@alva/shared-types": ["libs/shared-types/src/index.ts"],
+      "@alva/ui": ["libs/ui/src/index.ts"],
+      "@alva/utils": ["libs/utils/src/index.ts"],
+      "@alva/validation": ["libs/validation/src/index.ts"]
+    },
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
