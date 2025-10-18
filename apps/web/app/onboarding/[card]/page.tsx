@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { OnboardingCard } from '@/components/onboarding/OnboardingCard';
 import { Input } from '@/components/ui/Input';
@@ -8,21 +9,57 @@ import { PillSelector } from '@/components/onboarding/inputs/PillSelector';
 import { RadioSelector } from '@/components/onboarding/inputs/RadioSelector';
 import { MultiSelector } from '@/components/onboarding/inputs/MultiSelector';
 
-export default async function OnboardingCardPage({ params }: { params: Promise<{ card: string }> }) {
-  const resolvedParams = await params;
+export default function OnboardingCardPage({
+  params,
+}: {
+  params: Promise<{ card: string }>;
+}) {
+  const [resolvedParams, setResolvedParams] = useState<{ card: string } | null>(
+    null
+  );
+  const {
+    getCurrentCard,
+    getCurrentSection,
+    responses,
+    updateResponse,
+    getProgress,
+  } = useOnboardingStore();
+
+  useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+
+  if (!resolvedParams) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-primary-500 rounded-full flex items-center justify-center">
+            <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h1 className="text-2xl font-bold text-secondary-900 mb-2">
+            Loading...
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
   const cardNumber = parseInt(resolvedParams.card);
-  const { getCurrentCard, getCurrentSection, responses, updateResponse, getProgress } = useOnboardingStore();
-  
+
   const card = getCurrentCard();
   const section = getCurrentSection();
   const progress = getProgress();
-  
+
   if (!card || !section) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Card not found</h1>
-          <p className="text-gray-600">The requested onboarding card could not be found.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Card not found
+          </h1>
+          <p className="text-gray-600">
+            The requested onboarding card could not be found.
+          </p>
         </div>
       </div>
     );
@@ -92,7 +129,9 @@ export default async function OnboardingCardPage({ params }: { params: Promise<{
           <Input
             type="number"
             value={currentResponse || ''}
-            onChange={(e) => handleResponseChange(parseFloat(e.target.value) || 0)}
+            onChange={(e) =>
+              handleResponseChange(parseFloat(e.target.value) || 0)
+            }
             placeholder={card.placeholder || 'Enter a number...'}
             className="w-full"
           />
