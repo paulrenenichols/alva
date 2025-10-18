@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
 export default function OnboardingWelcome() {
-  const { startOnboarding } = useOnboardingStore();
+  const { startOnboarding, getProgress } = useOnboardingStore();
+  const progress = getProgress();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
@@ -17,11 +18,14 @@ export default function OnboardingWelcome() {
           Let's create your personalized marketing plan in just 5 minutes
         </p>
         <div className="bg-primary-100 rounded-lg p-4 mb-6">
-          <p className="text-primary-800 font-medium">26 cards • 5 minutes</p>
+          <p className="text-primary-800 font-medium">{progress.total} cards • 5 minutes</p>
         </div>
         <div className="space-y-3">
           <Button
-            onClick={startOnboarding}
+            onClick={() => {
+              startOnboarding();
+              window.location.href = '/onboarding/1';
+            }}
             className="w-full bg-primary-500 text-white"
           >
             Let's Go

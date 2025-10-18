@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-// import { apiClient } from '@alva/api-client';
+import { apiClient } from '@alva/api-client';
 
 interface QuickWin {
   id: string;
@@ -19,26 +19,61 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch quick wins from API
-    setQuickWins([
-      {
-        id: '1',
-        title: 'Set up Google Analytics',
-        description: 'Install Google Analytics tracking code on your website',
-        estimatedTime: 15,
-        priority: 'high',
-        status: 'planned',
-      },
-      {
-        id: '2',
-        title: 'Create Facebook Business Page',
-        description: 'Set up your business presence on Facebook',
-        estimatedTime: 20,
-        priority: 'medium',
-        status: 'planned',
-      },
-    ]);
-    setLoading(false);
+    const fetchQuickWins = async () => {
+      try {
+        const plans = await apiClient.getUserPlans();
+        if (plans.length > 0) {
+          const plan = plans[0];
+          const quickWinsData = plan.quickWins || plan.tasks?.slice(0, 3) || [];
+          setQuickWins(quickWinsData);
+        } else {
+          // Fallback to mock data
+          setQuickWins([
+            {
+              id: '1',
+              title: 'Set up Google Analytics',
+              description: 'Install Google Analytics tracking code on your website',
+              estimatedTime: 15,
+              priority: 'high',
+              status: 'planned',
+            },
+            {
+              id: '2',
+              title: 'Create Facebook Business Page',
+              description: 'Set up your business presence on Facebook',
+              estimatedTime: 20,
+              priority: 'medium',
+              status: 'planned',
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch quick wins:', error);
+        // Fallback to mock data
+        setQuickWins([
+          {
+            id: '1',
+            title: 'Set up Google Analytics',
+            description: 'Install Google Analytics tracking code on your website',
+            estimatedTime: 15,
+            priority: 'high',
+            status: 'planned',
+          },
+          {
+            id: '2',
+            title: 'Create Facebook Business Page',
+            description: 'Set up your business presence on Facebook',
+            estimatedTime: 20,
+            priority: 'medium',
+            status: 'planned',
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuickWins();
   }, []);
 
   const handleStartTask = (taskId: string) => {
