@@ -38,6 +38,12 @@ Iterative development plan with detailed task breakdowns.
 - **[03-core-modules-phase.md](phases/03-core-modules-phase.md)** - Multi-channel: Blog, Email, Social modules + governance
 - **[04-polish-phase.md](phases/04-polish-phase.md)** - Production: performance, testing, monitoring, launch
 
+### 🛠️ Detailed Implementation Plans
+
+Step-by-step implementation guides for each phase.
+
+- **[01-phase-1-implementation-plan.md](phase-plans/01-phase-1-implementation-plan.md)** - Detailed setup instructions with commands, file structures, and validation steps
+
 ### 🛠️ Setup Guides
 
 Resources for getting started.
@@ -112,6 +118,10 @@ Design assets and mockups for reference.
 - [MVP Phase](phases/02-mvp-phase.md)
 - [Core Modules](phases/03-core-modules-phase.md)
 - [Polish Phase](phases/04-polish-phase.md)
+
+### Implementation Guides
+
+- [Phase 1 Implementation Plan](phase-plans/01-phase-1-implementation-plan.md) - Step-by-step setup instructions
 
 ### AI & Marketing Logic
 
