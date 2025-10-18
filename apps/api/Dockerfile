@@ -27,6 +27,10 @@ COPY --from=builder --chown=nodejs:nodejs /app/dist/apps/api ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/dist/libs ./dist/libs
 COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
+# Generate runtime package.json with module aliases
+COPY tools/scripts/generate-runtime-package.json.js ./tools/scripts/
+RUN node tools/scripts/generate-runtime-package.json.js
+
 USER nodejs
 
 EXPOSE 3001
