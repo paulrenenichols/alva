@@ -1,7 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as authSchema from './schemas/auth';
-import * as appSchema from './schemas/app';
 
 export const createDbPool = (connectionString: string) => {
   const pool = new Pool({
@@ -11,11 +9,7 @@ export const createDbPool = (connectionString: string) => {
     connectionTimeoutMillis: 2000,
   });
 
-  return drizzle(pool, {
-    schema: { ...authSchema, ...appSchema }
-  });
+  return drizzle(pool);
 };
 
 export type Database = ReturnType<typeof createDbPool>;
-export * from './schemas/auth';
-export * from './schemas/app';

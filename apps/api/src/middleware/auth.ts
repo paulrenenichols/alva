@@ -17,7 +17,7 @@ export async function authMiddleware(fastify: FastifyInstance) {
       }
 
       const token = authHeader.substring(7);
-      const publicKey = process.env.JWT_PUBLIC_KEY!;
+      const publicKey = process.env['JWT_PUBLIC_KEY']!;
 
       const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as {
         userId: string;
