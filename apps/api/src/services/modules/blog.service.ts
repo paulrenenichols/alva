@@ -2,8 +2,7 @@ import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 
 const openai = new OpenAI({
-  apiKey:
-    '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',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export class BlogService {
