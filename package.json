@@ -26,7 +26,9 @@
     "setup": "./scripts/setup-env.sh",
     "validate": "./scripts/validate-setup.sh",
     "dev:full": "./scripts/dev.sh",
-    "test:phase2": "./scripts/test-phase2.sh"
+    "test:phase2": "./scripts/test-phase2.sh",
+    "deploy": "./scripts/deploy.sh",
+    "typecheck": "nx run-many --target=typecheck --all"
   },
   "private": true,
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@types/pg": "^8.15.5",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "@types/winston": "^2.4.4",
     "autoprefixer": "^10.4.21",
     "drizzle-kit": "^0.31.5",
     "esbuild": "^0.19.2",
@@ -82,8 +85,10 @@
     "pg": "^8.16.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "resend": "^4.0.0",
     "tailwind-merge": "^3.3.1",
     "tslib": "^2.3.0",
+    "winston": "^3.18.0",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"
   }

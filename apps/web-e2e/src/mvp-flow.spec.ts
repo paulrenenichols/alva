@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('MVP Flow', () => {
+test.describe('Complete MVP Flow', () => {
   test('complete onboarding to dashboard flow', async ({ page }) => {
     // 1. Landing page
     await page.goto('/');
@@ -26,6 +26,12 @@ test.describe('MVP Flow', () => {
     );
     await page.click('text=Next');
 
+    await expect(page.locator('h1')).toContainText(
+      'How would you describe your business?'
+    );
+    await page.fill('textarea', 'A test business description');
+    await page.click('text=Next');
+
     // 5. Processing screen
     await expect(page.locator('h1')).toContainText('Crunching your answers...');
 
@@ -43,5 +49,35 @@ test.describe('MVP Flow', () => {
     await expect(page.locator('h1')).toContainText('Dashboard');
     await expect(page.locator('text=Daily Quick Wins')).toBeVisible();
     await expect(page.locator('text=Plan Overview')).toBeVisible();
+  });
+
+  test('marketing plan page displays correctly', async ({ page }) => {
+    await page.goto('/dashboard/plan');
+
+    // Check plan page elements
+    await expect(page.locator('h1')).toContainText('Your Marketing Plan');
+    await expect(page.locator('text=Overview')).toBeVisible();
+    await expect(page.locator('text=Tasks')).toBeVisible();
+    await expect(page.locator('text=Timeline')).toBeVisible();
+    await expect(page.locator('text=Modules')).toBeVisible();
+  });
+});
+
+test.describe('Authentication Flow', () => {
+  test('email verification works', async ({ page }) => {
+    // Mock verification token
+    await page.goto('/verify?token=mock-token');
+
+    // Should show verification success
+    await expect(page.locator('h1')).toContainText(
+      'Email verified successfully!'
+    );
+  });
+
+  test('invalid verification token shows error', async ({ page }) => {
+    await page.goto('/verify?token=invalid-token');
+
+    // Should show error
+    await expect(page.locator('h1')).toContainText('Verification failed');
   });
 });
