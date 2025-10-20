@@ -20,7 +20,7 @@ export function RadioSelector({
       {options.map((option) => (
         <label
           key={option}
-          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50"
+          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-bg-secondary"
         >
           <input
             type="radio"
@@ -28,9 +28,9 @@ export function RadioSelector({
             value={option}
             checked={value === option}
             onChange={(e) => onChange(e.target.value)}
-            className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
+            className="w-4 h-4 text-gold border-border-default focus:ring-gold"
           />
-          <span className="text-gray-700">{option}</span>
+          <span className="text-text-primary">{option}</span>
         </label>
       ))}
     </div>

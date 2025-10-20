@@ -30,7 +30,7 @@ export function MultiSelector({
       {options.map((option) => (
         <label
           key={option}
-          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50"
+          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-bg-secondary"
         >
           <input
             type="checkbox"
@@ -41,9 +41,9 @@ export function MultiSelector({
               maxSelections !== undefined &&
               value.length >= maxSelections
             }
-            className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500 disabled:opacity-50"
+            className="w-4 h-4 text-gold border-border-default rounded focus:ring-gold disabled:opacity-50"
           />
-          <span className="text-gray-700">{option}</span>
+          <span className="text-text-primary">{option}</span>
         </label>
       ))}
     </div>
