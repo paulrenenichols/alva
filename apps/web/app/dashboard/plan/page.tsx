@@ -32,12 +32,20 @@ export default function MarketingPlanPage() {
   useEffect(() => {
     const fetchPlan = async () => {
       try {
+        // Add a timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
         const plans = await apiClient.getUserPlans();
+        clearTimeout(timeoutId);
+        
         if (plans.length > 0) {
           setPlan(plans[0]);
         }
       } catch (error) {
         console.error('Failed to fetch plan:', error);
+        // Set plan to null to show "no plan" message
+        setPlan(null);
       } finally {
         setLoading(false);
       }

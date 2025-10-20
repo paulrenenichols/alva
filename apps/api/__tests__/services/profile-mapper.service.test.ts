@@ -1,4 +1,4 @@
-import { ProfileMapperService } from '../services/profile/profile-mapper.service';
+import { ProfileMapperService } from '../../src/services/profile/profile-mapper.service';
 import { ClientProfile } from '@alva/shared-types';
 
 describe('ProfileMapperService', () => {

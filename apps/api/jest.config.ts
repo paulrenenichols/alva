@@ -1,10 +1,11 @@
 export default {
-  displayName: 'auth-client',
+  displayName: 'api',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['../../jest.setup.ts'],
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/auth-client',
+  coverageDirectory: '../../coverage/apps/api',
+  testEnvironment: 'node',
 };
