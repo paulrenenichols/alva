@@ -1,4 +1,4 @@
-import winston from 'winston';
+import * as winston from 'winston';
 
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
@@ -7,7 +7,7 @@ const logFormat = winston.format.combine(
 );
 
 export const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env['LOG_LEVEL'] || 'info',
   format: logFormat,
   defaultMeta: { service: 'alva' },
   transports: [

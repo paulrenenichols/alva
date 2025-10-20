@@ -26,7 +26,12 @@ export default function OnboardingCardPage({
   } = useOnboardingStore();
 
   useEffect(() => {
-    params.then(setResolvedParams);
+    params.then((resolved) => {
+      setResolvedParams(resolved);
+      const cardNumber = parseInt(resolved.card);
+      const { goToCard } = useOnboardingStore.getState();
+      goToCard(cardNumber);
+    });
   }, [params]);
 
   if (!resolvedParams) {

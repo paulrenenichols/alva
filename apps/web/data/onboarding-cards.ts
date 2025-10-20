@@ -6,8 +6,8 @@ export interface OnboardingCard {
     | 'text-input'
     | 'textarea'
     | 'pill-selector'
-    | 'radio-selector'
-    | 'multi-selector'
+    | 'radio-select'
+    | 'multi-select'
     | 'number-input';
   options?: string[];
   maxSelections?: number;

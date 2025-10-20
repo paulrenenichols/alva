@@ -29,6 +29,22 @@ export function OnboardingCard({
 }: OnboardingCardProps) {
   const { nextCard, prevCard, getProgress } = useOnboardingStore();
   const currentProgress = progress || getProgress();
+
+  const handleNext = () => {
+    nextCard();
+    const newProgress = getProgress();
+    if (newProgress.current <= newProgress.total) {
+      window.location.href = `/onboarding/${newProgress.current}`;
+    }
+  };
+
+  const handlePrev = () => {
+    prevCard();
+    const newProgress = getProgress();
+    if (newProgress.current >= 1) {
+      window.location.href = `/onboarding/${newProgress.current}`;
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
       <div className="container mx-auto px-4 py-8">
@@ -36,7 +52,9 @@ export function OnboardingCard({
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Card {currentProgress.current} of {currentProgress.total}</span>
+              <span>
+                Card {currentProgress.current} of {currentProgress.total}
+              </span>
               <span>{currentProgress.percentage}% Complete</span>
             </div>
             <ProgressBar value={currentProgress.percentage} />
@@ -50,9 +68,7 @@ export function OnboardingCard({
             <h1 className="text-3xl font-bold text-secondary-900 mb-4">
               {question}
             </h1>
-            {description && (
-              <p className="text-secondary-600">{description}</p>
-            )}
+            {description && <p className="text-secondary-600">{description}</p>}
           </div>
 
           {/* Card Content */}
@@ -64,17 +80,19 @@ export function OnboardingCard({
           <div className="flex justify-between">
             <Button
               variant="outline"
-              onClick={prevCard}
+              onClick={handlePrev}
               disabled={currentProgress.current === 1}
             >
               Back
             </Button>
             <Button
-              onClick={nextCard}
+              onClick={handleNext}
               disabled={!isValid}
               className="bg-primary-500 hover:bg-primary-600"
             >
-              {currentProgress.current === currentProgress.total ? 'Complete' : 'Next'}
+              {currentProgress.current === currentProgress.total
+                ? 'Complete'
+                : 'Next'}
             </Button>
           </div>
         </div>

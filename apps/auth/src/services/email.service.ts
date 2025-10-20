@@ -1,10 +1,10 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env['RESEND_API_KEY']);
 
 export class EmailService {
   async sendVerificationEmail(email: string, token: string) {
-    const verificationUrl = `${process.env.WEB_URL}/verify?token=${token}`;
+    const verificationUrl = `${process.env['WEB_URL']}/verify?token=${token}`;
 
     return await resend.emails.send({
       from: 'Alva <noreply@alva.app>',
