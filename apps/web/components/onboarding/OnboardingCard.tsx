@@ -34,7 +34,10 @@ export function OnboardingCard({
     nextCard();
     const newProgress = getProgress();
     if (newProgress.current <= newProgress.total) {
-      window.location.href = `/onboarding/${newProgress.current}`;
+      // Only navigate in browser environment, not in tests
+      if (typeof window !== 'undefined' && window.location) {
+        window.location.href = `/onboarding/${newProgress.current}`;
+      }
     }
   };
 
@@ -42,7 +45,10 @@ export function OnboardingCard({
     prevCard();
     const newProgress = getProgress();
     if (newProgress.current >= 1) {
-      window.location.href = `/onboarding/${newProgress.current}`;
+      // Only navigate in browser environment, not in tests
+      if (typeof window !== 'undefined' && window.location) {
+        window.location.href = `/onboarding/${newProgress.current}`;
+      }
     }
   };
   return (
