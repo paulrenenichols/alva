@@ -1,5 +1,12 @@
 import { FastifyInstance } from 'fastify';
 
+// Extend FastifyInstance to include db property
+declare module 'fastify' {
+  interface FastifyInstance {
+    db: any;
+  }
+}
+
 export async function healthRoutes(fastify: FastifyInstance) {
   // Basic health check
   fastify.get('/health', async (request, reply) => {
@@ -35,7 +42,7 @@ async function checkDatabase(db: any) {
   try {
     await db.execute('SELECT 1');
     return { status: 'healthy', responseTime: '< 100ms' };
-  } catch (error) {
+  } catch (error: any) {
     return { status: 'unhealthy', error: error.message };
   }
 }
@@ -44,7 +51,7 @@ async function checkOpenAI() {
   try {
     // Simple API key check
     return { status: process.env['OPENAI_API_KEY'] ? 'healthy' : 'unhealthy' };
-  } catch (error) {
+  } catch (error: any) {
     return { status: 'unhealthy', error: error.message };
   }
 }

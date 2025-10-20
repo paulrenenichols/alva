@@ -7,6 +7,13 @@ import { EmailService } from '../services/email.service';
 import { TokenService } from '../services/token.service';
 import { authenticateToken } from '../middleware/auth.middleware';
 
+// Extend FastifyInstance to include db property
+declare module 'fastify' {
+  interface FastifyInstance {
+    db: any;
+  }
+}
+
 const registerSchema = z.object({
   email: z.string().email(),
 });

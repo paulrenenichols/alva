@@ -19,6 +19,21 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  webpack: (config, { isServer }) => {
+    // Exclude Storybook files from Next.js build
+    config.module.rules.push({
+      test: /\.stories\.(js|jsx|ts|tsx)$/,
+      use: 'ignore-loader',
+    });
+    
+    // Also exclude Storybook configuration files
+    config.module.rules.push({
+      test: /\.storybook\//,
+      use: 'ignore-loader',
+    });
+    
+    return config;
+  },
 };
 
 const plugins = [

@@ -1,6 +1,13 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { performance } from 'perf_hooks';
 
+// Extend FastifyRequest to include startTime
+declare module 'fastify' {
+  interface FastifyRequest {
+    startTime?: number;
+  }
+}
+
 export async function monitoringPlugin(fastify: FastifyInstance) {
   // Request timing middleware
   fastify.addHook('onRequest', async (request: FastifyRequest) => {
@@ -10,7 +17,7 @@ export async function monitoringPlugin(fastify: FastifyInstance) {
   fastify.addHook(
     'onResponse',
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const duration = performance.now() - request.startTime;
+      const duration = performance.now() - (request.startTime || 0);
 
       // Log request metrics
       fastify.log.info(

@@ -27,7 +27,7 @@ export async function securityPlugin(fastify: FastifyInstance) {
   fastify.register(require('@fastify/rate-limit'), {
     max: 100,
     timeWindow: '1 minute',
-    errorResponseBuilder: (request, context) => ({
+    errorResponseBuilder: (request: any, context: any) => ({
       error: 'Rate limit exceeded',
       statusCode: 429,
       retryAfter: Math.round(context.ttl / 1000),

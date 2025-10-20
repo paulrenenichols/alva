@@ -50,7 +50,10 @@
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.stories.ts",
-    "**/*.stories.js"
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    ".storybook/**/*"
   ],
   "references": [
     {
