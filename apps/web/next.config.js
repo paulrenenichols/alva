@@ -19,6 +19,10 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  // Enable PostCSS processing for Tailwind CSS
+  experimental: {
+    esmExternals: false,
+  },
   webpack: (config, { isServer }) => {
     // Exclude Storybook files from Next.js build
     config.module.rules.push({

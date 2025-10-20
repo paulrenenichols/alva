@@ -4,55 +4,10 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  safelist: [
-    // Design system colors
-    'bg-gold', 'bg-gold-light', 'bg-gold-dark', 'bg-gold-muted',
-    'text-gold', 'text-gold-light', 'text-gold-dark', 'text-gold-muted',
-    'border-gold', 'border-gold-light', 'border-gold-dark', 'border-gold-muted',
-    'hover:bg-gold-light', 'hover:bg-gold-dark', 'active:bg-gold-dark',
-    'focus:ring-gold', 'focus:ring-gold-light',
-    
-    'bg-blue', 'bg-blue-light', 'bg-blue-dark', 'bg-blue-muted',
-    'text-blue', 'text-blue-light', 'text-blue-dark', 'text-blue-muted',
-    'border-blue', 'border-blue-light', 'border-blue-dark', 'border-blue-muted',
-    'hover:bg-blue-light', 'hover:bg-blue-dark', 'hover:bg-blue-muted',
-    'focus:ring-blue', 'focus:ring-blue-light',
-    
-    'bg-green', 'bg-green-light', 'bg-green-dark', 'bg-green-muted',
-    'text-green', 'text-green-light', 'text-green-dark', 'text-green-muted',
-    'border-green', 'border-green-light', 'border-green-dark', 'border-green-muted',
-    'hover:bg-green-light', 'hover:bg-green-dark', 'hover:bg-green-muted',
-    'focus:ring-green', 'focus:ring-green-light',
-    
-    'bg-red', 'bg-red-light', 'bg-red-dark', 'bg-red-muted',
-    'text-red', 'text-red-light', 'text-red-dark', 'text-red-muted',
-    'border-red', 'border-red-light', 'border-red-dark', 'border-red-muted',
-    'hover:bg-red-light', 'hover:bg-red-dark', 'hover:bg-red-muted',
-    'focus:ring-red', 'focus:ring-red-light',
-    
-    // Text colors
-    'text-text-primary', 'text-text-secondary', 'text-text-tertiary', 'text-text-inverse',
-    
-    // Background colors
-    'bg-bg-primary', 'bg-bg-secondary', 'bg-bg-tertiary',
-    'hover:bg-bg-secondary', 'hover:bg-bg-tertiary', 'active:bg-bg-tertiary',
-    
-    // Border colors
-    'border-border-subtle', 'border-border-default', 'border-border-strong',
-    
-    // Info and warning colors
-    'bg-info', 'bg-info-light', 'bg-info-muted',
-    'text-info', 'text-info-light', 'text-info-muted',
-    'border-info', 'border-info-light', 'border-info-muted',
-    'hover:bg-info-light', 'hover:bg-info-muted',
-    'focus:ring-info', 'focus:ring-info-light',
-    
-    'bg-warning', 'bg-warning-light', 'bg-warning-muted',
-    'text-warning', 'text-warning-light', 'text-warning-muted',
-    'border-warning', 'border-warning-light', 'border-warning-muted',
-    'hover:bg-warning-light', 'hover:bg-warning-muted',
-    'focus:ring-warning', 'focus:ring-warning-light',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './stories/**/*.{js,ts,jsx,tsx,mdx}',
+    './.storybook/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {

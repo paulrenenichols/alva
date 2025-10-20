@@ -7,7 +7,9 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, className }: PageLayoutProps) {
   return (
-    <div className={cn('min-h-screen bg-gray-50', className)}>{children}</div>
+    <div className={cn('min-h-screen bg-bg-secondary', className)}>
+      {children}
+    </div>
   );
 }
 
