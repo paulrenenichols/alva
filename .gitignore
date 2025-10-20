@@ -55,3 +55,6 @@ Thumbs.db
 .next
 out
 node_modules
+
+
+storybook-static
