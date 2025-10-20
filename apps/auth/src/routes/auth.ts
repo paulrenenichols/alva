@@ -1,6 +1,18 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
+import { eq } from 'drizzle-orm';
+import { users, verificationTokens } from '@alva/database';
+import { UserService } from '../services/user.service';
+import { EmailService } from '../services/email.service';
 import { TokenService } from '../services/token.service';
+import { authenticateToken } from '../middleware/auth.middleware';
+
+// Extend FastifyInstance to include db property
+declare module 'fastify' {
+  interface FastifyInstance {
+    db: any;
+  }
+}
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -11,6 +23,8 @@ const verifySchema = z.object({
 });
 
 export async function authRoutes(fastify: FastifyInstance) {
+  const userService = new UserService(fastify.db);
+  const emailService = new EmailService();
   const tokenService = new TokenService();
 
   // Register user
@@ -34,19 +48,28 @@ export async function authRoutes(fastify: FastifyInstance) {
       const { email } = request.body;
 
       try {
-        // TODO: Implement database operations
-        // For now, just return success
+        // Check if user already exists
+        const existingUser = await fastify.db.query.users.findFirst({
+          where: eq(users.email, email),
+        });
 
-        // Generate magic link token (simplified for now)
-        const magicToken = tokenService.generateRefreshToken();
+        if (existingUser) {
+          return reply.code(400).send({ error: 'User already exists' });
+        }
 
-        // TODO: Send email with magic link
-        console.log(`Magic link for ${email}: ${magicToken}`);
+        // Create user
+        const user = await userService.createUser(email);
+
+        // Generate verification token
+        const token = await userService.createVerificationToken(user.id);
+
+        // Send verification email
+        await emailService.sendVerificationEmail(email, token);
 
         return {
           message:
             'User registered successfully. Check your email for verification link.',
-          userId: 'temp-user-id',
+          userId: user.id,
         };
       } catch (error) {
         fastify.log.error(error);
@@ -55,9 +78,9 @@ export async function authRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // Verify magic link
+  // Verify email with real token validation
   fastify.post(
-    '/verify-magic-link',
+    '/verify',
     {
       schema: {
         body: {
@@ -76,18 +99,23 @@ export async function authRoutes(fastify: FastifyInstance) {
       const { token } = request.body;
 
       try {
-        // TODO: Verify magic link token against database
-        // For now, we'll create a mock verification
+        const userId = await userService.verifyToken(token);
 
-        // Generate tokens
+        if (!userId) {
+          return reply.code(400).send({ error: 'Invalid or expired token' });
+        }
+
+        // Generate JWT tokens
         const accessToken = tokenService.generateAccessToken({
-          userId: 'mock-user-id',
-          email: 'mock@example.com',
+          userId,
+          email: '',
         });
-
         const refreshToken = tokenService.generateRefreshToken();
 
-        // Set refresh token as httpOnly cookie
+        // Store refresh token
+        await userService.createRefreshToken(userId, refreshToken);
+
+        // Set refresh token cookie
         reply.setCookie('refreshToken', refreshToken, {
           httpOnly: true,
           secure: process.env['NODE_ENV'] === 'production',
@@ -97,10 +125,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
         return {
           accessToken,
-          user: {
-            id: 'mock-user-id',
-            email: 'mock@example.com',
-          },
+          user: { id: userId },
         };
       } catch (error) {
         fastify.log.error(error);
@@ -113,16 +138,11 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/me',
     {
-      preHandler: async (request, reply) => {
-        // TODO: Implement JWT validation middleware
-      },
+      preHandler: authenticateToken,
     },
     async (request, reply) => {
       return {
-        user: {
-          id: 'mock-user-id',
-          email: 'mock@example.com',
-        },
+        user: request.user,
       };
     }
   );

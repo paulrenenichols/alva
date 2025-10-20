@@ -103,7 +103,7 @@ export default function OnboardingCardPage({
         return (
           <PillSelector
             options={card.options || []}
-            selected={currentResponse || []}
+            value={currentResponse || []}
             onChange={handleResponseChange}
             maxSelections={card.maxSelections}
           />
@@ -113,9 +113,8 @@ export default function OnboardingCardPage({
         return (
           <RadioSelector
             options={card.options || []}
-            selected={currentResponse || ''}
+            value={currentResponse || ''}
             onChange={handleResponseChange}
-            name={card.id}
           />
         );
 
@@ -123,7 +122,7 @@ export default function OnboardingCardPage({
         return (
           <MultiSelector
             options={card.options || []}
-            selected={currentResponse || []}
+            value={currentResponse || []}
             onChange={handleResponseChange}
             maxSelections={card.maxSelections}
           />
