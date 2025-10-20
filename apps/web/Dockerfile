@@ -29,8 +29,8 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Copy the built application
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next/static ./.next/static
 
 USER nextjs
 

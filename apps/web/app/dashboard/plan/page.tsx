@@ -213,7 +213,7 @@ export default function MarketingPlanPage() {
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </h3>
                 <div className="space-y-3">
-                  {tasks.map((task) => (
+                  {(tasks as Task[]).map((task) => (
                     <div key={task.id} className="p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium text-gray-900 text-sm">
