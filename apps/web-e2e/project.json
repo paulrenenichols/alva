@@ -6,5 +6,19 @@
   "tags": [],
   "implicitDependencies": ["web"],
   "// targets": "to see all targets run: nx show project web-e2e --web",
-  "targets": {}
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright"],
+      "options": {
+        "config": "apps/web-e2e/playwright.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "config": "apps/web-e2e/playwright.config.ts",
+          "headed": false
+        }
+      }
+    }
+  }
 }

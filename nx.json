@@ -28,7 +28,7 @@
     "@nx/next": {
       "application": {
         "style": "css",
-        "linter": "none"
+        "linter": "eslint"
       }
     }
   },

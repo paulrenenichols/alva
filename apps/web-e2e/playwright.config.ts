@@ -23,27 +23,45 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'pnpm exec nx run web:start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    cwd: workspaceRoot,
-  },
+  webServer: process.env['CI']
+    ? {
+        command:
+          'pnpm exec nx run web:build:production && pnpm exec nx run web:start',
+        url: 'http://localhost:3000',
+        reuseExistingServer: false,
+        cwd: workspaceRoot,
+        timeout: 120000, // 2 minutes timeout for CI
+        env: {
+          NODE_ENV: 'production',
+          CI: 'true',
+        },
+      }
+    : {
+        command: 'pnpm exec nx run web:start',
+        url: 'http://localhost:3000',
+        reuseExistingServer: true,
+        cwd: workspaceRoot,
+      },
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // Only run chromium in CI to speed up tests
+    ...(process.env['CI']
+      ? []
+      : [
+          {
+            name: 'firefox',
+            use: { ...devices['Desktop Firefox'] },
+          },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+          {
+            name: 'webkit',
+            use: { ...devices['Desktop Safari'] },
+          },
+        ]),
 
     // Uncomment for mobile browsers support
     /* {

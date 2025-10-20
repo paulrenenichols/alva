@@ -40,9 +40,9 @@ export const useOnboardingStore = create<OnboardingState>()(
         const state = get();
         if (state.currentCard < totalCards) {
           const newCard = state.currentCard + 1;
-          set({ 
+          set({
             currentCard: newCard,
-            currentSection: getCurrentSectionForCard(newCard)
+            currentSection: getCurrentSectionForCard(newCard),
           });
         } else {
           get().completeOnboarding();
@@ -53,18 +53,19 @@ export const useOnboardingStore = create<OnboardingState>()(
         const state = get();
         if (state.currentCard > 1) {
           const newCard = state.currentCard - 1;
-          set({ 
+          set({
             currentCard: newCard,
-            currentSection: getCurrentSectionForCard(newCard)
+            currentSection: getCurrentSectionForCard(newCard),
           });
         }
       },
 
       goToCard: (cardNumber: number) => {
         const validCard = Math.max(1, Math.min(cardNumber, totalCards));
+        const newSection = getCurrentSectionForCard(validCard);
         set({
           currentCard: validCard,
-          currentSection: getCurrentSectionForCard(validCard)
+          currentSection: newSection,
         });
       },
 
@@ -92,7 +93,9 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       getCurrentSection: () => {
         const state = get();
-        return onboardingSections[state.currentSection] || null;
+        // currentSection is 1-based, but array is 0-based
+        const section = onboardingSections[state.currentSection - 1] || null;
+        return section;
       },
 
       getProgress: () => {
@@ -115,9 +118,9 @@ function getCurrentSectionForCard(cardNumber: number): number {
   for (let i = 0; i < onboardingSections.length; i++) {
     const section = onboardingSections[i];
     if (cardNumber <= cardIndex + section.cards.length) {
-      return i;
+      return i + 1; // Return 1-based index
     }
     cardIndex += section.cards.length;
   }
-  return onboardingSections.length - 1;
+  return onboardingSections.length; // Return 1-based index
 }
