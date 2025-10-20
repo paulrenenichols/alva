@@ -1,29 +1,36 @@
 'use client';
 
+import { cn } from '@/lib/utils';
+
 interface RadioSelectorProps {
   options: string[];
-  selected: string;
+  value: string;
   onChange: (value: string) => void;
-  name: string;
+  className?: string;
 }
 
-export function RadioSelector({ options, selected, onChange, name }: RadioSelectorProps) {
+export function RadioSelector({
+  options,
+  value,
+  onChange,
+  className,
+}: RadioSelectorProps) {
   return (
-    <div className="space-y-3">
+    <div className={cn('space-y-3', className)}>
       {options.map((option) => (
         <label
           key={option}
-          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+          className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50"
         >
           <input
             type="radio"
-            name={name}
+            name="radio-group"
             value={option}
-            checked={selected === option}
+            checked={value === option}
             onChange={(e) => onChange(e.target.value)}
-            className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-500"
+            className="w-4 h-4 text-primary-500 border-gray-300 focus:ring-primary-500"
           />
-          <span className="text-gray-700 font-medium">{option}</span>
+          <span className="text-gray-700">{option}</span>
         </label>
       ))}
     </div>

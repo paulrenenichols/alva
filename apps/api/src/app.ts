@@ -4,9 +4,12 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
 import { authMiddleware } from './middleware/auth';
+import { monitoringPlugin } from './middleware/monitoring';
+import { securityPlugin } from './middleware/security';
 import { apiRoutes } from './routes/api';
 import { onboardingRoutes } from './routes/onboarding';
 import { planRoutes } from './routes/plans';
+import { healthRoutes } from './routes/health';
 import { createDbPool } from '@alva/database';
 
 const fastify = Fastify({
@@ -50,17 +53,15 @@ export async function buildApp() {
   fastify.decorate('db', db);
 
   // Register middleware
+  await fastify.register(monitoringPlugin);
+  await fastify.register(securityPlugin);
   fastify.register(authMiddleware);
 
   // Register routes
   await fastify.register(apiRoutes, { prefix: '/api' });
   await fastify.register(onboardingRoutes, { prefix: '/onboarding' });
   await fastify.register(planRoutes, { prefix: '/plans' });
-
-  // Health check
-  fastify.get('/health', async (request, reply) => {
-    return { status: 'ok', service: 'api' };
-  });
+  await fastify.register(healthRoutes);
 
   return fastify;
 }

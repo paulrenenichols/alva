@@ -1,45 +1,44 @@
 'use client';
 
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
+
 interface PillSelectorProps {
   options: string[];
-  selected: string[];
-  onChange: (selected: string[]) => void;
-  multiSelect?: boolean;
+  value: string[];
+  onChange: (value: string[]) => void;
   maxSelections?: number;
+  className?: string;
 }
 
 export function PillSelector({
   options,
-  selected,
+  value,
   onChange,
-  multiSelect = true,
   maxSelections,
+  className,
 }: PillSelectorProps) {
   const handleToggle = (option: string) => {
-    if (multiSelect) {
-      const newSelected = selected.includes(option)
-        ? selected.filter((s) => s !== option)
-        : [...selected, option];
-
-      if (!maxSelections || newSelected.length <= maxSelections) {
-        onChange(newSelected);
-      }
-    } else {
-      onChange([option]);
+    if (value.includes(option)) {
+      onChange(value.filter((v) => v !== option));
+    } else if (!maxSelections || value.length < maxSelections) {
+      onChange([...value, option]);
     }
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={cn('flex flex-wrap gap-2', className)}>
       {options.map((option) => (
         <button
           key={option}
+          type="button"
           onClick={() => handleToggle(option)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selected.includes(option)
+          className={cn(
+            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
+            value.includes(option)
               ? 'bg-primary-500 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
+          )}
         >
           {option}
         </button>
