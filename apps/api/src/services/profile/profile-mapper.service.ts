@@ -44,9 +44,6 @@ export class ProfileMapperService {
       },
     };
 
-    // Validate the profile
     return ClientProfileSchema.parse(profile);
   }
 }
-
-export const profileMapperService = new ProfileMapperService();

@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { profileMapperService } from '../services/profile/profile-mapper.service';
+import { ProfileMapperService } from '../services/profile/profile-mapper.service';
 
 const saveSectionSchema = z.object({
   section: z.string(),
@@ -10,6 +10,8 @@ const saveSectionSchema = z.object({
 const finalizeSchema = z.object({
   profileData: z.record(z.string(), z.any()),
 });
+
+const profileMapperService = new ProfileMapperService();
 
 export async function onboardingRoutes(fastify: FastifyInstance) {
   // Save onboarding section
