@@ -16,7 +16,6 @@
         "main": "libs/database/src/index.ts",
         "tsConfig": "libs/database/tsconfig.lib.json",
         "assets": ["libs/database/src/assets"],
-        "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {

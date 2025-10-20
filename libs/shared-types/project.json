@@ -16,7 +16,6 @@
         "main": "libs/shared-types/src/index.ts",
         "tsConfig": "libs/shared-types/tsconfig.lib.json",
         "assets": ["libs/shared-types/src/assets"],
-        "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
