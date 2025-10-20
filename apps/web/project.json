@@ -81,6 +81,27 @@
           "dev": false
         }
       }
+    },
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "configDir": "apps/web/.storybook",
+        "browserTarget": "web:build",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "configDir": "apps/web/.storybook",
+        "outputDir": "dist/storybook/web"
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:3001';
+const API_BASE_URL =
+  process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:3001';
 
 export class ApiClient {
   private accessToken: string | null = null;
@@ -58,6 +59,17 @@ export class ApiClient {
 
   async getUserPlans() {
     return this.request('/plans/user');
+  }
+
+  async getModules() {
+    return this.request('/modules');
+  }
+
+  async toggleModule(moduleId: string, active: boolean) {
+    return this.request(`/modules/${moduleId}/toggle`, {
+      method: 'POST',
+      body: JSON.stringify({ active }),
+    });
   }
 }
 
