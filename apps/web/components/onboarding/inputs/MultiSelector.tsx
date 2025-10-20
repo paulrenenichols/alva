@@ -20,7 +20,7 @@ export function MultiSelector({
   const handleToggle = (option: string) => {
     if (value.includes(option)) {
       onChange(value.filter((v) => v !== option));
-    } else if (!maxSelections || value.length < maxSelections) {
+    } else if (maxSelections === undefined || value.length < maxSelections) {
       onChange([...value, option]);
     }
   };
@@ -38,7 +38,7 @@ export function MultiSelector({
             onChange={() => handleToggle(option)}
             disabled={
               !value.includes(option) &&
-              maxSelections &&
+              maxSelections !== undefined &&
               value.length >= maxSelections
             }
             className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500 disabled:opacity-50"

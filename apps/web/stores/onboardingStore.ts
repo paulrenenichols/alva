@@ -13,6 +13,7 @@ interface OnboardingState {
   prevCard: () => void;
   goToCard: (cardNumber: number) => void;
   completeOnboarding: () => void;
+  clearResponses: () => void;
   getCurrentCard: () => any;
   getCurrentSection: () => any;
   getProgress: () => { current: number; total: number; percentage: number };
@@ -75,6 +76,10 @@ export const useOnboardingStore = create<OnboardingState>()(
         if (typeof window !== 'undefined') {
           window.location.href = '/onboarding/processing';
         }
+      },
+
+      clearResponses: () => {
+        set({ responses: {} });
       },
 
       getCurrentCard: () => {

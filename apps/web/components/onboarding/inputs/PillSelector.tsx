@@ -21,7 +21,7 @@ export function PillSelector({
   const handleToggle = (option: string) => {
     if (value.includes(option)) {
       onChange(value.filter((v) => v !== option));
-    } else if (!maxSelections || value.length < maxSelections) {
+    } else if (maxSelections === undefined || value.length < maxSelections) {
       onChange([...value, option]);
     }
   };
