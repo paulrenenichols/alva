@@ -6,19 +6,19 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
-# Rebuild the source code only when needed
+# Development build
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Build without standalone output
-RUN corepack enable pnpm && pnpm nx build web
+# Use development build which works correctly with Tailwind
+RUN corepack enable pnpm && pnpm nx build web --configuration=development
 
-# Production image, copy all the files and run next
+# Development runner
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV development
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -29,10 +29,9 @@ COPY --from=builder /app/apps/web/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Copy the built application and dependencies
-COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+# Copy the built application from development build
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
 
 USER nextjs
 
@@ -41,4 +40,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["npx", "next", "start"]
+CMD ["node", "apps/web/server.js"]
