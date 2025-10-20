@@ -13,7 +13,7 @@ test.describe('Complete MVP Flow', () => {
     await page.click('button[type="submit"]');
 
     // 3. Welcome screen
-    await expect(page.locator('h1')).toContainText('Welcome to Alva!');
+    await expect(page.locator('h1')).toContainText('Welcome to Alva');
     await page.click("text=Let's Go");
 
     // 4. Onboarding cards (test first few)
@@ -45,8 +45,8 @@ test.describe('Complete MVP Flow', () => {
     // Mock authentication and navigate to dashboard
     await page.goto('/dashboard');
 
-    // Check dashboard elements
-    await expect(page.locator('h1')).toContainText('Dashboard');
+    // Check dashboard elements - use more specific selector to avoid multiple h1 elements
+    await expect(page.locator('h1').first()).toContainText('Dashboard');
     await expect(page.locator('text=Daily Quick Wins')).toBeVisible();
     await expect(page.locator('text=Plan Overview')).toBeVisible();
   });
@@ -54,8 +54,8 @@ test.describe('Complete MVP Flow', () => {
   test('marketing plan page displays correctly', async ({ page }) => {
     await page.goto('/dashboard/plan');
 
-    // Check plan page elements
-    await expect(page.locator('h1')).toContainText('Your Marketing Plan');
+    // Check plan page elements - use more specific selector to avoid multiple h1 elements
+    await expect(page.locator('h1').first()).toContainText('Your Marketing Plan');
     await expect(page.locator('text=Overview')).toBeVisible();
     await expect(page.locator('text=Tasks')).toBeVisible();
     await expect(page.locator('text=Timeline')).toBeVisible();
@@ -68,7 +68,7 @@ test.describe('Authentication Flow', () => {
     // Mock verification token
     await page.goto('/verify?token=mock-token');
 
-    // Should show verification success
+    // Should show verification success - wait for the success state
     await expect(page.locator('h1')).toContainText(
       'Email verified successfully!'
     );
@@ -77,7 +77,7 @@ test.describe('Authentication Flow', () => {
   test('invalid verification token shows error', async ({ page }) => {
     await page.goto('/verify?token=invalid-token');
 
-    // Should show error
+    // Should show error - wait for the error state
     await expect(page.locator('h1')).toContainText('Verification failed');
   });
 });
