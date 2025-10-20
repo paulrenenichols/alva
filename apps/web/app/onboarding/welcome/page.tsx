@@ -31,7 +31,8 @@ export default function OnboardingWelcome() {
               {progress.total} cards • 5 minutes
             </p>
             <p className="text-text-secondary text-xs mt-1">
-              I'll guide you step-by-step. You won't need to guess your next move again.
+              I'll guide you step-by-step. You won't need to guess your next
+              move again.
             </p>
           </div>
 

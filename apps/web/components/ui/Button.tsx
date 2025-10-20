@@ -13,14 +13,19 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses =
+    'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-gold text-text-primary hover:bg-gold-light active:bg-gold-dark focus:ring-gold shadow-sm',
-    secondary: 'bg-white text-text-primary border border-border-default hover:bg-bg-secondary active:bg-bg-tertiary focus:ring-gold',
-    outline: 'border border-border-default bg-white text-text-primary hover:bg-bg-secondary focus:ring-gold',
+    primary:
+      'bg-gold text-text-primary hover:bg-gold-light active:bg-gold-dark focus:ring-gold shadow-sm',
+    secondary:
+      'bg-white text-text-primary border border-border-default hover:bg-bg-secondary active:bg-bg-tertiary focus:ring-gold',
+    outline:
+      'border border-border-default bg-white text-text-primary hover:bg-bg-secondary focus:ring-gold',
     ghost: 'text-blue hover:bg-blue-muted focus:ring-blue',
-    destructive: 'bg-red text-white hover:bg-red-light active:bg-red-dark focus:ring-red',
+    destructive:
+      'bg-red text-white hover:bg-red-light active:bg-red-dark focus:ring-red',
   };
 
   const sizeClasses = {
