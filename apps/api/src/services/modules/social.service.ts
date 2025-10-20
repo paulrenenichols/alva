@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env['OPENAI_API_KEY'],
 });
 
 export class SocialMediaService {
@@ -82,7 +82,11 @@ Return JSON with:
     const calendar = [];
 
     for (let week = 1; week <= weeks; week++) {
-      const weekContent = [];
+      const weekContent: Array<{
+        type: string;
+        status: string;
+        due_date: string;
+      }> = [];
 
       contentTypes.forEach((type) => {
         weekContent.push({

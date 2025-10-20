@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env['OPENAI_API_KEY'],
 });
 
 export class EmailService {
