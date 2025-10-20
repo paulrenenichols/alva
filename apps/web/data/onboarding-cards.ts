@@ -343,7 +343,7 @@ export const onboardingSections: OnboardingSection[] = [
         id: 'marketing-budget',
         question: "What's your monthly marketing budget?",
         description: 'Include all marketing expenses',
-        component: 'radio-selector',
+        component: 'radio-select',
         options: [
           'Under $500',
           '$500-$1,000',
