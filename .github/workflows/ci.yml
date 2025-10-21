@@ -120,7 +120,7 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     needs: [build]
-    if: false # Temporarily disabled - Docker build issues need investigation
+    if: github.ref == 'refs/heads/main'  # Re-enabled with debugging
     steps:
       - uses: actions/checkout@v4
 

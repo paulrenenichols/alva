@@ -14,6 +14,9 @@ COPY . .
 # Build shared libraries first, then the API service with all dependencies
 RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api
 
+# Verify the build output exists
+RUN ls -la /app/dist/apps/api || echo "API build output not found"
+
 # Production image
 FROM base AS runner
 WORKDIR /app
