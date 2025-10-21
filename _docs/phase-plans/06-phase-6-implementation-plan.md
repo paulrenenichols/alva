@@ -584,7 +584,48 @@
    # Create reference materials
    ```
 
-#### 4.3 Final Testing & Validation (8-12 hours)
+#### 4.3 GitHub Pages Deployment Setup (8-12 hours)
+
+**Objective**: Set up automated Storybook deployment to GitHub Pages
+
+**Tasks**:
+
+1. **Configure GitHub Pages Deployment**
+
+   ```bash
+   # Add Storybook build job to CI/CD pipeline
+   # Configure GitHub Pages deployment
+   # Set up proper build artifacts
+   # Configure deployment permissions
+   ```
+
+2. **Update CI/CD Pipeline**
+
+   ```bash
+   # Add storybook-build job to .github/workflows/ci.yml
+   # Configure deployment triggers
+   # Set up proper caching for faster builds
+   # Configure environment variables
+   ```
+
+3. **Test Deployment Process**
+
+   ```bash
+   # Test Storybook build in CI environment
+   # Verify GitHub Pages deployment
+   # Test deployment on different branches
+   # Verify proper URL configuration
+   ```
+
+4. **Configure Custom Domain (Optional)**
+   ```bash
+   # Set up custom domain for Storybook
+   # Configure SSL certificates
+   # Set up proper redirects
+   # Document deployment process
+   ```
+
+#### 4.4 Final Testing & Validation (8-12 hours)
 
 **Objective**: Final testing and validation of all features
 
@@ -624,6 +665,133 @@
    # Fix any issues reported
    # Finalize setup and documentation
    ```
+
+---
+
+## GitHub Pages Deployment Configuration
+
+### CI/CD Pipeline Integration
+
+**Add Storybook Build and Deploy Job to .github/workflows/ci.yml**
+
+```yaml
+  storybook-build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build Storybook
+        run: pnpm nx run web:build-storybook
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload Storybook artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./apps/web/storybook-static
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+### Storybook Build Configuration
+
+**Update apps/web/project.json to include build-storybook target**
+
+```json
+{
+  "targets": {
+    "build-storybook": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "apps/web/storybook-static",
+        "configDir": "apps/web/.storybook",
+        "uiFramework": "@storybook/nextjs"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "configDir": "apps/web/.storybook",
+        "browserTarget": "web:build",
+        "compodoc": false,
+        "uiFramework": "@storybook/nextjs"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  }
+}
+```
+
+### GitHub Pages Configuration
+
+**Configure GitHub Pages settings in repository:**
+
+1. **Repository Settings**:
+   - Go to Settings → Pages
+   - Source: GitHub Actions
+   - Custom domain: `storybook.alva.com` (optional)
+
+2. **Environment Setup**:
+   - Create `github-pages` environment
+   - Configure deployment protection rules
+   - Set up environment secrets if needed
+
+3. **Branch Protection**:
+   - Configure branch protection for main/develop
+   - Require status checks before merging
+   - Include Storybook build in required checks
+
+### Deployment URLs
+
+- **Main Branch**: `https://paulrenenichols.github.io/alva/`
+- **Develop Branch**: `https://paulrenenichols.github.io/alva/develop/`
+- **Custom Domain**: `https://storybook.alva.com/` (optional)
+
+### Deployment Triggers
+
+**Automatic deployment on**:
+- Push to `main` branch (production Storybook)
+- Push to `develop` branch (staging Storybook)
+- Pull request previews (optional)
+
+**Manual deployment**:
+- Triggered via GitHub Actions UI
+- Available for any branch or tag
 
 ---
 
@@ -974,4 +1142,10 @@ export const TailwindTest: Story = {
    - Component development workflow
    - Best practices documentation
 
-This phase establishes the foundation for efficient component development and design system implementation, enabling the team to build consistent, well-documented components with proper styling integration.
+5. **GitHub Pages Deployment**
+   - Automated Storybook deployment pipeline
+   - Live component library accessible to team
+   - Branch-based deployment strategy
+   - Custom domain configuration (optional)
+
+This phase establishes the foundation for efficient component development and design system implementation, enabling the team to build consistent, well-documented components with proper styling integration and automated deployment to a live, accessible component library.
