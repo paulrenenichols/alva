@@ -577,6 +577,7 @@
    ```
 
 4. **Create Team Training Materials**
+
    ```bash
    # Create onboarding materials
    # Create training presentations
@@ -810,7 +811,7 @@ storybook-build-and-deploy:
 
 **Add comprehensive Storybook documentation to project README:**
 
-```markdown
+````markdown
 ## 🎨 Component Library (Storybook)
 
 Our component library is automatically deployed and updated with each merge to provide a live, interactive documentation of all UI components.
@@ -844,6 +845,7 @@ Our component library is automatically deployed and updated with each merge to p
 ### 📖 Component Documentation
 
 Each component includes:
+
 - Interactive controls for all props
 - Multiple variants and states
 - Accessibility testing results
@@ -853,19 +855,23 @@ Each component includes:
 ### 🛠️ Troubleshooting
 
 **Storybook won't start locally?**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules
 pnpm install
 pnpm nx run web:storybook
 ```
+````
 
 **Components not styling correctly?**
+
 - Check Tailwind CSS integration in `.storybook/preview.ts`
 - Verify global CSS import includes Tailwind directives
 - Ensure PostCSS configuration is properly set up
 
 **Deployment issues?**
+
 - Check GitHub Actions logs for build errors
 - Verify GitHub Pages settings in repository Settings → Pages
 - Ensure proper permissions for deployment workflow
@@ -876,7 +882,8 @@ pnpm nx run web:storybook
 - [Component Development Guide](./docs/component-development.md)
 - [Design System Guidelines](./docs/design-system.md)
 - [Deployment Troubleshooting](./docs/troubleshooting.md)
-```
+
+````
 
 ---
 
@@ -894,7 +901,7 @@ module.exports = {
     autoprefixer: {},
   },
 };
-```
+````
 
 **Install Required Dependencies**
 
@@ -1229,6 +1236,7 @@ export const TailwindTest: Story = {
    - Best practices documentation
 
 5. **GitHub Pages Deployment**
+
    - Automated Storybook deployment pipeline
    - Live component library accessible to team
    - Branch-based deployment strategy
