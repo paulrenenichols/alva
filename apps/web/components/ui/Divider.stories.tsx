@@ -8,7 +8,8 @@ const meta: Meta<typeof Divider> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A divider component for separating content sections with semantic styling.',
+        component:
+          'A divider component for separating content sections with semantic styling.',
       },
     },
   },
@@ -76,17 +77,17 @@ export const CustomStyling: Story = {
         <p className="text-text-primary mb-2">Default</p>
         <Divider />
       </div>
-      
+
       <div className="w-64">
         <p className="text-text-primary mb-2">Thick</p>
         <Divider className="border-2" />
       </div>
-      
+
       <div className="w-64">
         <p className="text-text-primary mb-2">Dashed</p>
         <Divider className="border-dashed" />
       </div>
-      
+
       <div className="w-64">
         <p className="text-text-primary mb-2">Colored</p>
         <Divider className="border-primary" />
@@ -99,16 +100,20 @@ export const ThemeComparison: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-text-primary">Light Mode</h3>
+        <h3 className="text-lg font-semibold mb-4 text-text-primary">
+          Light Mode
+        </h3>
         <div className="w-64">
           <p className="text-text-primary mb-4">Content above</p>
           <Divider />
           <p className="text-text-primary mt-4">Content below</p>
         </div>
       </div>
-      
+
       <div className="dark">
-        <h3 className="text-lg font-semibold mb-4 text-text-primary">Dark Mode</h3>
+        <h3 className="text-lg font-semibold mb-4 text-text-primary">
+          Dark Mode
+        </h3>
         <div className="w-64">
           <p className="text-text-primary mb-4">Content above</p>
           <Divider />

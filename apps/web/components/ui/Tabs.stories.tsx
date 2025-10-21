@@ -8,7 +8,8 @@ const meta: Meta<typeof Tabs> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A tabs component for organizing content into multiple panels with keyboard navigation.',
+        component:
+          'A tabs component for organizing content into multiple panels with keyboard navigation.',
       },
     },
   },
@@ -64,9 +65,12 @@ export const WithContent: Story = {
         </button>
       </div>
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">Overview</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
+          Overview
+        </h3>
         <p className="text-text-secondary">
-          This is the overview content. It provides a summary of the main information.
+          This is the overview content. It provides a summary of the main
+          information.
         </p>
       </div>
     </Tabs>
@@ -88,7 +92,9 @@ export const VerticalTabs: Story = {
         </button>
       </div>
       <div className="flex-1 p-4">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">Profile Settings</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
+          Profile Settings
+        </h3>
         <p className="text-text-secondary">
           Manage your profile information and preferences.
         </p>
@@ -104,7 +110,10 @@ export const DisabledTab: Story = {
         <button className="px-4 py-2 text-text-primary border-b-2 border-primary font-medium">
           Active Tab
         </button>
-        <button className="px-4 py-2 text-text-tertiary cursor-not-allowed" disabled>
+        <button
+          className="px-4 py-2 text-text-tertiary cursor-not-allowed"
+          disabled
+        >
           Disabled Tab
         </button>
         <button className="px-4 py-2 text-text-secondary hover:text-text-primary">
@@ -136,7 +145,9 @@ export const WithIcons: Story = {
         </button>
       </div>
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">Home Dashboard</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
+          Home Dashboard
+        </h3>
         <p className="text-text-secondary">
           Welcome to your dashboard. Here you can see an overview of your data.
         </p>
@@ -149,7 +160,9 @@ export const ThemeComparison: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4 text-text-primary">Light Mode</h3>
+        <h3 className="text-lg font-semibold mb-4 text-text-primary">
+          Light Mode
+        </h3>
         <Tabs defaultValue="tab1" className="w-96">
           <div className="flex border-b border-border-default">
             <button className="px-4 py-2 text-text-primary border-b-2 border-primary font-medium">
@@ -164,9 +177,11 @@ export const ThemeComparison: Story = {
           </div>
         </Tabs>
       </div>
-      
+
       <div className="dark">
-        <h3 className="text-lg font-semibold mb-4 text-text-primary">Dark Mode</h3>
+        <h3 className="text-lg font-semibold mb-4 text-text-primary">
+          Dark Mode
+        </h3>
         <Tabs defaultValue="tab1" className="w-96">
           <div className="flex border-b border-border-default">
             <button className="px-4 py-2 text-text-primary border-b-2 border-primary font-medium">
@@ -189,7 +204,9 @@ export const AccessibilityTest: Story = {
   render: () => (
     <div className="space-y-4 w-96">
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-text-primary">Accessibility Features</h3>
+        <h3 className="text-lg font-semibold mb-2 text-text-primary">
+          Accessibility Features
+        </h3>
         <ul className="text-text-secondary space-y-1 mb-4">
           <li>• Keyboard navigation (Arrow keys)</li>
           <li>• Screen reader support</li>
@@ -198,10 +215,10 @@ export const AccessibilityTest: Story = {
           <li>• Semantic HTML structure</li>
         </ul>
       </div>
-      
+
       <Tabs defaultValue="accessibility" className="w-full">
         <div className="flex border-b border-border-default">
-          <button 
+          <button
             className="px-4 py-2 text-text-primary border-b-2 border-primary font-medium"
             role="tab"
             aria-selected="true"
@@ -210,7 +227,7 @@ export const AccessibilityTest: Story = {
           >
             Accessibility
           </button>
-          <button 
+          <button
             className="px-4 py-2 text-text-secondary hover:text-text-primary"
             role="tab"
             aria-selected="false"
@@ -220,7 +237,7 @@ export const AccessibilityTest: Story = {
             Keyboard
           </button>
         </div>
-        <div 
+        <div
           className="p-4"
           role="tabpanel"
           id="accessibility-panel"
