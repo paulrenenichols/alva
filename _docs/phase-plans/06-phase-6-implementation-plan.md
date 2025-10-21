@@ -584,6 +584,15 @@
    # Create reference materials
    ```
 
+5. **Update README Documentation**
+   ```bash
+   # Add Storybook deployment information to README
+   # Include links to deployed Storybook instances
+   # Document deployment process and URLs
+   # Add component development workflow documentation
+   # Include troubleshooting guide for Storybook
+   ```
+
 #### 4.3 GitHub Pages Deployment Setup (8-12 hours)
 
 **Objective**: Set up automated Storybook deployment to GitHub Pages
@@ -675,47 +684,47 @@
 **Add Storybook Build and Deploy Job to .github/workflows/ci.yml**
 
 ```yaml
-  storybook-build-and-deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-      
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      
-      - name: Build Storybook
-        run: pnpm nx run web:build-storybook
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      
-      - name: Upload Storybook artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./apps/web/storybook-static
-      
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+storybook-build-and-deploy:
+  runs-on: ubuntu-latest
+  needs: [build]
+  if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+  permissions:
+    contents: read
+    pages: write
+    id-token: write
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ env.PNPM_VERSION }}
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Storybook
+      run: pnpm nx run web:build-storybook
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload Storybook artifacts
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./apps/web/storybook-static
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 ```
 
 ### Storybook Build Configuration
@@ -762,11 +771,13 @@
 **Configure GitHub Pages settings in repository:**
 
 1. **Repository Settings**:
+
    - Go to Settings → Pages
    - Source: GitHub Actions
    - Custom domain: `storybook.alva.com` (optional)
 
 2. **Environment Setup**:
+
    - Create `github-pages` environment
    - Configure deployment protection rules
    - Set up environment secrets if needed
@@ -785,13 +796,87 @@
 ### Deployment Triggers
 
 **Automatic deployment on**:
+
 - Push to `main` branch (production Storybook)
 - Push to `develop` branch (staging Storybook)
 - Pull request previews (optional)
 
 **Manual deployment**:
+
 - Triggered via GitHub Actions UI
 - Available for any branch or tag
+
+### README Documentation Updates
+
+**Add comprehensive Storybook documentation to project README:**
+
+```markdown
+## 🎨 Component Library (Storybook)
+
+Our component library is automatically deployed and updated with each merge to provide a live, interactive documentation of all UI components.
+
+### 📖 Live Documentation
+
+- **Production Storybook**: [View Live Component Library](https://paulrenenichols.github.io/alva/)
+- **Staging Storybook**: [View Development Components](https://paulrenenichols.github.io/alva/develop/)
+
+### 🚀 Quick Start
+
+1. **View Components**: Visit the live Storybook links above
+2. **Local Development**: Run `pnpm nx run web:storybook` to start local Storybook
+3. **Build Storybook**: Run `pnpm nx run web:build-storybook` to build static version
+
+### 📚 What's Included
+
+- **Interactive Component Playground**: Test components with live controls
+- **Design System Documentation**: Complete color, typography, and spacing guides
+- **Accessibility Testing**: Built-in a11y testing for all components
+- **Responsive Testing**: Test components across different screen sizes
+- **Component Stories**: Comprehensive examples and use cases
+
+### 🔧 Development Workflow
+
+1. **Create/Update Component**: Make changes to component files
+2. **Update Stories**: Add or modify component stories in `.stories.tsx` files
+3. **Test Locally**: Run Storybook locally to verify changes
+4. **Deploy**: Merge to main/develop branch for automatic deployment
+
+### 📖 Component Documentation
+
+Each component includes:
+- Interactive controls for all props
+- Multiple variants and states
+- Accessibility testing results
+- Responsive behavior examples
+- Usage guidelines and best practices
+
+### 🛠️ Troubleshooting
+
+**Storybook won't start locally?**
+```bash
+# Clear cache and reinstall
+rm -rf node_modules
+pnpm install
+pnpm nx run web:storybook
+```
+
+**Components not styling correctly?**
+- Check Tailwind CSS integration in `.storybook/preview.ts`
+- Verify global CSS import includes Tailwind directives
+- Ensure PostCSS configuration is properly set up
+
+**Deployment issues?**
+- Check GitHub Actions logs for build errors
+- Verify GitHub Pages settings in repository Settings → Pages
+- Ensure proper permissions for deployment workflow
+
+### 🔗 Useful Links
+
+- [Storybook Documentation](https://storybook.js.org/docs)
+- [Component Development Guide](./docs/component-development.md)
+- [Design System Guidelines](./docs/design-system.md)
+- [Deployment Troubleshooting](./docs/troubleshooting.md)
+```
 
 ---
 
@@ -1138,6 +1223,7 @@ export const TailwindTest: Story = {
    - Testing integration
 
 4. **Team Training Materials**
+
    - Storybook usage guide
    - Component development workflow
    - Best practices documentation
@@ -1148,4 +1234,10 @@ export const TailwindTest: Story = {
    - Branch-based deployment strategy
    - Custom domain configuration (optional)
 
-This phase establishes the foundation for efficient component development and design system implementation, enabling the team to build consistent, well-documented components with proper styling integration and automated deployment to a live, accessible component library.
+6. **Updated README Documentation**
+   - Comprehensive Storybook section with live links
+   - Component development workflow documentation
+   - Troubleshooting guides and quick start instructions
+   - Links to deployed Storybook instances
+
+This phase establishes the foundation for efficient component development and design system implementation, enabling the team to build consistent, well-documented components with proper styling integration, automated deployment to a live, accessible component library, and comprehensive documentation for team onboarding and reference.
