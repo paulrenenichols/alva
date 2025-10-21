@@ -100,7 +100,8 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "apps/web/storybook-static",
-        "configDir": "apps/web/.storybook"
+        "configDir": "apps/web/.storybook",
+        "uiFramework": "@storybook/nextjs"
       },
       "configurations": {
         "ci": {
