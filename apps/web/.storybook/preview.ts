@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react';
-import '../app/global.css';
+import React from 'react';
+import '../app/global.css'; // Import global styles
 
 const preview: Preview = {
   parameters: {
@@ -7,7 +8,7 @@ const preview: Preview = {
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/,
+        date: /Date$/i,
       },
     },
     backgrounds: {
@@ -19,11 +20,11 @@ const preview: Preview = {
         },
         {
           name: 'dark',
-          value: '#1f1f1f',
+          value: '#0f172a',
         },
         {
-          name: 'gold',
-          value: '#FFD700',
+          name: 'primary',
+          value: '#f59e0b', // Gold color from design system
         },
       ],
     },
@@ -46,13 +47,54 @@ const preview: Preview = {
         desktop: {
           name: 'Desktop',
           styles: {
-            width: '1024px',
-            height: '768px',
+            width: '1440px',
+            height: '900px',
           },
         },
       },
     },
+    a11y: {
+      config: {
+        rules: [
+          {
+            id: 'color-contrast',
+            enabled: true,
+          },
+          {
+            id: 'keyboard-navigation',
+            enabled: true,
+          },
+        ],
+      },
+    },
   },
+  globalTypes: {
+    theme: {
+      description: 'Global theme for components',
+      defaultValue: 'light',
+      toolbar: {
+        title: 'Theme',
+        icon: 'circlehollow',
+        items: [
+          { value: 'light', icon: 'circlehollow', title: 'Light' },
+          { value: 'dark', icon: 'circle', title: 'Dark' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  decorators: [
+    (Story, context) => {
+      const theme = context.globals.theme || 'light';
+      return (
+        <div
+          className={`font-sans antialiased ${theme === 'dark' ? 'dark' : ''}`}
+        >
+          <Story />
+        </div>
+      );
+    },
+  ],
 };
 
 export default preview;
