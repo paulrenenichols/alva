@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MainLayout } from '../layout/MainLayout';
+import { MainLayout } from '../../components/layout/MainLayout';
 
 const meta: Meta<typeof MainLayout> = {
   title: 'Layout/MainLayout',
