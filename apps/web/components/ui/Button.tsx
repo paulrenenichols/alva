@@ -1,4 +1,7 @@
+'use client';
+
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
@@ -18,19 +21,19 @@ export function Button({
 
   const variantClasses = {
     primary:
-      'bg-gold text-text-primary hover:bg-gold-light active:bg-gold-dark focus:ring-gold shadow-sm',
+      'bg-gold text-text-primary hover:bg-gold-light active:bg-gold-dark active:scale-95 focus:ring-gold',
     secondary:
-      'bg-white text-text-primary border border-border-default hover:bg-bg-secondary active:bg-bg-tertiary focus:ring-gold',
+      'bg-bg-primary text-text-primary border border-border-default hover:bg-bg-secondary active:bg-bg-tertiary active:scale-95',
     outline:
-      'border border-border-default bg-white text-text-primary hover:bg-bg-secondary focus:ring-gold',
-    ghost: 'text-blue hover:bg-blue-muted focus:ring-blue',
+      'border border-border-default bg-bg-primary text-text-primary hover:bg-bg-secondary active:bg-bg-tertiary active:scale-95',
+    ghost: 'text-blue hover:bg-blue-muted active:bg-blue-muted active:scale-95',
     destructive:
-      'bg-red text-white hover:bg-red-light active:bg-red-dark focus:ring-red',
+      'bg-red text-text-inverse hover:bg-red-light active:bg-red-dark active:scale-95 focus:ring-red',
   };
 
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm h-8',
-    md: 'px-4 py-2 text-sm h-10',
+    sm: 'px-4 py-2 text-sm h-8',
+    md: 'px-5 py-2.5 text-sm h-10',
     lg: 'px-6 py-3 text-base h-12',
   };
 

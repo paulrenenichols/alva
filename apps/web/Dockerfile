@@ -11,6 +11,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Build without standalone output
 RUN corepack enable pnpm && pnpm nx build web
 
 # Production image, copy all the files and run next
@@ -28,9 +29,10 @@ COPY --from=builder /app/apps/web/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Copy the built application
-COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next/static ./.next/static
+# Copy the built application and dependencies
+COPY --from=builder --chown=nextjs:nodejs /app/dist/apps/web/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
 USER nextjs
 
@@ -39,4 +41,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "apps/web/server.js"]
+CMD ["npx", "next", "start"]

@@ -1,8 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Spinner } from '@/components/ui/Progress';
+import {
+  HeadingPage,
+  HeadingCard,
+  BodyDefault,
+  BodySmall,
+  Caption,
+} from '@/components/ui/Typography';
+import { Grid, Stack } from '@/components/ui/Layout';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { apiClient } from '@alva/api-client';
 
 interface QuickWin {
@@ -32,7 +43,8 @@ export default function DashboardPage() {
             {
               id: '1',
               title: 'Set up Google Analytics',
-              description: 'Install Google Analytics tracking code on your website',
+              description:
+                'Install Google Analytics tracking code on your website',
               estimatedTime: 15,
               priority: 'high',
               status: 'planned',
@@ -54,7 +66,8 @@ export default function DashboardPage() {
           {
             id: '1',
             title: 'Set up Google Analytics',
-            description: 'Install Google Analytics tracking code on your website',
+            description:
+              'Install Google Analytics tracking code on your website',
             estimatedTime: 15,
             priority: 'high',
             status: 'planned',
@@ -82,86 +95,105 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">
-          Welcome back! Here's what's on your agenda today.
-        </p>
-      </div>
+    <MainLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Stack spacing="lg">
+          <div>
+            <HeadingPage>Dashboard</HeadingPage>
+            <BodyDefault className="mt-2">
+              Welcome back! Here's what's on your agenda today.
+            </BodyDefault>
+          </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Quick Wins Card */}
-        <div className="lg:col-span-2">
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Daily Quick Wins
-              </h2>
-              <span className="text-sm text-gray-500">⚡ High Impact</span>
-            </div>
-
-            <div className="space-y-4">
-              {loading ? (
-                <div className="animate-pulse space-y-3">
-                  <div className="h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="h-16 bg-gray-200 rounded-lg"></div>
-                </div>
-              ) : (
-                quickWins.map((win) => (
-                  <div
-                    key={win.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{win.title}</h3>
-                      <p className="text-sm text-gray-600">{win.description}</p>
-                      <span className="inline-block mt-1 text-xs bg-primary-100 text-primary-800 px-2 py-1 rounded-full">
-                        {win.estimatedTime} min
-                      </span>
-                    </div>
-                    <Button
-                      onClick={() => handleStartTask(win.id)}
-                      className="bg-primary-500 text-white"
-                    >
-                      Start Task
-                    </Button>
+          <Grid cols={3} gap="lg">
+            {/* Quick Wins Card */}
+            <div className="lg:col-span-2">
+              <Card variant="elevated">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <HeadingCard>Daily Quick Wins</HeadingCard>
+                    <Badge variant="gold">⚡ High Impact</Badge>
                   </div>
-                ))
-              )}
-            </div>
-          </Card>
-        </div>
+                </CardHeader>
 
-        {/* Plan Overview */}
-        <div>
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Plan Overview
-            </h2>
-            <div className="space-y-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary-600">12</div>
-                <div className="text-sm text-gray-600">Tasks Planned</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">3</div>
-                <div className="text-sm text-gray-600">Completed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">10h</div>
-                <div className="text-sm text-gray-600">Weekly Capacity</div>
-              </div>
+                <CardBody>
+                  <Stack spacing="md">
+                    {loading ? (
+                      <div className="space-y-4">
+                        <div className="h-20 bg-bg-tertiary rounded-lg animate-pulse"></div>
+                        <div className="h-20 bg-bg-tertiary rounded-lg animate-pulse"></div>
+                      </div>
+                    ) : (
+                      quickWins.map((win) => (
+                        <Card
+                          key={win.id}
+                          variant="interactive"
+                          className="p-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <HeadingCard className="text-base">
+                                {win.title}
+                              </HeadingCard>
+                              <BodySmall className="mt-1">
+                                {win.description}
+                              </BodySmall>
+                              <Badge variant="gold" size="sm" className="mt-2">
+                                {win.estimatedTime} min
+                              </Badge>
+                            </div>
+                            <Button
+                              onClick={() => handleStartTask(win.id)}
+                              variant="primary"
+                              size="sm"
+                            >
+                              Start Task
+                            </Button>
+                          </div>
+                        </Card>
+                      ))
+                    )}
+                  </Stack>
+                </CardBody>
+              </Card>
             </div>
-            <Button
-              className="w-full mt-4 bg-primary-500 text-white"
-              onClick={() => (window.location.href = '/dashboard/plan')}
-            >
-              View Full Plan
-            </Button>
-          </Card>
-        </div>
+
+            {/* Plan Overview */}
+            <div>
+              <Card variant="elevated">
+                <CardHeader>
+                  <HeadingCard>Plan Overview</HeadingCard>
+                </CardHeader>
+                <CardBody>
+                  <Stack spacing="md">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-gold">12</div>
+                      <Caption>Tasks Planned</Caption>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green">3</div>
+                      <Caption>Completed</Caption>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue">10h</div>
+                      <Caption>Weekly Capacity</Caption>
+                    </div>
+                  </Stack>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    onClick={() => (window.location.href = '/dashboard/plan')}
+                  >
+                    View Full Plan
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </Grid>
+        </Stack>
       </div>
-    </div>
+    </MainLayout>
   );
 }

@@ -24,3 +24,30 @@ export function Card({ children, className, variant = 'default' }: CardProps) {
     </div>
   );
 }
+
+interface CardHeaderProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function CardHeader({ children, className }: CardHeaderProps) {
+  return <div className={cn('p-6 pb-4', className)}>{children}</div>;
+}
+
+interface CardBodyProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function CardBody({ children, className }: CardBodyProps) {
+  return <div className={cn('p-6 py-4', className)}>{children}</div>;
+}
+
+interface CardFooterProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function CardFooter({ children, className }: CardFooterProps) {
+  return <div className={cn('p-6 pt-4', className)}>{children}</div>;
+}

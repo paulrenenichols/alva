@@ -11,7 +11,11 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['default', 'secondary', 'destructive', 'outline'],
+      options: ['default', 'gold', 'blue', 'green', 'red', 'gray'],
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['sm', 'md'],
     },
   },
 };
@@ -21,50 +25,115 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    children: 'Default Badge',
+    children: 'Default',
     variant: 'default',
   },
 };
 
-export const Secondary: Story = {
+export const Gold: Story = {
   args: {
-    children: 'Secondary Badge',
-    variant: 'secondary',
+    children: 'Gold',
+    variant: 'gold',
   },
 };
 
-export const Destructive: Story = {
+export const Blue: Story = {
   args: {
-    children: 'Destructive Badge',
-    variant: 'destructive',
+    children: 'Blue',
+    variant: 'blue',
   },
 };
 
-export const Outline: Story = {
+export const Green: Story = {
   args: {
-    children: 'Outline Badge',
-    variant: 'outline',
+    children: 'Green',
+    variant: 'green',
   },
 };
 
-export const StatusBadges: Story = {
+export const Red: Story = {
+  args: {
+    children: 'Red',
+    variant: 'red',
+  },
+};
+
+export const Gray: Story = {
+  args: {
+    children: 'Gray',
+    variant: 'gray',
+  },
+};
+
+export const Small: Story = {
+  args: {
+    children: 'Small',
+    size: 'sm',
+  },
+};
+
+export const Medium: Story = {
+  args: {
+    children: 'Medium',
+    size: 'md',
+  },
+};
+
+export const AllVariants: Story = {
   render: () => (
-    <div className="flex space-x-2">
-      <Badge variant="default">Active</Badge>
-      <Badge variant="secondary">Inactive</Badge>
-      <Badge variant="destructive">Error</Badge>
-      <Badge variant="outline">Pending</Badge>
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="default">Default</Badge>
+      <Badge variant="gold">Gold</Badge>
+      <Badge variant="blue">Blue</Badge>
+      <Badge variant="green">Green</Badge>
+      <Badge variant="red">Red</Badge>
+      <Badge variant="gray">Gray</Badge>
+    </div>
+  ),
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-2">
+      <Badge size="sm">Small</Badge>
+      <Badge size="md">Medium</Badge>
     </div>
   ),
 };
 
 export const WithIcons: Story = {
   render: () => (
-    <div className="flex space-x-2">
-      <Badge variant="default">✓ Completed</Badge>
-      <Badge variant="secondary">⏳ In Progress</Badge>
-      <Badge variant="destructive">⚠ Warning</Badge>
-      <Badge variant="outline">ℹ Info</Badge>
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="gold">
+        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Complete
+      </Badge>
+      <Badge variant="blue">
+        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Info
+      </Badge>
+      <Badge variant="red">
+        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Error
+      </Badge>
     </div>
   ),
 };
