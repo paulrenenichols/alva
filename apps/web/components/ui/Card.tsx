@@ -7,13 +7,13 @@ interface CardProps {
 }
 
 export function Card({ children, className, variant = 'default' }: CardProps) {
-  const baseClasses = 'bg-bg-primary rounded-lg';
+  const baseClasses = 'bg-bg-elevated rounded-lg';
 
   const variantClasses = {
     default: 'border border-border-subtle shadow-none',
     elevated: 'border-transparent shadow-md',
     highlighted:
-      'border-l-4 border-l-gold border-y border-r border-border-subtle shadow-none',
+      'border-l-4 border-l-primary border-y border-r border-border-subtle shadow-none',
     interactive:
       'border border-border-subtle hover:bg-bg-secondary hover:shadow-md transition-all duration-150 cursor-pointer',
   };

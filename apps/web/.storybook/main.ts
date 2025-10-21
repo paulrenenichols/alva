@@ -2,22 +2,23 @@ import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
   stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
-    '@storybook/addon-a11y',
-    '@storybook/addon-viewport',
-  ],
+  addons: ['@storybook/addon-a11y'],
   framework: {
     name: '@storybook/nextjs',
-    options: {},
+    options: {
+      nextConfigPath: '../apps/web/next.config.js',
+      builder: {
+        useSWC: true,
+      },
+    },
   },
   typescript: {
     check: false,
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+      propFilter: (prop) =>
+        prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
   },
 };

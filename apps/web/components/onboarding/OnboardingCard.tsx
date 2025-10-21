@@ -97,7 +97,7 @@ export function OnboardingCard({
           {/* Navigation */}
           <div className="flex justify-between">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={handlePrev}
               disabled={currentProgress.current === 1}
             >

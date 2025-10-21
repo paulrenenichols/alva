@@ -31,12 +31,10 @@ export const Default: Story = {
 
 export const Mobile: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'mobile1',
-    },
     docs: {
       description: {
-        story: 'Quick wins page optimized for mobile devices.',
+        story:
+          'Quick wins page optimized for mobile devices. Resize your browser window to test mobile layout.',
       },
     },
   },
@@ -44,12 +42,10 @@ export const Mobile: Story = {
 
 export const Tablet: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'tablet',
-    },
     docs: {
       description: {
-        story: 'Quick wins page layout for tablet devices.',
+        story:
+          'Quick wins page layout for tablet devices. Resize your browser window to test tablet layout.',
       },
     },
   },

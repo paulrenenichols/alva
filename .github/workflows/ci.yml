@@ -170,6 +170,50 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  storybook-build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: |
+          cd apps/web
+          npx storybook build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Storybook artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./apps/web/storybook-static
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   deploy:
     runs-on: ubuntu-latest
     needs: [docker-build]

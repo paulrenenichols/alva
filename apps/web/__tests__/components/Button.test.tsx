@@ -11,7 +11,7 @@ describe('Button Component', () => {
   it('applies variant classes correctly', () => {
     render(<Button variant="primary">Primary Button</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-gold');
+    expect(button).toHaveClass('bg-primary');
   });
 
   it('handles click events', () => {

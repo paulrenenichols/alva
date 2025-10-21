@@ -97,10 +97,16 @@
     },
     "build-storybook": {
       "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
+      "outputs": ["{options.outputPath}"],
       "options": {
+        "outputPath": "apps/web/storybook-static",
         "configDir": "apps/web/.storybook",
-        "outputDir": "dist/storybook/web"
+        "uiFramework": "@storybook/nextjs"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     }
   }

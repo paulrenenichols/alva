@@ -4,37 +4,38 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
   children: React.ReactNode;
 }
 
 export function Button({
   variant = 'primary',
   size = 'md',
+  loading = false,
   className,
   children,
+  disabled,
   ...props
 }: ButtonProps) {
   const baseClasses =
-    'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:pointer-events-none disabled:opacity-50';
 
   const variantClasses = {
     primary:
-      'bg-gold text-text-primary hover:bg-gold-light active:bg-gold-dark active:scale-95 focus:ring-gold',
+      'bg-primary text-text-primary hover:bg-primary-hover active:bg-primary-active font-semibold',
     secondary:
-      'bg-bg-primary text-text-primary border border-border-default hover:bg-bg-secondary active:bg-bg-tertiary active:scale-95',
-    outline:
-      'border border-border-default bg-bg-primary text-text-primary hover:bg-bg-secondary active:bg-bg-tertiary active:scale-95',
-    ghost: 'text-blue hover:bg-blue-muted active:bg-blue-muted active:scale-95',
+      'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary',
+    ghost: 'text-text-primary hover:bg-bg-secondary',
     destructive:
-      'bg-red text-text-inverse hover:bg-red-light active:bg-red-dark active:scale-95 focus:ring-red',
+      'bg-danger text-text-inverse hover:bg-danger-hover active:bg-danger-active',
   };
 
   const sizeClasses = {
-    sm: 'px-4 py-2 text-sm h-8',
-    md: 'px-5 py-2.5 text-sm h-10',
-    lg: 'px-6 py-3 text-base h-12',
+    sm: 'h-8 px-3 text-xs',
+    md: 'h-10 px-4 py-2',
+    lg: 'h-12 px-8 text-base',
   };
 
   return (
@@ -45,8 +46,12 @@ export function Button({
         sizeClasses[size],
         className
       )}
+      disabled={disabled || loading}
       {...props}
     >
+      {loading ? (
+        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      ) : null}
       {children}
     </button>
   );

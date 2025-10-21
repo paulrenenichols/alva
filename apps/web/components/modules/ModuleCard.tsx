@@ -67,7 +67,7 @@ export function ModuleCard({
       )}
 
       <Button
-        variant={isActive ? 'outline' : 'primary'}
+        variant={isActive ? 'secondary' : 'primary'}
         onClick={() => onToggle(id, !isActive)}
         className="w-full"
       >

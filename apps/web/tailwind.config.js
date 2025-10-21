@@ -9,126 +9,117 @@ module.exports = {
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './.storybook/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class', // Enable manual dark mode toggle
   theme: {
     extend: {
+      // Semantic color system using CSS custom properties
       colors: {
-        // Primary Gold Palette (from design system)
-        gold: {
-          DEFAULT: '#FFD700',
-          light: '#FFE44D',
-          dark: '#E6C200',
-          muted: '#FFF4CC',
-        },
-        // Secondary Blue Palette
-        blue: {
-          DEFAULT: '#007BFF',
-          light: '#4DA3FF',
-          dark: '#0056B3',
-          muted: '#CCE5FF',
-        },
-        // Success Green
-        green: {
-          DEFAULT: '#28A745',
-          light: '#5CB85C',
-          dark: '#1E7E34',
-          muted: '#D4EDDA',
-        },
-        // Danger Red
-        red: {
-          DEFAULT: '#D32F2F',
-          light: '#EF5350',
-          dark: '#B71C1C',
-          muted: '#F8D7DA',
-        },
-        // Text Colors
-        'text-primary': '#1F1F1F',
-        'text-secondary': '#6F6F6F',
-        'text-tertiary': '#A0A0A0',
-        'text-inverse': '#FFFFFF',
-        // Background Colors
-        'bg-primary': '#FFFFFF',
-        'bg-secondary': '#FAFAFA',
-        'bg-tertiary': '#F0F0F0',
-        // Border Colors
-        'border-subtle': '#E5E5E5',
-        'border-default': '#CCCCCC',
-        'border-strong': '#A0A0A0',
-        // Legacy aliases for compatibility
         primary: {
-          50: '#FFF4CC', // gold-muted
-          500: '#FFD700', // gold
-          600: '#E6C200', // gold-dark
-          900: '#1F1F1F', // text-primary
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
+          active: 'var(--color-primary-active)',
+          muted: 'var(--color-primary-muted)',
         },
         secondary: {
-          50: '#F8FAFC', // bg-secondary
-          500: '#6F6F6F', // text-secondary
-          600: '#007BFF', // blue
-          900: '#1F1F1F', // text-primary
+          DEFAULT: 'var(--color-secondary)',
+          hover: 'var(--color-secondary-hover)',
+          active: 'var(--color-secondary-active)',
+          muted: 'var(--color-secondary-muted)',
         },
-        // Additional semantic colors
-        info: {
-          DEFAULT: '#17A2B8',
-          light: '#5DADE2',
-          muted: '#D1ECF1',
+        success: {
+          DEFAULT: 'var(--color-success)',
+          hover: 'var(--color-success-hover)',
+          active: 'var(--color-success-active)',
+          muted: 'var(--color-success-muted)',
+        },
+        danger: {
+          DEFAULT: 'var(--color-danger)',
+          hover: 'var(--color-danger-hover)',
+          active: 'var(--color-danger-active)',
+          muted: 'var(--color-danger-muted)',
         },
         warning: {
-          DEFAULT: '#FFC107',
-          light: '#FFD54F',
-          muted: '#FFF3CD',
+          DEFAULT: 'var(--color-warning)',
+          hover: 'var(--color-warning-hover)',
+          active: 'var(--color-warning-active)',
+          muted: 'var(--color-warning-muted)',
+        },
+        info: {
+          DEFAULT: 'var(--color-info)',
+          hover: 'var(--color-info-hover)',
+          active: 'var(--color-info-active)',
+          muted: 'var(--color-info-muted)',
+        },
+        text: {
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
+          inverse: 'var(--color-text-inverse)',
+        },
+        bg: {
+          primary: 'var(--color-bg-primary)',
+          secondary: 'var(--color-bg-secondary)',
+          tertiary: 'var(--color-bg-tertiary)',
+          elevated: 'var(--color-bg-elevated)',
+        },
+        border: {
+          subtle: 'var(--color-border-subtle)',
+          DEFAULT: 'var(--color-border-default)',
+          strong: 'var(--color-border-strong)',
+          focus: 'var(--color-border-focus)',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['var(--font-family-sans)'],
       },
       fontSize: {
-        xs: ['12px', { lineHeight: '1.5' }],
-        sm: ['13px', { lineHeight: '1.5' }],
-        base: ['14px', { lineHeight: '1.5' }],
-        md: ['16px', { lineHeight: '1.5' }],
-        lg: ['18px', { lineHeight: '1.375' }],
-        xl: ['22px', { lineHeight: '1.375' }],
-        '2xl': ['28px', { lineHeight: '1.25' }],
-        '3xl': ['36px', { lineHeight: '1.25' }],
+        xs: ['var(--font-size-xs)', { lineHeight: '1.5' }],
+        sm: ['var(--font-size-sm)', { lineHeight: '1.5' }],
+        base: ['var(--font-size-base)', { lineHeight: '1.5' }],
+        md: ['var(--font-size-md)', { lineHeight: '1.5' }],
+        lg: ['var(--font-size-lg)', { lineHeight: '1.375' }],
+        xl: ['var(--font-size-xl)', { lineHeight: '1.375' }],
+        '2xl': ['var(--font-size-2xl)', { lineHeight: '1.25' }],
+        '3xl': ['var(--font-size-3xl)', { lineHeight: '1.25' }],
       },
       spacing: {
-        '0': '0',
-        '1': '4px',
-        '2': '8px',
-        '3': '12px',
-        '4': '16px',
-        '5': '20px',
-        '6': '24px',
-        '8': '32px',
-        '10': '40px',
-        '12': '48px',
-        '16': '64px',
-        '20': '80px',
-        '24': '96px',
+        0: 'var(--spacing-0)',
+        1: 'var(--spacing-1)',
+        2: 'var(--spacing-2)',
+        3: 'var(--spacing-3)',
+        4: 'var(--spacing-4)',
+        5: 'var(--spacing-5)',
+        6: 'var(--spacing-6)',
+        8: 'var(--spacing-8)',
+        10: 'var(--spacing-10)',
+        12: 'var(--spacing-12)',
+        16: 'var(--spacing-16)',
+        20: 'var(--spacing-20)',
+        24: 'var(--spacing-24)',
       },
       borderRadius: {
-        sm: '4px',
-        DEFAULT: '8px',
-        md: '8px',
-        lg: '12px',
-        xl: '16px',
-        full: '9999px',
+        sm: 'var(--radius-sm)',
+        DEFAULT: 'var(--radius-md)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        full: 'var(--radius-full)',
       },
       boxShadow: {
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        focus: '0 0 0 3px rgba(255, 215, 0, 0.3)',
-        error: '0 0 0 3px rgba(211, 47, 47, 0.2)',
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow-md)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        focus: 'var(--shadow-focus)',
+        error: 'var(--shadow-error)',
       },
       transitionDuration: {
-        fast: '100ms',
-        DEFAULT: '150ms',
-        moderate: '200ms',
-        slow: '300ms',
-        slower: '500ms',
+        fast: 'var(--transition-fast)',
+        DEFAULT: 'var(--transition-normal)',
+        moderate: 'var(--transition-moderate)',
+        slow: 'var(--transition-slow)',
+        slower: 'var(--transition-slower)',
       },
     },
   },
