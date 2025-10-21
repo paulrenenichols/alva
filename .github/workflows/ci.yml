@@ -191,7 +191,7 @@ jobs:
 
       - name: Build Storybook
         run: |
-          pnpm exec storybook build --config-dir apps/web/.storybook
+          pnpm exec storybook build --config-dir apps/web/.storybook --output-dir apps/web/storybook-static
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
