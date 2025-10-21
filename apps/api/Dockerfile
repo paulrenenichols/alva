@@ -13,8 +13,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Build shared libraries first, then the API service with all dependencies
 RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api
-RUN corepack enable pnpm && pnpm nx run api:prune-lockfile
-RUN corepack enable pnpm && pnpm nx run api:copy-workspace-modules
 
 # Production image
 FROM base AS runner
