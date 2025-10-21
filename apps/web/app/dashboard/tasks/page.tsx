@@ -139,7 +139,7 @@ export default function TasksPage() {
             <Button onClick={handleAddTask} className="bg-primary-500 text-white">
               Add
             </Button>
-            <Button onClick={() => setShowAddForm(false)} variant="outline">
+            <Button onClick={() => setShowAddForm(false)} variant="secondary">
               Cancel
             </Button>
           </div>
@@ -151,7 +151,7 @@ export default function TasksPage() {
         {(['all', 'todo', 'in-progress', 'completed'] as const).map((status) => (
           <Button
             key={status}
-            variant={filter === status ? 'primary' : 'outline'}
+            variant={filter === status ? 'primary' : 'secondary'}
             onClick={() => setFilter(status)}
             className="capitalize"
           >
@@ -221,14 +221,14 @@ export default function TasksPage() {
                   {task.status === 'completed' && (
                     <Button
                       onClick={() => handleUpdateStatus(task.id, 'todo')}
-                      variant="outline"
+                      variant="secondary"
                     >
                       Reopen
                     </Button>
                   )}
                   <Button
                     onClick={() => handleDeleteTask(task.id)}
-                    variant="outline"
+                    variant="secondary"
                     className="text-red-600 hover:text-red-700"
                   >
                     Delete

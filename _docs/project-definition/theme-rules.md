@@ -1,6 +1,608 @@
-# Alva Theme & Design System
+# Alva Theme & Design System - Semantic Design System
 
-**@fileoverview** Complete design system specification for the Alva marketing platform, defining colors, typography, spacing, and visual language to ensure consistent, premium brand expression.
+**@fileoverview** Complete semantic design system specification for the Alva marketing platform, defining semantic colors, typography, spacing, and visual language using CSS custom properties for consistent theming across light and dark modes.
+
+---
+
+## Brand Identity
+
+### Name
+
+**Alva** — Derived from Latin "albus" (white/light), symbolizing clarity and illumination
+
+### Tagline
+
+_"Bringing your marketing into the light."_
+
+### Mission
+
+Provide small business owners with a custom marketing plan and a skilled, always-on marketing director at a fraction of the cost.
+
+### Brand Personality
+
+- **Sharp**: Cutting through marketing noise with precision
+- **Confident**: Decisive recommendations, never wishy-washy
+- **Warm**: Approachable and encouraging, not clinical
+- **Direct**: Clear communication, no fluff
+
+### Core Values
+
+1. **Clarity** — Eliminate confusion, provide direction
+2. **Precision** — Targeted strategies, not generic advice
+3. **Empowerment** — Users feel in control, not dependent
+4. **Adaptation** — Evolves with business needs
+
+---
+
+## Semantic Design System Overview
+
+### Philosophy
+
+The Alva design system uses **semantic naming** instead of color-specific naming to ensure consistent theming across light and dark modes. All design tokens are defined as CSS custom properties for maximum flexibility and maintainability.
+
+### Key Principles
+
+1. **Semantic Over Literal**: Use `primary`, `secondary`, `success` instead of `gold`, `blue`, `green`
+2. **CSS Custom Properties**: All tokens defined as CSS variables for easy theming
+3. **Theme Agnostic**: Components work seamlessly in light and dark modes
+4. **Consistent Branding**: Brand colors (gold) remain consistent across themes
+5. **Accessibility First**: All color combinations meet WCAG AA standards
+
+---
+
+## Semantic Color System
+
+### Primary Colors (Brand Identity)
+
+#### Primary (Gold - Brand Color)
+
+```css
+--color-primary: #ffd700;
+--color-primary-hover: #ffe44d;
+--color-primary-active: #e6c200;
+--color-primary-muted: #fff4cc;
+```
+
+**Usage**:
+
+- Primary CTAs (buttons, links)
+- Active states (selected items, current page)
+- Progress indicators
+- Attention-grabbing elements (Quick Win card)
+- Alva's "thinking" pulse animation
+- Highlights and accents
+
+**Accessibility**:
+
+- ⚠️ Does not pass WCAG AA for body text on white
+- ✅ Use for large text only (18px+, headings)
+- ✅ Passes AA for icons and UI elements (3:1 ratio)
+
+#### Secondary (Blue - Navigation & Info)
+
+```css
+--color-secondary: #007bff;
+--color-secondary-hover: #4da3ff;
+--color-secondary-active: #0056b3;
+--color-secondary-muted: #cce5ff;
+```
+
+**Usage**:
+
+- Secondary actions (back links, info links)
+- Informational states
+- Links in body text
+- Icons for information/help
+
+**Accessibility**:
+
+- ✅ Passes WCAG AA for all text sizes (4.5:1 on white)
+
+### Semantic State Colors
+
+#### Success (Green)
+
+```css
+--color-success: #28a745;
+--color-success-hover: #5cb85c;
+--color-success-active: #1e7e34;
+--color-success-muted: #d4edda;
+```
+
+**Usage**:
+
+- Success messages
+- Completed states (tasks, onboarding)
+- Positive metrics/trends
+- Verification badges
+
+#### Danger (Red)
+
+```css
+--color-danger: #d32f2f;
+--color-danger-hover: #ef5350;
+--color-danger-active: #b71c1c;
+--color-danger-muted: #f8d7da;
+```
+
+**Usage**:
+
+- Error messages
+- Destructive actions (delete, remove)
+- Validation failures
+- Warning indicators
+
+#### Warning (Yellow)
+
+```css
+--color-warning: #ffc107;
+--color-warning-hover: #ffd54f;
+--color-warning-active: #e0a800;
+--color-warning-muted: #fff3cd;
+```
+
+**Usage**:
+
+- Warning messages
+- Caution states
+- Important notices
+- Attention-grabbing alerts
+
+#### Info (Cyan)
+
+```css
+--color-info: #17a2b8;
+--color-info-hover: #5dade2;
+--color-info-active: #138496;
+--color-info-muted: #d1ecf1;
+```
+
+**Usage**:
+
+- Informational content
+- Help text
+- Neutral alerts
+- General notifications
+
+---
+
+## Theme-Aware Color System
+
+### Light Mode (Default)
+
+```css
+/* Text Colors */
+--color-text-primary: #1f1f1f;
+--color-text-secondary: #6f6f6f;
+--color-text-tertiary: #a0a0a0;
+--color-text-inverse: #ffffff;
+
+/* Background Colors */
+--color-bg-primary: #ffffff;
+--color-bg-secondary: #fafafa;
+--color-bg-tertiary: #f0f0f0;
+--color-bg-elevated: #ffffff;
+
+/* Border Colors */
+--color-border-subtle: #e5e5e5;
+--color-border-default: #cccccc;
+--color-border-strong: #a0a0a0;
+--color-border-focus: #ffd700;
+```
+
+### Dark Mode
+
+```css
+/* Text Colors */
+--color-text-primary: #fafafa;
+--color-text-secondary: #a0a0a0;
+--color-text-tertiary: #6f6f6f;
+--color-text-inverse: #1f1f1f;
+
+/* Background Colors */
+--color-bg-primary: #0f172a;
+--color-bg-secondary: #1e293b;
+--color-bg-tertiary: #334155;
+--color-bg-elevated: #1e293b;
+
+/* Border Colors */
+--color-border-subtle: #334155;
+--color-border-default: #475569;
+--color-border-strong: #64748b;
+--color-border-focus: #ffd700;
+
+/* Brand Colors (Consistent Across Themes) */
+--color-primary: #ffd700;
+--color-primary-hover: #ffe44d;
+--color-primary-active: #e6c200;
+--color-primary-muted: #332f00;
+
+/* Adjusted Semantic Colors for Dark Mode */
+--color-secondary: #3b82f6;
+--color-success: #10b981;
+--color-danger: #ef4444;
+--color-warning: #f59e0b;
+--color-info: #06b6d4;
+```
+
+---
+
+## Typography System
+
+### Font Family
+
+```css
+--font-family-sans: 'Inter', 'Helvetica', 'Arial', sans-serif;
+```
+
+### Font Sizes
+
+```css
+--font-size-xs: 12px;
+--font-size-sm: 13px;
+--font-size-base: 14px;
+--font-size-md: 16px;
+--font-size-lg: 18px;
+--font-size-xl: 22px;
+--font-size-2xl: 28px;
+--font-size-3xl: 36px;
+```
+
+### Semantic Typography Classes
+
+#### Headings
+
+```css
+.heading-hero {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+}
+
+.heading-page {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--color-text-primary);
+}
+
+.heading-section {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.375;
+  color: var(--color-text-primary);
+}
+```
+
+#### Body Text
+
+```css
+.body-default {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.body-large {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.body-small {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+```
+
+---
+
+## Spacing System
+
+### Base Unit
+
+**4px** — All spacing is a multiple of 4px for consistency
+
+### Spacing Scale
+
+```css
+--spacing-0: 0;
+--spacing-1: 4px;
+--spacing-2: 8px;
+--spacing-3: 12px;
+--spacing-4: 16px;
+--spacing-5: 20px;
+--spacing-6: 24px;
+--spacing-8: 32px;
+--spacing-10: 40px;
+--spacing-12: 48px;
+--spacing-16: 64px;
+--spacing-20: 80px;
+--spacing-24: 96px;
+```
+
+---
+
+## Border & Radius System
+
+### Border Radius
+
+```css
+--radius-sm: 4px;
+--radius-md: 8px;
+--radius-lg: 12px;
+--radius-xl: 16px;
+--radius-full: 9999px;
+```
+
+### Border Widths
+
+```css
+--border-width-thin: 1px;
+--border-width-default: 1px;
+--border-width-thick: 2px;
+--border-width-heavy: 3px;
+```
+
+---
+
+## Shadow & Elevation System
+
+### Shadow Scale
+
+```css
+--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+--shadow-focus: 0 0 0 3px rgba(255, 215, 0, 0.3);
+--shadow-error: 0 0 0 3px rgba(211, 47, 47, 0.2);
+```
+
+---
+
+## Transition System
+
+### Duration Scale
+
+```css
+--transition-fast: 100ms;
+--transition-normal: 150ms;
+--transition-moderate: 200ms;
+--transition-slow: 300ms;
+--transition-slower: 500ms;
+```
+
+---
+
+## Component Theming Examples
+
+### Button Variants (Semantic Classes)
+
+```css
+/* Primary Button */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--color-primary-active);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-default);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Ghost Button */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+/* Destructive Button */
+.btn-destructive {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+  border: 1px solid transparent;
+}
+
+.btn-destructive:hover {
+  background-color: var(--color-danger-hover);
+}
+```
+
+### Card Variants (Semantic Classes)
+
+```css
+/* Default Card */
+.card-default {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: none;
+}
+
+/* Elevated Card */
+.card-elevated {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-md);
+}
+
+/* Interactive Card */
+.card-interactive {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  transition: all var(--transition-normal);
+}
+
+.card-interactive:hover {
+  background-color: var(--color-bg-secondary);
+  box-shadow: var(--shadow-md);
+}
+
+/* Highlighted Card */
+.card-highlighted {
+  background-color: var(--color-bg-elevated);
+  border-left: 4px solid var(--color-primary);
+  border-top: 1px solid var(--color-border-subtle);
+  border-right: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+```
+
+---
+
+## Dark Mode Implementation
+
+### Automatic Detection
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode color overrides */
+  }
+}
+```
+
+### Manual Toggle
+
+```css
+.dark {
+  /* Dark mode color overrides */
+}
+```
+
+### Theme Toggle Component
+
+```typescript
+// Theme toggle implementation
+const toggleTheme = () => {
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+};
+```
+
+---
+
+## Usage Guidelines
+
+### DO's ✅
+
+- Use semantic color names (`primary`, `secondary`, `success`, `danger`)
+- Use CSS custom properties for all design tokens
+- Test components in both light and dark modes
+- Ensure sufficient contrast ratios (4.5:1 for body text)
+- Use consistent spacing multiples of 4px
+- Maintain brand color consistency across themes
+
+### DON'Ts ❌
+
+- Don't use literal color names (`gold`, `blue`, `green`)
+- Don't hardcode color values in components
+- Don't assume light mode only
+- Don't use color alone to convey meaning
+- Don't vary brand colors across themes
+- Don't forget to test accessibility in both modes
+
+---
+
+## Migration from Literal to Semantic
+
+### Before (Literal Naming)
+
+```css
+.btn-gold {
+  background-color: #ffd700;
+}
+.btn-blue {
+  background-color: #007bff;
+}
+.text-gray-600 {
+  color: #6f6f6f;
+}
+```
+
+### After (Semantic Naming)
+
+```css
+.btn-primary {
+  background-color: var(--color-primary);
+}
+.btn-secondary {
+  background-color: var(--color-secondary);
+}
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+```
+
+### Benefits of Semantic System
+
+1. **Theme Consistency**: Components automatically adapt to theme changes
+2. **Maintainability**: Change colors in one place (CSS custom properties)
+3. **Accessibility**: Easier to ensure proper contrast ratios
+4. **Scalability**: Easy to add new themes or brand variations
+5. **Developer Experience**: Clear, meaningful class names
+
+---
+
+## Future Considerations
+
+### Advanced Theming
+
+- User-customizable accent colors (premium feature)
+- Industry-specific color schemes (e.g., eco-brands → green accents)
+- Seasonal theme variations
+- Brand-specific theme customization
+
+### Accessibility Enhancements
+
+- High contrast mode support
+- Dyslexia-friendly font options
+- Enhanced focus indicators
+- Reduced motion preferences
+
+---
+
+## Implementation Checklist
+
+Before shipping any component:
+
+- [ ] Uses semantic color classes (no literal color names)
+- [ ] Uses CSS custom properties for all design tokens
+- [ ] Tested in both light and dark modes
+- [ ] Meets WCAG AA contrast requirements
+- [ ] Follows 4px spacing system
+- [ ] Uses consistent border radius values
+- [ ] Implements proper focus states
+- [ ] Includes loading and error states
+- [ ] Responsive across all breakpoints
+- [ ] Accessible via keyboard navigation
+
+This semantic design system ensures consistent, accessible, and maintainable theming across the entire Alva platform while supporting both light and dark modes seamlessly.
 
 ---
 
@@ -191,7 +793,7 @@ $warning-muted: #fff3cd;
 **Primary**: Inter
 
 ```scss
-$font-family-base: "Inter", "Helvetica", "Arial", sans-serif;
+$font-family-base: 'Inter', 'Helvetica', 'Arial', sans-serif;
 ```
 
 **Why Inter**:
@@ -724,24 +1326,24 @@ $container-max: 1536px; // Maximum width (rare)
 // tailwind.config.ts
 const buttonVariants = {
   primary: {
-    bg: "bg-gold hover:bg-gold-light active:bg-gold-dark",
-    text: "text-dark-text",
-    border: "border-transparent",
+    bg: 'bg-gold hover:bg-gold-light active:bg-gold-dark',
+    text: 'text-dark-text',
+    border: 'border-transparent',
   },
   secondary: {
-    bg: "bg-white hover:bg-gray-50 active:bg-gray-100",
-    text: "text-dark-text",
-    border: "border-border-default",
+    bg: 'bg-white hover:bg-gray-50 active:bg-gray-100',
+    text: 'text-dark-text',
+    border: 'border-border-default',
   },
   ghost: {
-    bg: "bg-transparent hover:bg-gray-50",
-    text: "text-blue hover:text-blue-light",
-    border: "border-transparent",
+    bg: 'bg-transparent hover:bg-gray-50',
+    text: 'text-blue hover:text-blue-light',
+    border: 'border-transparent',
   },
   destructive: {
-    bg: "bg-red hover:bg-red-light active:bg-red-dark",
-    text: "text-white",
-    border: "border-transparent",
+    bg: 'bg-red hover:bg-red-light active:bg-red-dark',
+    text: 'text-white',
+    border: 'border-transparent',
   },
 };
 ```
@@ -751,24 +1353,24 @@ const buttonVariants = {
 ```ts
 const cardVariants = {
   default: {
-    bg: "bg-white",
-    border: "border border-border-subtle",
-    shadow: "shadow-none",
+    bg: 'bg-white',
+    border: 'border border-border-subtle',
+    shadow: 'shadow-none',
   },
   elevated: {
-    bg: "bg-white",
-    border: "border-transparent",
-    shadow: "shadow-md",
+    bg: 'bg-white',
+    border: 'border-transparent',
+    shadow: 'shadow-md',
   },
   highlighted: {
-    bg: "bg-white",
-    border: "border-l-4 border-l-gold border-y border-r border-border-subtle",
-    shadow: "shadow-none",
+    bg: 'bg-white',
+    border: 'border-l-4 border-l-gold border-y border-r border-border-subtle',
+    shadow: 'shadow-none',
   },
   interactive: {
-    bg: "bg-white hover:bg-gray-50",
-    border: "border border-border-subtle",
-    shadow: "hover:shadow-md transition-all",
+    bg: 'bg-white hover:bg-gray-50',
+    border: 'border border-border-subtle',
+    shadow: 'hover:shadow-md transition-all',
   },
 };
 ```
@@ -806,105 +1408,105 @@ $gold-dark-mode: #ffd700; // Keep gold consistent
 
 ```ts
 // tailwind.config.ts
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ["./apps/**/*.{js,ts,jsx,tsx}", "./libs/**/*.{js,ts,jsx,tsx}"],
+  content: ['./apps/**/*.{js,ts,jsx,tsx}', './libs/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
         gold: {
-          DEFAULT: "#FFD700",
-          light: "#FFE44D",
-          dark: "#E6C200",
-          muted: "#FFF4CC",
+          DEFAULT: '#FFD700',
+          light: '#FFE44D',
+          dark: '#E6C200',
+          muted: '#FFF4CC',
         },
         blue: {
-          DEFAULT: "#007BFF",
-          light: "#4DA3FF",
-          dark: "#0056B3",
-          muted: "#CCE5FF",
+          DEFAULT: '#007BFF',
+          light: '#4DA3FF',
+          dark: '#0056B3',
+          muted: '#CCE5FF',
         },
         green: {
-          DEFAULT: "#28A745",
-          light: "#5CB85C",
-          dark: "#1E7E34",
-          muted: "#D4EDDA",
+          DEFAULT: '#28A745',
+          light: '#5CB85C',
+          dark: '#1E7E34',
+          muted: '#D4EDDA',
         },
         red: {
-          DEFAULT: "#D32F2F",
-          light: "#EF5350",
-          dark: "#B71C1C",
-          muted: "#F8D7DA",
+          DEFAULT: '#D32F2F',
+          light: '#EF5350',
+          dark: '#B71C1C',
+          muted: '#F8D7DA',
         },
         text: {
-          primary: "#1F1F1F",
-          secondary: "#6F6F6F",
-          tertiary: "#A0A0A0",
-          inverse: "#FFFFFF",
+          primary: '#1F1F1F',
+          secondary: '#6F6F6F',
+          tertiary: '#A0A0A0',
+          inverse: '#FFFFFF',
         },
         bg: {
-          primary: "#FFFFFF",
-          secondary: "#FAFAFA",
-          tertiary: "#F0F0F0",
+          primary: '#FFFFFF',
+          secondary: '#FAFAFA',
+          tertiary: '#F0F0F0',
         },
         border: {
-          subtle: "#E5E5E5",
-          DEFAULT: "#CCCCCC",
-          strong: "#A0A0A0",
+          subtle: '#E5E5E5',
+          DEFAULT: '#CCCCCC',
+          strong: '#A0A0A0',
         },
       },
       fontFamily: {
-        sans: ["Inter", "Helvetica", "Arial", "sans-serif"],
+        sans: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
       },
       fontSize: {
-        xs: ["12px", { lineHeight: "1.5" }],
-        sm: ["13px", { lineHeight: "1.5" }],
-        base: ["14px", { lineHeight: "1.5" }],
-        md: ["16px", { lineHeight: "1.5" }],
-        lg: ["18px", { lineHeight: "1.375" }],
-        xl: ["22px", { lineHeight: "1.375" }],
-        "2xl": ["28px", { lineHeight: "1.25" }],
-        "3xl": ["36px", { lineHeight: "1.25" }],
+        xs: ['12px', { lineHeight: '1.5' }],
+        sm: ['13px', { lineHeight: '1.5' }],
+        base: ['14px', { lineHeight: '1.5' }],
+        md: ['16px', { lineHeight: '1.5' }],
+        lg: ['18px', { lineHeight: '1.375' }],
+        xl: ['22px', { lineHeight: '1.375' }],
+        '2xl': ['28px', { lineHeight: '1.25' }],
+        '3xl': ['36px', { lineHeight: '1.25' }],
       },
       spacing: {
-        "0": "0",
-        "1": "4px",
-        "2": "8px",
-        "3": "12px",
-        "4": "16px",
-        "5": "20px",
-        "6": "24px",
-        "8": "32px",
-        "10": "40px",
-        "12": "48px",
-        "16": "64px",
-        "20": "80px",
-        "24": "96px",
+        '0': '0',
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        '8': '32px',
+        '10': '40px',
+        '12': '48px',
+        '16': '64px',
+        '20': '80px',
+        '24': '96px',
       },
       borderRadius: {
-        sm: "4px",
-        DEFAULT: "8px",
-        md: "8px",
-        lg: "12px",
-        xl: "16px",
-        full: "9999px",
+        sm: '4px',
+        DEFAULT: '8px',
+        md: '8px',
+        lg: '12px',
+        xl: '16px',
+        full: '9999px',
       },
       boxShadow: {
-        sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        DEFAULT: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-        focus: "0 0 0 3px rgba(255, 215, 0, 0.3)",
-        error: "0 0 0 3px rgba(211, 47, 47, 0.2)",
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        focus: '0 0 0 3px rgba(255, 215, 0, 0.3)',
+        error: '0 0 0 3px rgba(211, 47, 47, 0.2)',
       },
       transitionDuration: {
-        fast: "100ms",
-        DEFAULT: "150ms",
-        moderate: "200ms",
-        slow: "300ms",
-        slower: "500ms",
+        fast: '100ms',
+        DEFAULT: '150ms',
+        moderate: '200ms',
+        slow: '300ms',
+        slower: '500ms',
       },
     },
   },
@@ -950,7 +1552,7 @@ export default config;
   --space-8: 32px;
 
   /* Typography */
-  --font-sans: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-sans: 'Inter', 'Helvetica', 'Arial', sans-serif;
 
   /* Border Radius */
   --radius-sm: 4px;

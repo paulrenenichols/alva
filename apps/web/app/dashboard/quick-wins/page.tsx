@@ -100,7 +100,7 @@ export default function QuickWinsPage() {
         {(['all', 'planned', 'in-progress', 'completed'] as const).map((status) => (
           <Button
             key={status}
-            variant={filter === status ? 'primary' : 'outline'}
+            variant={filter === status ? 'primary' : 'secondary'}
             onClick={() => setFilter(status)}
             className="capitalize"
           >
@@ -159,7 +159,7 @@ export default function QuickWinsPage() {
                   {win.status === 'completed' && (
                     <Button
                       onClick={() => handleUpdateStatus(win.id, 'planned')}
-                      variant="outline"
+                      variant="secondary"
                     >
                       Restart
                     </Button>
