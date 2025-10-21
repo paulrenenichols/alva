@@ -9,7 +9,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Comprehensive responsive design testing across different viewport sizes.',
+          'Comprehensive responsive design testing across different screen sizes.',
       },
     },
   },
@@ -24,8 +24,8 @@ export const ButtonResponsiveTest: Story = {
       <div>
         <h2 className="text-xl font-bold mb-4">Button Responsive Behavior</h2>
         <p className="text-text-secondary mb-4">
-          Test button behavior across different screen sizes. Use the viewport
-          addon to test.
+          Test button behavior across different screen sizes. Resize your
+          browser window to test responsive behavior.
         </p>
 
         <div className="space-y-4">
@@ -253,14 +253,15 @@ export const BreakpointTest: Story = {
       <div>
         <h2 className="text-xl font-bold mb-4">Breakpoint Testing</h2>
         <p className="text-text-secondary mb-4">
-          Test components at different breakpoints using the viewport addon.
+          Test components at different breakpoints by resizing your browser
+          window.
         </p>
 
         <div className="space-y-4">
           <div className="p-4 bg-bg-secondary rounded-lg">
             <h3 className="text-lg font-semibold mb-2">Current Viewport</h3>
             <p className="text-text-secondary">
-              Use the viewport addon to test different screen sizes:
+              Resize your browser window to test different screen sizes:
             </p>
             <ul className="list-disc list-inside text-text-secondary mt-2 space-y-1">
               <li>Mobile: 375px width</li>

@@ -32,9 +32,6 @@ export const Default: Story = {
 
 export const Mobile: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'mobile1',
-    },
     docs: {
       description: {
         story: 'Marketing plan page optimized for mobile devices.',
@@ -45,9 +42,6 @@ export const Mobile: Story = {
 
 export const Tablet: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'tablet',
-    },
     docs: {
       description: {
         story: 'Marketing plan page layout for tablet devices.',

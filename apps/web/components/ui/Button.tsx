@@ -24,7 +24,7 @@ export function Button({
 
   const variantClasses = {
     primary:
-      'bg-primary text-text-inverse hover:bg-primary-hover active:bg-primary-active',
+      'bg-primary text-text-primary hover:bg-primary-hover active:bg-primary-active font-semibold',
     secondary:
       'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary',
     ghost: 'text-text-primary hover:bg-bg-secondary',

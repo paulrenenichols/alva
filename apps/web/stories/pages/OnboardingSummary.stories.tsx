@@ -31,9 +31,6 @@ export const Default: Story = {
 
 export const Mobile: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'mobile1',
-    },
     docs: {
       description: {
         story: 'Onboarding summary page optimized for mobile devices.',
@@ -44,9 +41,6 @@ export const Mobile: Story = {
 
 export const Tablet: Story = {
   parameters: {
-    viewport: {
-      defaultViewport: 'tablet',
-    },
     docs: {
       description: {
         story: 'Onboarding summary page layout for tablet devices.',
