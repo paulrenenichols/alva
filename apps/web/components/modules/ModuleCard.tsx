@@ -44,7 +44,7 @@ export function ModuleCard({
             <p className="text-sm text-gray-600">{description}</p>
           </div>
         </div>
-        <Badge variant={isActive ? 'default' : 'secondary'}>
+        <Badge variant={isActive ? 'default' : 'gray'}>
           {isActive ? 'Active' : 'Inactive'}
         </Badge>
       </div>

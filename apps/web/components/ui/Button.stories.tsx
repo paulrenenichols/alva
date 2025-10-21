@@ -33,6 +33,31 @@ export const Primary: Story = {
   },
 };
 
+export const PrimaryLarge: Story = {
+  args: {
+    children: "Let's Go",
+    variant: 'primary',
+    size: 'lg',
+  },
+};
+
+export const PrimaryLargeFullWidth: Story = {
+  args: {
+    children: "Let's Go",
+    variant: 'primary',
+    size: 'lg',
+    className: 'w-full',
+  },
+};
+
+export const GhostFullWidth: Story = {
+  args: {
+    children: 'Back to Home',
+    variant: 'ghost',
+    className: 'w-full',
+  },
+};
+
 export const Secondary: Story = {
   args: {
     children: 'Secondary Button',
@@ -89,9 +114,18 @@ export const Disabled: Story = {
   },
 };
 
-export const WithClick: Story = {
-  args: {
-    children: 'Click Me',
-    onClick: () => alert('Button clicked!'),
+export const OnboardingExample: Story = {
+  render: () => (
+    <div className="space-y-3 w-full max-w-md">
+      <Button size="lg" className="w-full">
+        Let's Go
+      </Button>
+      <Button variant="ghost" className="w-full">
+        Back to Home
+      </Button>
+    </div>
+  ),
+  parameters: {
+    layout: 'centered',
   },
 };
