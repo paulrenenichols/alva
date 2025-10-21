@@ -57,4 +57,5 @@ out
 node_modules
 
 
-storybook-static
+storybook-staticenv.development
+env.production
