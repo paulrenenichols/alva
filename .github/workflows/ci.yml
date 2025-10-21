@@ -198,7 +198,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Storybook
-        run: pnpm nx run web:build-storybook
+        run: |
+          cd apps/web
+          npx storybook build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

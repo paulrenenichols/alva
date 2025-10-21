@@ -47,7 +47,7 @@ Our component library is automatically deployed and updated with each merge to p
 
 1. **View Components**: Visit the live Storybook links above
 2. **Local Development**: Run `pnpm nx run web:storybook` to start local Storybook
-3. **Build Storybook**: Run `pnpm nx run web:build-storybook` to build static version
+3. **Build Storybook**: Run `cd apps/web && npx storybook build` to build static version
 4. **Theme Testing**: Use the theme toggle in Storybook toolbar to test light/dark modes
 
 ### 📚 What's Included
