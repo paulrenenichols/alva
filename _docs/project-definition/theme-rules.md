@@ -529,11 +529,17 @@ const toggleTheme = () => {
 
 ---
 
-## Migration from Literal to Semantic
+## Migration from Tailwind CSS 3 to 4
 
-### Before (Literal Naming)
+### Before (Tailwind CSS 3)
 
 ```css
+/* Old @tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Literal color naming */
 .btn-gold {
   background-color: #ffd700;
 }
@@ -545,9 +551,13 @@ const toggleTheme = () => {
 }
 ```
 
-### After (Semantic Naming)
+### After (Tailwind CSS 4)
 
 ```css
+/* New @import syntax */
+@import 'tailwindcss';
+
+/* Semantic naming with CSS custom properties */
 .btn-primary {
   background-color: var(--color-primary);
 }
@@ -559,13 +569,75 @@ const toggleTheme = () => {
 }
 ```
 
-### Benefits of Semantic System
+### Benefits of Tailwind CSS 4 + Semantic System
 
 1. **Theme Consistency**: Components automatically adapt to theme changes
 2. **Maintainability**: Change colors in one place (CSS custom properties)
 3. **Accessibility**: Easier to ensure proper contrast ratios
 4. **Scalability**: Easy to add new themes or brand variations
 5. **Developer Experience**: Clear, meaningful class names
+6. **Performance**: Tailwind CSS 4's improved CSS generation
+7. **Modern Architecture**: Better integration with CSS custom properties
+8. **Future-Proof**: Aligned with modern CSS standards
+
+---
+
+## Tailwind CSS 4 Best Practices
+
+### Key Features & Changes
+
+1. **New Import Syntax**: Use `@import 'tailwindcss'` instead of `@tailwind` directives
+2. **CSS Custom Properties**: Direct integration with CSS variables in configuration
+3. **Improved Performance**: Faster CSS generation and smaller bundle sizes
+4. **Better PostCSS Integration**: Enhanced PostCSS plugin architecture
+5. **Modern CSS Standards**: Better support for modern CSS features
+
+### Implementation Guidelines
+
+#### ✅ DO's (Tailwind CSS 4)
+
+- Use `@import 'tailwindcss'` in your CSS files
+- Define colors using CSS custom properties: `var(--color-primary)`
+- Use semantic naming: `primary`, `secondary`, `success`, `danger`
+- Leverage CSS custom properties for dynamic theming
+- Use the new PostCSS plugin: `@tailwindcss/postcss`
+
+#### ❌ DON'Ts (Avoid Tailwind CSS 3 Patterns)
+
+- Don't use `@tailwind base; @tailwind components; @tailwind utilities;`
+- Don't hardcode color values in Tailwind config
+- Don't use literal color names: `gold`, `blue`, `green`
+- Don't mix Tailwind 3 and 4 syntax in the same project
+
+### PostCSS Configuration
+
+```js
+// postcss.config.js
+module.exports = {
+  plugins: {
+    '@tailwindcss/postcss': {},
+    autoprefixer: {},
+  },
+}
+```
+
+### Storybook Integration
+
+```tsx
+// .storybook/preview.tsx
+import '../app/global.css'; // Import Tailwind CSS
+import { withThemeByClassName } from '@storybook/addon-themes';
+
+export const decorators = [
+  withThemeByClassName({
+    themes: {
+      light: 'light',
+      dark: 'dark',
+    },
+    defaultTheme: 'light',
+  }),
+];
+```
 
 ---
 
@@ -587,10 +659,11 @@ const toggleTheme = () => {
 
 ---
 
-## Implementation Checklist
+## Implementation Checklist (Tailwind CSS 4)
 
 Before shipping any component:
 
+- [ ] Uses `@import 'tailwindcss'` syntax (not `@tailwind` directives)
 - [ ] Uses semantic color classes (no literal color names)
 - [ ] Uses CSS custom properties for all design tokens
 - [ ] Tested in both light and dark modes
@@ -601,8 +674,11 @@ Before shipping any component:
 - [ ] Includes loading and error states
 - [ ] Responsive across all breakpoints
 - [ ] Accessible via keyboard navigation
+- [ ] Uses Tailwind CSS 4 PostCSS plugin
+- [ ] Storybook properly imports Tailwind CSS file
+- [ ] No hardcoded color values in Tailwind config
 
-This semantic design system ensures consistent, accessible, and maintainable theming across the entire Alva platform while supporting both light and dark modes seamlessly.
+This semantic design system with Tailwind CSS 4 ensures consistent, accessible, and maintainable theming across the entire Alva platform while supporting both light and dark modes seamlessly.
 
 ---
 
@@ -1320,59 +1396,92 @@ $container-max: 1536px; // Maximum width (rare)
 
 ## Component Theming
 
-### Button Variants (Tailwind Config)
+### Button Variants (Semantic Classes - Tailwind CSS 4)
 
-```ts
-// tailwind.config.ts
-const buttonVariants = {
-  primary: {
-    bg: 'bg-gold hover:bg-gold-light active:bg-gold-dark',
-    text: 'text-dark-text',
-    border: 'border-transparent',
-  },
-  secondary: {
-    bg: 'bg-white hover:bg-gray-50 active:bg-gray-100',
-    text: 'text-dark-text',
-    border: 'border-border-default',
-  },
-  ghost: {
-    bg: 'bg-transparent hover:bg-gray-50',
-    text: 'text-blue hover:text-blue-light',
-    border: 'border-transparent',
-  },
-  destructive: {
-    bg: 'bg-red hover:bg-red-light active:bg-red-dark',
-    text: 'text-white',
-    border: 'border-transparent',
-  },
-};
+```tsx
+// Button component using semantic Tailwind classes
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  className,
+  children,
+  disabled,
+  ...props
+}: ButtonProps) {
+  const isDisabled = disabled || loading;
+  const buttonClasses = cn(
+    'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:pointer-events-none disabled:opacity-50',
+    {
+      // Primary button using semantic colors
+      'bg-primary text-text-primary hover:bg-primary-hover active:bg-primary-active font-semibold': variant === 'primary',
+      
+      // Secondary button using semantic colors
+      'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary': variant === 'secondary',
+      
+      // Ghost button using semantic colors
+      'text-text-primary hover:bg-bg-secondary': variant === 'ghost',
+      
+      // Destructive button using semantic colors
+      'bg-danger text-text-inverse hover:bg-danger-hover active:bg-danger-active': variant === 'destructive',
+    },
+    {
+      'h-8 px-3 text-xs': size === 'sm',
+      'h-10 px-4 py-2': size === 'md',
+      'h-12 px-8 text-base': size === 'lg',
+    },
+    className
+  );
+
+  return (
+    <button
+      className={buttonClasses}
+      disabled={isDisabled}
+      {...props}
+    >
+      {loading && (
+        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      )}
+      {children}
+    </button>
+  );
+}
 ```
 
-### Card Variants
+### Card Variants (Semantic Classes - Tailwind CSS 4)
 
-```ts
-const cardVariants = {
-  default: {
-    bg: 'bg-white',
-    border: 'border border-border-subtle',
-    shadow: 'shadow-none',
-  },
-  elevated: {
-    bg: 'bg-white',
-    border: 'border-transparent',
-    shadow: 'shadow-md',
-  },
-  highlighted: {
-    bg: 'bg-white',
-    border: 'border-l-4 border-l-gold border-y border-r border-border-subtle',
-    shadow: 'shadow-none',
-  },
-  interactive: {
-    bg: 'bg-white hover:bg-gray-50',
-    border: 'border border-border-subtle',
-    shadow: 'hover:shadow-md transition-all',
-  },
-};
+```tsx
+// Card component using semantic Tailwind classes
+export function Card({
+  variant = 'default',
+  className,
+  children,
+  ...props
+}: CardProps) {
+  const cardClasses = cn(
+    'rounded-md transition-colors',
+    {
+      // Default card using semantic colors
+      'bg-bg-elevated border border-border-subtle': variant === 'default',
+      
+      // Elevated card using semantic colors
+      'bg-bg-elevated border-transparent shadow-md': variant === 'elevated',
+      
+      // Highlighted card using semantic colors
+      'bg-bg-elevated border-l-4 border-l-primary border-y border-r border-border-subtle': variant === 'highlighted',
+      
+      // Interactive card using semantic colors
+      'bg-bg-elevated border border-border-subtle hover:bg-bg-secondary hover:shadow-md': variant === 'interactive',
+    },
+    className
+  );
+
+  return (
+    <div className={cardClasses} {...props}>
+      {children}
+    </div>
+  );
+}
 ```
 
 ---
@@ -1402,111 +1511,134 @@ $gold-dark-mode: #ffd700; // Keep gold consistent
 
 ---
 
-## Tailwind Configuration
+## Tailwind CSS 4 Configuration
 
-### Complete Config
+### Complete Config (Tailwind CSS 4)
 
 ```ts
 // tailwind.config.ts
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ['./apps/**/*.{js,ts,jsx,tsx}', './libs/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './stories/**/*.{js,ts,jsx,tsx,mdx}',
+    './.storybook/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  darkMode: 'class', // Enable manual dark mode toggle
   theme: {
     extend: {
+      // Semantic color system using CSS custom properties
       colors: {
-        gold: {
-          DEFAULT: '#FFD700',
-          light: '#FFE44D',
-          dark: '#E6C200',
-          muted: '#FFF4CC',
+        primary: {
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
+          active: 'var(--color-primary-active)',
+          muted: 'var(--color-primary-muted)',
         },
-        blue: {
-          DEFAULT: '#007BFF',
-          light: '#4DA3FF',
-          dark: '#0056B3',
-          muted: '#CCE5FF',
+        secondary: {
+          DEFAULT: 'var(--color-secondary)',
+          hover: 'var(--color-secondary-hover)',
+          active: 'var(--color-secondary-active)',
+          muted: 'var(--color-secondary-muted)',
         },
-        green: {
-          DEFAULT: '#28A745',
-          light: '#5CB85C',
-          dark: '#1E7E34',
-          muted: '#D4EDDA',
+        success: {
+          DEFAULT: 'var(--color-success)',
+          hover: 'var(--color-success-hover)',
+          active: 'var(--color-success-active)',
+          muted: 'var(--color-success-muted)',
         },
-        red: {
-          DEFAULT: '#D32F2F',
-          light: '#EF5350',
-          dark: '#B71C1C',
-          muted: '#F8D7DA',
+        danger: {
+          DEFAULT: 'var(--color-danger)',
+          hover: 'var(--color-danger-hover)',
+          active: 'var(--color-danger-active)',
+          muted: 'var(--color-danger-muted)',
+        },
+        warning: {
+          DEFAULT: 'var(--color-warning)',
+          hover: 'var(--color-warning-hover)',
+          active: 'var(--color-warning-active)',
+          muted: 'var(--color-warning-muted)',
+        },
+        info: {
+          DEFAULT: 'var(--color-info)',
+          hover: 'var(--color-info-hover)',
+          active: 'var(--color-info-active)',
+          muted: 'var(--color-info-muted)',
         },
         text: {
-          primary: '#1F1F1F',
-          secondary: '#6F6F6F',
-          tertiary: '#A0A0A0',
-          inverse: '#FFFFFF',
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
+          inverse: 'var(--color-text-inverse)',
         },
         bg: {
-          primary: '#FFFFFF',
-          secondary: '#FAFAFA',
-          tertiary: '#F0F0F0',
+          primary: 'var(--color-bg-primary)',
+          secondary: 'var(--color-bg-secondary)',
+          tertiary: 'var(--color-bg-tertiary)',
+          elevated: 'var(--color-bg-elevated)',
         },
         border: {
-          subtle: '#E5E5E5',
-          DEFAULT: '#CCCCCC',
-          strong: '#A0A0A0',
+          subtle: 'var(--color-border-subtle)',
+          DEFAULT: 'var(--color-border-default)',
+          strong: 'var(--color-border-strong)',
+          focus: 'var(--color-border-focus)',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['var(--font-family-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
-        xs: ['12px', { lineHeight: '1.5' }],
-        sm: ['13px', { lineHeight: '1.5' }],
-        base: ['14px', { lineHeight: '1.5' }],
-        md: ['16px', { lineHeight: '1.5' }],
-        lg: ['18px', { lineHeight: '1.375' }],
-        xl: ['22px', { lineHeight: '1.375' }],
-        '2xl': ['28px', { lineHeight: '1.25' }],
-        '3xl': ['36px', { lineHeight: '1.25' }],
+        xs: ['0.75rem', { lineHeight: '1.5' }],
+        sm: ['0.875rem', { lineHeight: '1.5' }],
+        base: ['1rem', { lineHeight: '1.5' }],
+        md: ['1.125rem', { lineHeight: '1.5' }],
+        lg: ['1.25rem', { lineHeight: '1.375' }],
+        xl: ['1.5rem', { lineHeight: '1.375' }],
+        '2xl': ['1.875rem', { lineHeight: '1.25' }],
+        '3xl': ['2.25rem', { lineHeight: '1.25' }],
       },
       spacing: {
-        '0': '0',
-        '1': '4px',
-        '2': '8px',
-        '3': '12px',
-        '4': '16px',
-        '5': '20px',
-        '6': '24px',
-        '8': '32px',
-        '10': '40px',
-        '12': '48px',
-        '16': '64px',
-        '20': '80px',
-        '24': '96px',
+        0: '0px',
+        1: '0.25rem',
+        2: '0.5rem',
+        3: '0.75rem',
+        4: '1rem',
+        5: '1.25rem',
+        6: '1.5rem',
+        8: '2rem',
+        10: '2.5rem',
+        12: '3rem',
+        16: '4rem',
+        20: '5rem',
+        24: '6rem',
       },
       borderRadius: {
-        sm: '4px',
-        DEFAULT: '8px',
-        md: '8px',
-        lg: '12px',
-        xl: '16px',
+        sm: '0.125rem',
+        DEFAULT: '0.375rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
         full: '9999px',
       },
       boxShadow: {
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        focus: '0 0 0 3px rgba(255, 215, 0, 0.3)',
-        error: '0 0 0 3px rgba(211, 47, 47, 0.2)',
+        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        focus: '0 0 0 2px var(--color-border-focus)',
+        error: '0 0 0 2px var(--color-danger)',
       },
       transitionDuration: {
-        fast: '100ms',
-        DEFAULT: '150ms',
-        moderate: '200ms',
-        slow: '300ms',
-        slower: '500ms',
+        fast: '150ms',
+        DEFAULT: '200ms',
+        moderate: '300ms',
+        slow: '500ms',
+        slower: '700ms',
       },
     },
   },
@@ -1518,52 +1650,197 @@ export default config;
 
 ---
 
-## Design Tokens (CSS Custom Properties)
+## Design Tokens (CSS Custom Properties) - Tailwind CSS 4
+
+### CSS Import Syntax (Tailwind CSS 4)
 
 ```css
-/* apps/web/app/globals.css */
+/* apps/web/app/global.css */
+@import 'tailwindcss';
+
+/* Design System CSS Custom Properties */
 :root {
-  /* Colors */
-  --color-gold: #ffd700;
-  --color-gold-light: #ffe44d;
-  --color-gold-dark: #e6c200;
+  /* Semantic Color System */
+  --color-primary: #ffd701;
+  --color-primary-hover: #ffe44d;
+  --color-primary-active: #e6c200;
+  --color-primary-muted: #fff4cc;
 
-  --color-blue: #007bff;
-  --color-green: #28a745;
-  --color-red: #d32f2f;
+  --color-secondary: #007bff;
+  --color-secondary-hover: #4da3ff;
+  --color-secondary-active: #0056b3;
+  --color-secondary-muted: #cce5ff;
 
+  --color-success: #28a745;
+  --color-success-hover: #5cb85c;
+  --color-success-active: #1e7e34;
+  --color-success-muted: #d4edda;
+
+  --color-danger: #d32f2f;
+  --color-danger-hover: #ef5350;
+  --color-danger-active: #b71c1c;
+  --color-danger-muted: #f8d7da;
+
+  --color-warning: #ffc107;
+  --color-warning-hover: #ffd54f;
+  --color-warning-active: #e0a800;
+  --color-warning-muted: #fff3cd;
+
+  --color-info: #17a2b8;
+  --color-info-hover: #5dade2;
+  --color-info-active: #138496;
+  --color-info-muted: #d1ecf1;
+
+  /* Semantic Text Colors */
   --color-text-primary: #1f1f1f;
   --color-text-secondary: #6f6f6f;
   --color-text-tertiary: #a0a0a0;
+  --color-text-inverse: #ffffff;
 
+  /* Semantic Background Colors */
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #fafafa;
   --color-bg-tertiary: #f0f0f0;
+  --color-bg-elevated: #ffffff;
 
+  /* Semantic Border Colors */
   --color-border-subtle: #e5e5e5;
   --color-border-default: #cccccc;
-
-  /* Spacing */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
+  --color-border-strong: #a0a0a0;
+  --color-border-focus: #ffd701;
 
   /* Typography */
-  --font-sans: 'Inter', 'Helvetica', 'Arial', sans-serif;
+  --font-family-sans: 'Inter', 'Helvetica', 'Arial', sans-serif;
+
+  /* Spacing */
+  --spacing-0: 0px;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
 
   /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
   --radius-full: 9999px;
 
   /* Transitions */
-  --transition-fast: 100ms ease-out;
-  --transition-normal: 150ms ease-in-out;
-  --transition-slow: 300ms ease-out;
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-moderate: 300ms;
+  --transition-slow: 500ms;
+  --transition-slower: 700ms;
+}
+
+/* Dark Mode Theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Mode Semantic Colors */
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #a0a0a0;
+    --color-text-tertiary: #6f6f6f;
+    --color-text-inverse: #0a0a0a;
+
+    --color-bg-primary: #0f172a;
+    --color-bg-secondary: #1e293b;
+    --color-bg-tertiary: #334155;
+    --color-bg-elevated: #1e293b;
+
+    --color-border-subtle: #334155;
+    --color-border-default: #475569;
+    --color-border-strong: #64748b;
+    --color-border-focus: #ffd701;
+
+    /* Keep brand colors consistent */
+    --color-primary: #d4af00;
+    --color-primary-hover: #e6c200;
+    --color-primary-active: #b8941f;
+    --color-primary-muted: #332f00;
+
+    --color-secondary: #3b82f6;
+    --color-secondary-hover: #60a5fa;
+    --color-secondary-active: #2563eb;
+    --color-secondary-muted: #1e3a8a;
+
+    --color-success: #10b981;
+    --color-success-hover: #34d399;
+    --color-success-active: #059669;
+    --color-success-muted: #064e3b;
+
+    --color-danger: #ef4444;
+    --color-danger-hover: #f87171;
+    --color-danger-active: #dc2626;
+    --color-danger-muted: #7f1d1d;
+
+    --color-warning: #f59e0b;
+    --color-warning-hover: #fbbf24;
+    --color-warning-active: #d97706;
+    --color-warning-muted: #78350f;
+
+    --color-info: #06b6d4;
+    --color-info-hover: #22d3ee;
+    --color-info-active: #0891b2;
+    --color-info-muted: #164e63;
+  }
+}
+
+/* Manual Dark Mode Toggle Support */
+.dark {
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #6f6f6f;
+  --color-text-inverse: #0a0a0a;
+
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-bg-tertiary: #334155;
+  --color-bg-elevated: #1e293b;
+
+  --color-border-subtle: #334155;
+  --color-border-default: #475569;
+  --color-border-strong: #64748b;
+  --color-border-focus: #ffd701;
+
+  /* Keep brand colors consistent */
+  --color-primary: #d4af00;
+  --color-primary-hover: #e6c200;
+  --color-primary-active: #b8941f;
+  --color-primary-muted: #332f00;
+
+  --color-secondary: #3b82f6;
+  --color-secondary-hover: #60a5fa;
+  --color-secondary-active: #2563eb;
+  --color-secondary-muted: #1e3a8a;
+
+  --color-success: #10b981;
+  --color-success-hover: #34d399;
+  --color-success-active: #059669;
+  --color-success-muted: #064e3b;
+
+  --color-danger: #ef4444;
+  --color-danger-hover: #f87171;
+  --color-danger-active: #dc2626;
+  --color-danger-muted: #7f1d1d;
+
+  --color-warning: #f59e0b;
+  --color-warning-hover: #fbbf24;
+  --color-warning-active: #d97706;
+  --color-warning-muted: #78350f;
+
+  --color-info: #06b6d4;
+  --color-info-hover: #22d3ee;
+  --color-info-active: #0891b2;
+  --color-info-muted: #164e63;
 }
 ```
 
