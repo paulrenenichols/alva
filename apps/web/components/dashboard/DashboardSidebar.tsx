@@ -1,10 +1,20 @@
+/**
+ * @fileoverview Dashboard sidebar navigation component
+ */
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: string;
+}
+
+const NAVIGATION_ITEMS: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: '📊' },
   { name: 'Marketing Plan', href: '/dashboard/plan', icon: '📋' },
   { name: 'Daily Quick Wins', href: '/dashboard/quick-wins', icon: '⚡' },
@@ -13,25 +23,53 @@ const navigation = [
   { name: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
 ];
 
+const SIDEBAR_CONTAINER_CLASSES = 'w-64 bg-white shadow-sm border-r min-h-screen';
+const SIDEBAR_CONTENT_CLASSES = 'p-6';
+const NAVIGATION_CONTAINER_CLASSES = 'space-y-2';
+const NAVIGATION_LINK_BASE_CLASSES = 'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors';
+const NAVIGATION_LINK_ACTIVE_CLASSES = 'bg-primary-50 text-primary-700';
+const NAVIGATION_LINK_INACTIVE_CLASSES = 'text-gray-600 hover:bg-gray-50';
+const NAVIGATION_ICON_CLASSES = 'text-lg';
+
+/**
+ * @description Renders the dashboard sidebar with navigation links
+ */
 export function DashboardSidebar() {
   const pathname = usePathname();
 
+  /**
+   * @description Determines if a navigation item is currently active
+   * @param href - Navigation item href
+   * @returns True if the item is active
+   */
+  const isActiveItem = (href: string): boolean => {
+    return pathname === href;
+  };
+
+  /**
+   * @description Gets the CSS classes for a navigation link based on its active state
+   * @param href - Navigation item href
+   * @returns Combined CSS classes for the navigation link
+   */
+  const getNavigationLinkClasses = (href: string): string => {
+    const isActive = isActiveItem(href);
+    return cn(
+      NAVIGATION_LINK_BASE_CLASSES,
+      isActive ? NAVIGATION_LINK_ACTIVE_CLASSES : NAVIGATION_LINK_INACTIVE_CLASSES
+    );
+  };
+
   return (
-    <div className="w-64 bg-white shadow-sm border-r min-h-screen">
-      <div className="p-6">
-        <nav className="space-y-2">
-          {navigation.map((item) => (
+    <div className={SIDEBAR_CONTAINER_CLASSES}>
+      <div className={SIDEBAR_CONTENT_CLASSES}>
+        <nav className={NAVIGATION_CONTAINER_CLASSES}>
+          {NAVIGATION_ITEMS.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={cn(
-                'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                pathname === item.href
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-gray-600 hover:bg-gray-50'
-              )}
+              className={getNavigationLinkClasses(item.href)}
             >
-              <span className="text-lg">{item.icon}</span>
+              <span className={NAVIGATION_ICON_CLASSES}>{item.icon}</span>
               <span>{item.name}</span>
             </Link>
           ))}
