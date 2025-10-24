@@ -16,8 +16,8 @@ interface FormFieldProps {
 
 const FORM_FIELD_CONTAINER_CLASSES = 'space-y-2';
 const FORM_LABEL_CLASSES = 'block text-sm font-medium text-text-primary';
-const REQUIRED_INDICATOR_CLASSES = 'text-red ml-1';
-const ERROR_TEXT_CLASSES = 'text-sm text-red flex items-center gap-1';
+const REQUIRED_INDICATOR_CLASSES = 'text-danger ml-1';
+const ERROR_TEXT_CLASSES = 'text-sm text-danger flex items-center gap-1';
 const ERROR_ICON_CLASSES = 'w-4 h-4';
 const HELPER_TEXT_CLASSES = 'text-sm text-text-secondary';
 
@@ -86,9 +86,7 @@ interface LabelProps {
  */
 export function Label({ children, className }: LabelProps) {
   return (
-    <label className={cn(FORM_LABEL_CLASSES, className)}>
-      {children}
-    </label>
+    <label className={cn(FORM_LABEL_CLASSES, className)}>{children}</label>
   );
 }
 
@@ -133,9 +131,5 @@ interface HelperTextProps {
  * @param className - Additional CSS classes
  */
 export function HelperText({ children, className }: HelperTextProps) {
-  return (
-    <p className={cn(HELPER_TEXT_CLASSES, className)}>
-      {children}
-    </p>
-  );
+  return <p className={cn(HELPER_TEXT_CLASSES, className)}>{children}</p>;
 }

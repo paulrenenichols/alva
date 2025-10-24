@@ -14,13 +14,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-const BASE_CLASSES = 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:pointer-events-none disabled:opacity-50';
+const BASE_CLASSES =
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:pointer-events-none disabled:opacity-50';
 
 const VARIANT_CLASSES = {
-  primary: 'bg-primary text-text-primary hover:bg-primary-hover active:bg-primary-active font-semibold',
-  secondary: 'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary',
+  primary:
+    'bg-primary text-text-inverse hover:bg-primary-hover active:bg-primary-active font-semibold',
+  secondary:
+    'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary',
   ghost: 'text-text-primary hover:bg-bg-secondary',
-  destructive: 'bg-danger text-text-inverse hover:bg-danger-hover active:bg-danger-active',
+  destructive:
+    'bg-danger text-text-inverse hover:bg-danger-hover active:bg-danger-active',
 };
 
 const SIZE_CLASSES = {
@@ -57,11 +61,7 @@ export function Button({
   );
 
   return (
-    <button
-      className={buttonClasses}
-      disabled={isDisabled}
-      {...props}
-    >
+    <button className={buttonClasses} disabled={isDisabled} {...props}>
       {loading && (
         <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       )}

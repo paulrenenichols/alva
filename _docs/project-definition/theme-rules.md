@@ -618,7 +618,7 @@ module.exports = {
     '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
-}
+};
 ```
 
 ### Storybook Integration
@@ -1400,28 +1400,20 @@ $container-max: 1536px; // Maximum width (rare)
 
 ```tsx
 // Button component using semantic Tailwind classes
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  className,
-  children,
-  disabled,
-  ...props
-}: ButtonProps) {
+export function Button({ variant = 'primary', size = 'md', loading = false, className, children, disabled, ...props }: ButtonProps) {
   const isDisabled = disabled || loading;
   const buttonClasses = cn(
     'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus disabled:pointer-events-none disabled:opacity-50',
     {
       // Primary button using semantic colors
       'bg-primary text-text-primary hover:bg-primary-hover active:bg-primary-active font-semibold': variant === 'primary',
-      
+
       // Secondary button using semantic colors
       'bg-bg-secondary text-text-primary border border-border-default hover:bg-bg-tertiary': variant === 'secondary',
-      
+
       // Ghost button using semantic colors
       'text-text-primary hover:bg-bg-secondary': variant === 'ghost',
-      
+
       // Destructive button using semantic colors
       'bg-danger text-text-inverse hover:bg-danger-hover active:bg-danger-active': variant === 'destructive',
     },
@@ -1434,14 +1426,8 @@ export function Button({
   );
 
   return (
-    <button
-      className={buttonClasses}
-      disabled={isDisabled}
-      {...props}
-    >
-      {loading && (
-        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-      )}
+    <button className={buttonClasses} disabled={isDisabled} {...props}>
+      {loading && <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />}
       {children}
     </button>
   );
@@ -1452,24 +1438,19 @@ export function Button({
 
 ```tsx
 // Card component using semantic Tailwind classes
-export function Card({
-  variant = 'default',
-  className,
-  children,
-  ...props
-}: CardProps) {
+export function Card({ variant = 'default', className, children, ...props }: CardProps) {
   const cardClasses = cn(
     'rounded-md transition-colors',
     {
       // Default card using semantic colors
       'bg-bg-elevated border border-border-subtle': variant === 'default',
-      
+
       // Elevated card using semantic colors
       'bg-bg-elevated border-transparent shadow-md': variant === 'elevated',
-      
+
       // Highlighted card using semantic colors
       'bg-bg-elevated border-l-4 border-l-primary border-y border-r border-border-subtle': variant === 'highlighted',
-      
+
       // Interactive card using semantic colors
       'bg-bg-elevated border border-border-subtle hover:bg-bg-secondary hover:shadow-md': variant === 'interactive',
     },
@@ -1520,14 +1501,7 @@ $gold-dark-mode: #ffd700; // Keep gold consistent
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './lib/**/*.{js,ts,jsx,tsx,mdx}',
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './stories/**/*.{js,ts,jsx,tsx,mdx}',
-    './.storybook/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}', './lib/**/*.{js,ts,jsx,tsx,mdx}', './pages/**/*.{js,ts,jsx,tsx,mdx}', './stories/**/*.{js,ts,jsx,tsx,mdx}', './.storybook/**/*.{js,ts,jsx,tsx,mdx}'],
   darkMode: 'class', // Enable manual dark mode toggle
   theme: {
     extend: {

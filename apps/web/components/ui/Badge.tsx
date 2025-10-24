@@ -6,7 +6,14 @@ import { cn } from '@/lib/utils';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'default' | 'gold' | 'blue' | 'green' | 'red' | 'gray';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | 'info';
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -15,11 +22,12 @@ const BASE_BADGE_CLASSES = 'inline-flex items-center font-medium rounded-full';
 
 const BADGE_VARIANT_CLASSES = {
   default: 'bg-bg-tertiary text-text-primary',
-  gold: 'bg-gold text-text-primary',
-  blue: 'bg-blue text-white',
-  green: 'bg-green text-white',
-  red: 'bg-red text-white',
-  gray: 'bg-text-tertiary text-white',
+  primary: 'bg-primary text-text-inverse',
+  secondary: 'bg-secondary text-text-inverse',
+  success: 'bg-success text-text-inverse',
+  danger: 'bg-danger text-text-inverse',
+  warning: 'bg-warning text-text-inverse',
+  info: 'bg-info text-text-inverse',
 };
 
 const BADGE_SIZE_CLASSES = {
@@ -30,7 +38,7 @@ const BADGE_SIZE_CLASSES = {
 /**
  * @description Renders a badge with customizable variants and sizes
  * @param children - Badge content
- * @param variant - Badge color variant (default, gold, blue, green, red, gray)
+ * @param variant - Badge color variant (default, primary, secondary, success, danger, warning, info)
  * @param size - Badge size (sm, md)
  * @param className - Additional CSS classes
  */
@@ -47,9 +55,5 @@ export function Badge({
     className
   );
 
-  return (
-    <span className={badgeClasses}>
-      {children}
-    </span>
-  );
+  return <span className={badgeClasses}>{children}</span>;
 }

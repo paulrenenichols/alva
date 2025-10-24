@@ -40,9 +40,9 @@ const QUICK_WIN_DESCRIPTION_CLASSES = 'mt-1';
 const QUICK_WIN_TIME_BADGE_CLASSES = 'mt-2';
 const PLAN_OVERVIEW_CONTAINER_CLASSES = 'text-center';
 const PLAN_METRIC_CLASSES = 'text-2xl font-bold';
-const PLAN_METRIC_GOLD_CLASSES = 'text-gold';
-const PLAN_METRIC_GREEN_CLASSES = 'text-green';
-const PLAN_METRIC_BLUE_CLASSES = 'text-blue';
+const PLAN_METRIC_GOLD_CLASSES = 'text-primary';
+const PLAN_METRIC_GREEN_CLASSES = 'text-success';
+const PLAN_METRIC_BLUE_CLASSES = 'text-secondary';
 const PLAN_BUTTON_CLASSES = 'w-full';
 
 const MOCK_QUICK_WINS: QuickWin[] = [

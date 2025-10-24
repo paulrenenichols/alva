@@ -86,7 +86,9 @@ export const Specialized: Story = {
       </div>
       <div>
         <Link href="#">Link text for navigation</Link>
-        <Caption className="mt-1">text-blue hover:text-blue-light</Caption>
+        <Caption className="mt-1">
+          text-secondary hover:text-secondary-hover
+        </Caption>
       </div>
       <div>
         <LinkGhost href="#">Ghost link text</LinkGhost>
@@ -128,10 +130,12 @@ export const ColorVariations: Story = {
   render: () => (
     <div className="space-y-4">
       <div>
-        <HeadingPage className="text-gold">Gold Heading</HeadingPage>
-        <BodyDefault className="text-blue">Blue body text</BodyDefault>
-        <BodySmall className="text-green">Green success text</BodySmall>
-        <Caption className="text-red">Red error text</Caption>
+        <HeadingPage className="text-primary">Primary Heading</HeadingPage>
+        <BodyDefault className="text-secondary">
+          Secondary body text
+        </BodyDefault>
+        <BodySmall className="text-success">Success text</BodySmall>
+        <Caption className="text-danger">Error text</Caption>
       </div>
     </div>
   ),

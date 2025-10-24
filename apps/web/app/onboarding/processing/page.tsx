@@ -98,13 +98,13 @@ export default function ProcessingPage() {
         <p className="text-sm text-gray-500">{progress}% Complete</p>
 
         {status === 'error' && (
-          <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">
+          <div className="mt-8 p-4 bg-danger-muted border border-danger rounded-lg">
+            <p className="text-danger">
               Something went wrong. Please try again.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              className="mt-2 px-4 py-2 bg-danger text-text-inverse rounded hover:bg-danger-hover"
             >
               Retry
             </button>

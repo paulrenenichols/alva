@@ -20,7 +20,9 @@ interface Task {
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'todo' | 'in-progress' | 'completed'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'todo' | 'in-progress' | 'completed'
+  >('all');
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -43,8 +45,8 @@ export default function TasksPage() {
     fetchTasks();
   }, []);
 
-  const filteredTasks = tasks.filter(task => 
-    filter === 'all' || task.status === filter
+  const filteredTasks = tasks.filter(
+    (task) => filter === 'all' || task.status === filter
   );
 
   const handleAddTask = () => {
@@ -54,41 +56,51 @@ export default function TasksPage() {
         title: newTaskTitle.trim(),
         priority: 'medium',
         status: 'todo',
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week from now
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0], // 1 week from now
       };
-      setTasks(prev => [...prev, newTask]);
+      setTasks((prev) => [...prev, newTask]);
       setNewTaskTitle('');
       setShowAddForm(false);
     }
   };
 
   const handleUpdateStatus = (taskId: string, newStatus: Task['status']) => {
-    setTasks(prev => 
-      prev.map(task => 
+    setTasks((prev) =>
+      prev.map((task) =>
         task.id === taskId ? { ...task, status: newStatus } : task
       )
     );
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'high':
+        return 'bg-danger-muted text-danger';
+      case 'medium':
+        return 'bg-warning-muted text-warning';
+      case 'low':
+        return 'bg-success-muted text-success';
+      default:
+        return 'bg-bg-tertiary text-text-primary';
     }
   };
 
   const getStatusColor = (status: Task['status']) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'todo': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-success-muted text-success';
+      case 'in-progress':
+        return 'bg-secondary-muted text-secondary';
+      case 'todo':
+        return 'bg-bg-tertiary text-text-primary';
+      default:
+        return 'bg-bg-tertiary text-text-primary';
     }
   };
 
@@ -136,7 +148,10 @@ export default function TasksPage() {
               className="flex-1"
               onKeyPress={(e) => e.key === 'Enter' && handleAddTask()}
             />
-            <Button onClick={handleAddTask} className="bg-primary-500 text-white">
+            <Button
+              onClick={handleAddTask}
+              className="bg-primary-500 text-white"
+            >
               Add
             </Button>
             <Button onClick={() => setShowAddForm(false)} variant="secondary">
@@ -148,16 +163,18 @@ export default function TasksPage() {
 
       {/* Filter Buttons */}
       <div className="flex space-x-2">
-        {(['all', 'todo', 'in-progress', 'completed'] as const).map((status) => (
-          <Button
-            key={status}
-            variant={filter === status ? 'primary' : 'secondary'}
-            onClick={() => setFilter(status)}
-            className="capitalize"
-          >
-            {status.replace('-', ' ')}
-          </Button>
-        ))}
+        {(['all', 'todo', 'in-progress', 'completed'] as const).map(
+          (status) => (
+            <Button
+              key={status}
+              variant={filter === status ? 'primary' : 'secondary'}
+              onClick={() => setFilter(status)}
+              className="capitalize"
+            >
+              {status.replace('-', ' ')}
+            </Button>
+          )
+        )}
       </div>
 
       {/* Tasks List */}
@@ -175,15 +192,27 @@ export default function TasksPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className={`text-lg font-semibold ${
-                      task.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'
-                    }`}>
+                    <h3
+                      className={`text-lg font-semibold ${
+                        task.status === 'completed'
+                          ? 'line-through text-gray-500'
+                          : 'text-gray-900'
+                      }`}
+                    >
                       {task.title}
                     </h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(task.priority)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(
+                        task.priority
+                      )}`}
+                    >
                       {task.priority} priority
                     </span>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(task.status)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
+                        task.status
+                      )}`}
+                    >
                       {task.status.replace('-', ' ')}
                     </span>
                   </div>
@@ -192,7 +221,9 @@ export default function TasksPage() {
                   )}
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     {task.dueDate && (
-                      <span>📅 Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+                      <span>
+                        📅 Due: {new Date(task.dueDate).toLocaleDateString()}
+                      </span>
                     )}
                     {task.estimatedHours && (
                       <span>⏱️ {task.estimatedHours}h estimated</span>
@@ -200,7 +231,7 @@ export default function TasksPage() {
                     {task.category && <span>📂 {task.category}</span>}
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 ml-4">
                   {task.status === 'todo' && (
                     <Button
@@ -213,7 +244,7 @@ export default function TasksPage() {
                   {task.status === 'in-progress' && (
                     <Button
                       onClick={() => handleUpdateStatus(task.id, 'completed')}
-                      className="bg-green-500 text-white"
+                      className="bg-success text-text-inverse"
                     >
                       Complete
                     </Button>
@@ -229,7 +260,7 @@ export default function TasksPage() {
                   <Button
                     onClick={() => handleDeleteTask(task.id)}
                     variant="secondary"
-                    className="text-red-600 hover:text-red-700"
+                    className="text-danger hover:text-danger-hover"
                   >
                     Delete
                   </Button>

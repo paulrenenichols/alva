@@ -10,7 +10,7 @@ const HEADER_CONTAINER_CLASSES = 'bg-bg-primary border-b border-border-subtle';
 const HEADER_CONTENT_CLASSES = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
 const HEADER_LAYOUT_CLASSES = 'flex items-center justify-between h-16';
 const LOGO_CONTAINER_CLASSES = 'flex items-center';
-const LOGO_CLASSES = 'text-gold';
+const LOGO_CLASSES = 'text-primary';
 const USER_MENU_CLASSES = 'flex items-center space-x-4';
 
 /**

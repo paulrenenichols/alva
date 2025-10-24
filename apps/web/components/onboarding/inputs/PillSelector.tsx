@@ -36,7 +36,7 @@ export function PillSelector({
           className={cn(
             'px-4 py-2 rounded-full text-sm font-medium transition-colors',
             value.includes(option)
-              ? 'bg-gold text-text-primary'
+              ? 'bg-primary text-text-inverse'
               : 'bg-bg-tertiary text-text-primary hover:bg-bg-secondary'
           )}
         >

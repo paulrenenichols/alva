@@ -16,7 +16,8 @@ const PROGRESS_LABEL_CONTAINER_CLASSES = 'flex justify-between items-center';
 const PROGRESS_LABEL_CLASSES = 'text-sm font-medium text-text-primary';
 const PROGRESS_COUNT_CLASSES = 'text-sm text-text-secondary';
 const PROGRESS_TRACK_CLASSES = 'w-full bg-border-subtle rounded-full h-1.5';
-const PROGRESS_FILL_CLASSES = 'bg-gold h-1.5 rounded-full transition-all duration-300 ease-out';
+const PROGRESS_FILL_CLASSES =
+  'bg-primary h-1.5 rounded-full transition-all duration-300 ease-out';
 
 /**
  * @description Renders a progress bar with optional label and current/total count
@@ -61,7 +62,7 @@ interface ProgressDotsProps {
 
 const DOTS_CONTAINER_CLASSES = 'flex items-center gap-2';
 const DOT_BASE_CLASSES = 'w-2 h-2 rounded-full transition-all duration-200';
-const DOT_ACTIVE_CLASSES = 'bg-gold';
+const DOT_ACTIVE_CLASSES = 'bg-primary';
 const DOT_INACTIVE_CLASSES = 'bg-border-subtle';
 
 /**
@@ -80,9 +81,7 @@ export function ProgressDots({ steps, current, className }: ProgressDotsProps) {
           isActive ? DOT_ACTIVE_CLASSES : DOT_INACTIVE_CLASSES
         );
 
-        return (
-          <div key={index} className={dotClasses} />
-        );
+        return <div key={index} className={dotClasses} />;
       })}
     </div>
   );
@@ -90,11 +89,12 @@ export function ProgressDots({ steps, current, className }: ProgressDotsProps) {
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'gold' | 'blue' | 'gray';
+  color?: 'primary' | 'secondary' | 'gray';
   className?: string;
 }
 
-const SPINNER_BASE_CLASSES = 'animate-spin rounded-full border-2 border-current border-t-transparent';
+const SPINNER_BASE_CLASSES =
+  'animate-spin rounded-full border-2 border-current border-t-transparent';
 
 const SPINNER_SIZE_CLASSES = {
   sm: 'w-4 h-4',
@@ -103,20 +103,20 @@ const SPINNER_SIZE_CLASSES = {
 };
 
 const SPINNER_COLOR_CLASSES = {
-  gold: 'text-gold',
-  blue: 'text-blue',
+  primary: 'text-primary',
+  secondary: 'text-secondary',
   gray: 'text-text-secondary',
 };
 
 /**
  * @description Renders a loading spinner with customizable size and color
  * @param size - Spinner size (sm, md, lg)
- * @param color - Spinner color (gold, blue, gray)
+ * @param color - Spinner color (primary, secondary, gray)
  * @param className - Additional CSS classes
  */
 export function Spinner({
   size = 'md',
-  color = 'gold',
+  color = 'primary',
   className,
 }: SpinnerProps) {
   const spinnerClasses = cn(
@@ -127,11 +127,7 @@ export function Spinner({
   );
 
   return (
-    <div
-      className={spinnerClasses}
-      role="status"
-      aria-label="Loading"
-    >
+    <div className={spinnerClasses} role="status" aria-label="Loading">
       <span className="sr-only">Loading...</span>
     </div>
   );

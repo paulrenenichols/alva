@@ -33,9 +33,11 @@ interface NavigationLinkProps {
   exact?: boolean;
 }
 
-const NAVIGATION_LINK_BASE_CLASSES = 'text-sm font-medium transition-colors duration-150';
-const NAVIGATION_LINK_ACTIVE_CLASSES = 'text-gold border-b-2 border-gold pb-1';
-const NAVIGATION_LINK_INACTIVE_CLASSES = 'text-text-primary hover:text-gold';
+const NAVIGATION_LINK_BASE_CLASSES =
+  'text-sm font-medium transition-colors duration-150';
+const NAVIGATION_LINK_ACTIVE_CLASSES =
+  'text-primary border-b-2 border-primary pb-1';
+const NAVIGATION_LINK_INACTIVE_CLASSES = 'text-text-primary hover:text-primary';
 
 /**
  * @description Renders a navigation link with active state detection
@@ -55,7 +57,9 @@ export function NavigationLink({
 
   const linkClasses = cn(
     NAVIGATION_LINK_BASE_CLASSES,
-    isActive ? NAVIGATION_LINK_ACTIVE_CLASSES : NAVIGATION_LINK_INACTIVE_CLASSES,
+    isActive
+      ? NAVIGATION_LINK_ACTIVE_CLASSES
+      : NAVIGATION_LINK_INACTIVE_CLASSES,
     className
   );
 
@@ -97,7 +101,8 @@ interface BreadcrumbProps {
 }
 
 const BREADCRUMB_CURRENT_CLASSES = 'text-text-primary font-medium';
-const BREADCRUMB_LINK_CLASSES = 'text-text-secondary hover:text-blue transition-colors duration-150';
+const BREADCRUMB_LINK_CLASSES =
+  'text-text-secondary hover:text-secondary transition-colors duration-150';
 const BREADCRUMB_SEPARATOR_CLASSES = 'text-text-tertiary';
 
 /**
@@ -125,10 +130,7 @@ export function Breadcrumb({
 
   return (
     <>
-      <Link
-        href={href}
-        className={cn(BREADCRUMB_LINK_CLASSES, className)}
-      >
+      <Link href={href} className={cn(BREADCRUMB_LINK_CLASSES, className)}>
         {children}
       </Link>
       <span className={BREADCRUMB_SEPARATOR_CLASSES}>/</span>

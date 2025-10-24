@@ -35,10 +35,10 @@ export default function MarketingPlanPage() {
         // Add a timeout to prevent hanging
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-        
+
         const plans = await apiClient.getUserPlans();
         clearTimeout(timeoutId);
-        
+
         if (plans.length > 0) {
           setPlan(plans[0]);
         }
@@ -89,13 +89,13 @@ export default function MarketingPlanPage() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-danger-muted text-danger';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-muted text-warning';
       case 'low':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-secondary-muted text-secondary';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-bg-tertiary text-text-primary';
     }
   };
 
@@ -174,14 +174,14 @@ export default function MarketingPlanPage() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Completed:</span>
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-success">
                     {plan.tasks?.filter((t: Task) => t.status === 'completed')
                       .length || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">In Progress:</span>
-                  <span className="font-medium text-blue-600">
+                  <span className="font-medium text-secondary">
                     {plan.tasks?.filter((t: Task) => t.status === 'in-progress')
                       .length || 0}
                   </span>

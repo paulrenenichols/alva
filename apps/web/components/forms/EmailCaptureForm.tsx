@@ -37,11 +37,11 @@ export function EmailCaptureForm() {
           className="flex-1"
           required
         />
-        <Button type="submit" disabled={isLoading} className="bg-primary-500">
+        <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Sending...' : 'Get Started'}
         </Button>
       </div>
-      {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+      {error && <p className="text-danger mt-2 text-sm">{error}</p>}
     </form>
   );
 }

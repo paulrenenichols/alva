@@ -18,7 +18,9 @@ interface QuickWin {
 export default function QuickWinsPage() {
   const [quickWins, setQuickWins] = useState<QuickWin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'planned' | 'in-progress' | 'completed'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'planned' | 'in-progress' | 'completed'
+  >('all');
 
   useEffect(() => {
     const fetchQuickWins = async () => {
@@ -39,14 +41,17 @@ export default function QuickWinsPage() {
     fetchQuickWins();
   }, []);
 
-  const filteredWins = quickWins.filter(win => 
-    filter === 'all' || win.status === filter
+  const filteredWins = quickWins.filter(
+    (win) => filter === 'all' || win.status === filter
   );
 
-  const handleUpdateStatus = async (winId: string, newStatus: QuickWin['status']) => {
+  const handleUpdateStatus = async (
+    winId: string,
+    newStatus: QuickWin['status']
+  ) => {
     // TODO: Update task status via API
-    setQuickWins(prev => 
-      prev.map(win => 
+    setQuickWins((prev) =>
+      prev.map((win) =>
         win.id === winId ? { ...win, status: newStatus } : win
       )
     );
@@ -54,19 +59,27 @@ export default function QuickWinsPage() {
 
   const getPriorityColor = (priority: QuickWin['priority']) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'high':
+        return 'bg-danger-muted text-danger';
+      case 'medium':
+        return 'bg-warning-muted text-warning';
+      case 'low':
+        return 'bg-success-muted text-success';
+      default:
+        return 'bg-bg-tertiary text-text-primary';
     }
   };
 
   const getStatusColor = (status: QuickWin['status']) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'planned': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-success-muted text-success';
+      case 'in-progress':
+        return 'bg-secondary-muted text-secondary';
+      case 'planned':
+        return 'bg-bg-tertiary text-text-primary';
+      default:
+        return 'bg-bg-tertiary text-text-primary';
     }
   };
 
@@ -97,16 +110,18 @@ export default function QuickWinsPage() {
 
       {/* Filter Buttons */}
       <div className="flex space-x-2">
-        {(['all', 'planned', 'in-progress', 'completed'] as const).map((status) => (
-          <Button
-            key={status}
-            variant={filter === status ? 'primary' : 'secondary'}
-            onClick={() => setFilter(status)}
-            className="capitalize"
-          >
-            {status.replace('-', ' ')}
-          </Button>
-        ))}
+        {(['all', 'planned', 'in-progress', 'completed'] as const).map(
+          (status) => (
+            <Button
+              key={status}
+              variant={filter === status ? 'primary' : 'secondary'}
+              onClick={() => setFilter(status)}
+              className="capitalize"
+            >
+              {status.replace('-', ' ')}
+            </Button>
+          )
+        )}
       </div>
 
       {/* Quick Wins List */}
@@ -115,7 +130,9 @@ export default function QuickWinsPage() {
           <Card className="p-8 text-center">
             <div className="text-gray-500">
               <p className="text-lg mb-2">No quick wins found</p>
-              <p className="text-sm">Complete your onboarding to generate personalized quick wins!</p>
+              <p className="text-sm">
+                Complete your onboarding to generate personalized quick wins!
+              </p>
             </div>
           </Card>
         ) : (
@@ -124,11 +141,21 @@ export default function QuickWinsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{win.title}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(win.priority)}`}>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {win.title}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(
+                        win.priority
+                      )}`}
+                    >
                       {win.priority} priority
                     </span>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(win.status)}`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
+                        win.status
+                      )}`}
+                    >
                       {win.status.replace('-', ' ')}
                     </span>
                   </div>
@@ -138,7 +165,7 @@ export default function QuickWinsPage() {
                     {win.category && <span>📂 {win.category}</span>}
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 ml-4">
                   {win.status === 'planned' && (
                     <Button
@@ -151,7 +178,7 @@ export default function QuickWinsPage() {
                   {win.status === 'in-progress' && (
                     <Button
                       onClick={() => handleUpdateStatus(win.id, 'completed')}
-                      className="bg-green-500 text-white"
+                      className="bg-success text-text-inverse"
                     >
                       Complete
                     </Button>
