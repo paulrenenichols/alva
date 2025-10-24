@@ -116,9 +116,9 @@ export default function DashboardPage() {
 
   /**
    * @description Renders loading skeleton for quick wins
-   * @returns Loading skeleton JSX
+   * @returns Loading skeleton React element
    */
-  const renderLoadingSkeleton = (): JSX.Element => (
+  const renderLoadingSkeleton = () => (
     <div className="space-y-4">
       <div className={LOADING_SKELETON_CLASSES} />
       <div className={LOADING_SKELETON_CLASSES} />
@@ -128,9 +128,9 @@ export default function DashboardPage() {
   /**
    * @description Renders a quick win card
    * @param win - Quick win data
-   * @returns Quick win card JSX
+   * @returns Quick win card React element
    */
-  const renderQuickWinCard = (win: QuickWin): JSX.Element => (
+  const renderQuickWinCard = (win: QuickWin) => (
     <Card key={win.id} variant="interactive" className={QUICK_WIN_CARD_CLASSES}>
       <div className={QUICK_WIN_CONTENT_CLASSES}>
         <div className={QUICK_WIN_DETAILS_CLASSES}>
@@ -157,9 +157,9 @@ export default function DashboardPage() {
 
   /**
    * @description Renders plan overview metrics
-   * @returns Plan overview JSX
+   * @returns Plan overview React element
    */
-  const renderPlanOverview = (): JSX.Element => (
+  const renderPlanOverview = () => (
     <Card variant="elevated">
       <CardHeader>
         <HeadingCard>Plan Overview</HeadingCard>
