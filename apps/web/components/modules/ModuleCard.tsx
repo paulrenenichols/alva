@@ -93,8 +93,8 @@ export function ModuleCard({
    * @description Gets the badge variant based on active state
    * @returns Badge variant string
    */
-  const getBadgeVariant = (): 'default' | 'gray' => {
-    return isActive ? 'default' : 'gray';
+  const getBadgeVariant = (): 'success' | 'default' => {
+    return isActive ? 'success' : 'default';
   };
 
   return (

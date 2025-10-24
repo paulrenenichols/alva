@@ -11,7 +11,7 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['default', 'gold', 'blue', 'green', 'red', 'gray'],
+      options: ['default', 'primary', 'secondary', 'success', 'danger', 'warning', 'info'],
     },
     size: {
       control: { type: 'select' },
@@ -30,38 +30,45 @@ export const Default: Story = {
   },
 };
 
-export const Gold: Story = {
+export const Primary: Story = {
   args: {
-    children: 'Gold',
-    variant: 'gold',
+    children: 'Primary',
+    variant: 'primary',
   },
 };
 
-export const Blue: Story = {
+export const Secondary: Story = {
   args: {
-    children: 'Blue',
-    variant: 'blue',
+    children: 'Secondary',
+    variant: 'secondary',
   },
 };
 
-export const Green: Story = {
+export const Success: Story = {
   args: {
-    children: 'Green',
-    variant: 'green',
+    children: 'Success',
+    variant: 'success',
   },
 };
 
-export const Red: Story = {
+export const Danger: Story = {
   args: {
-    children: 'Red',
-    variant: 'red',
+    children: 'Danger',
+    variant: 'danger',
   },
 };
 
-export const Gray: Story = {
+export const Warning: Story = {
   args: {
-    children: 'Gray',
-    variant: 'gray',
+    children: 'Warning',
+    variant: 'warning',
+  },
+};
+
+export const Info: Story = {
+  args: {
+    children: 'Info',
+    variant: 'info',
   },
 };
 
