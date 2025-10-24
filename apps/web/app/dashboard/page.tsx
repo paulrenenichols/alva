@@ -78,7 +78,7 @@ export default function DashboardPage() {
     try {
       const plans = await apiClient.getUserPlans();
       const hasPlans = plans.length > 0;
-      
+
       if (hasPlans) {
         const plan = plans[0];
         const quickWinsData = plan.quickWins || plan.tasks?.slice(0, 3) || [];
@@ -140,7 +140,11 @@ export default function DashboardPage() {
           <BodySmall className={QUICK_WIN_DESCRIPTION_CLASSES}>
             {win.description}
           </BodySmall>
-          <Badge variant="gold" size="sm" className={QUICK_WIN_TIME_BADGE_CLASSES}>
+          <Badge
+            variant="gold"
+            size="sm"
+            className={QUICK_WIN_TIME_BADGE_CLASSES}
+          >
             {win.estimatedTime} min
           </Badge>
         </div>
@@ -167,15 +171,27 @@ export default function DashboardPage() {
       <CardBody>
         <Stack spacing="md">
           <div className={PLAN_OVERVIEW_CONTAINER_CLASSES}>
-            <div className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_GOLD_CLASSES}`}>12</div>
+            <div
+              className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_GOLD_CLASSES}`}
+            >
+              12
+            </div>
             <Caption>Tasks Planned</Caption>
           </div>
           <div className={PLAN_OVERVIEW_CONTAINER_CLASSES}>
-            <div className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_GREEN_CLASSES}`}>3</div>
+            <div
+              className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_GREEN_CLASSES}`}
+            >
+              3
+            </div>
             <Caption>Completed</Caption>
           </div>
           <div className={PLAN_OVERVIEW_CONTAINER_CLASSES}>
-            <div className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_BLUE_CLASSES}`}>10h</div>
+            <div
+              className={`${PLAN_METRIC_CLASSES} ${PLAN_METRIC_BLUE_CLASSES}`}
+            >
+              10h
+            </div>
             <Caption>Weekly Capacity</Caption>
           </div>
         </Stack>
@@ -216,16 +232,16 @@ export default function DashboardPage() {
 
                 <CardBody>
                   <Stack spacing="md">
-                    {isLoading ? renderLoadingSkeleton() : quickWins.map(renderQuickWinCard)}
+                    {isLoading
+                      ? renderLoadingSkeleton()
+                      : quickWins.map(renderQuickWinCard)}
                   </Stack>
                 </CardBody>
               </Card>
             </div>
 
             {/* Plan Overview */}
-            <div>
-              {renderPlanOverview()}
-            </div>
+            <div>{renderPlanOverview()}</div>
           </Grid>
         </Stack>
       </div>
