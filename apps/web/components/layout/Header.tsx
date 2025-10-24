@@ -1,15 +1,45 @@
+/**
+ * @fileoverview Header component with navigation and user menu
+ */
+
 import { Navigation, NavigationLink } from '@/components/ui/Navigation';
 import { HeadingCard } from '@/components/ui/Typography';
 import { Button } from '@/components/ui/Button';
 
+const HEADER_CONTAINER_CLASSES = 'bg-bg-primary border-b border-border-subtle';
+const HEADER_CONTENT_CLASSES = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
+const HEADER_LAYOUT_CLASSES = 'flex items-center justify-between h-16';
+const LOGO_CONTAINER_CLASSES = 'flex items-center';
+const LOGO_CLASSES = 'text-gold';
+const USER_MENU_CLASSES = 'flex items-center space-x-4';
+
+/**
+ * @description Renders the main header with navigation and user menu
+ */
 export function Header() {
+  /**
+   * @description Handles user profile navigation
+   */
+  const handleProfileClick = (): void => {
+    // TODO: Implement profile navigation
+    console.log('Navigate to profile');
+  };
+
+  /**
+   * @description Handles user sign out
+   */
+  const handleSignOutClick = (): void => {
+    // TODO: Implement sign out functionality
+    console.log('Sign out user');
+  };
+
   return (
-    <header className="bg-bg-primary border-b border-border-subtle">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className={HEADER_CONTAINER_CLASSES}>
+      <div className={HEADER_CONTENT_CLASSES}>
+        <div className={HEADER_LAYOUT_CLASSES}>
           {/* Logo */}
-          <div className="flex items-center">
-            <HeadingCard className="text-gold">Alva</HeadingCard>
+          <div className={LOGO_CONTAINER_CLASSES}>
+            <HeadingCard className={LOGO_CLASSES}>Alva</HeadingCard>
           </div>
 
           {/* Navigation */}
@@ -21,11 +51,11 @@ export function Header() {
           </Navigation>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+          <div className={USER_MENU_CLASSES}>
+            <Button variant="ghost" size="sm" onClick={handleProfileClick}>
               Profile
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleSignOutClick}>
               Sign Out
             </Button>
           </div>

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Form field components for consistent form styling and validation
+ */
+
 import { cn } from '@/lib/utils';
 import { Input } from './Input';
 
@@ -10,6 +14,22 @@ interface FormFieldProps {
   className?: string;
 }
 
+const FORM_FIELD_CONTAINER_CLASSES = 'space-y-2';
+const FORM_LABEL_CLASSES = 'block text-sm font-medium text-text-primary';
+const REQUIRED_INDICATOR_CLASSES = 'text-red ml-1';
+const ERROR_TEXT_CLASSES = 'text-sm text-red flex items-center gap-1';
+const ERROR_ICON_CLASSES = 'w-4 h-4';
+const HELPER_TEXT_CLASSES = 'text-sm text-text-secondary';
+
+/**
+ * @description Renders a form field with label, error handling, and helper text
+ * @param label - Field label text
+ * @param error - Error message to display
+ * @param helperText - Helper text to display when no error
+ * @param required - Whether the field is required
+ * @param children - Form input element
+ * @param className - Additional CSS classes
+ */
 export function FormField({
   label,
   error,
@@ -18,19 +38,22 @@ export function FormField({
   children,
   className,
 }: FormFieldProps) {
+  const hasError = !!error;
+  const shouldShowHelperText = !!helperText && !hasError;
+
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn(FORM_FIELD_CONTAINER_CLASSES, className)}>
       {label && (
-        <label className="block text-sm font-medium text-text-primary">
+        <label className={FORM_LABEL_CLASSES}>
           {label}
-          {required && <span className="text-red ml-1">*</span>}
+          {required && <span className={REQUIRED_INDICATOR_CLASSES}>*</span>}
         </label>
       )}
       {children}
-      {error && (
-        <p className="text-sm text-red flex items-center gap-1">
+      {hasError && (
+        <p className={ERROR_TEXT_CLASSES}>
           <svg
-            className="w-4 h-4"
+            className={ERROR_ICON_CLASSES}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -44,8 +67,8 @@ export function FormField({
           {error}
         </p>
       )}
-      {helperText && !error && (
-        <p className="text-sm text-text-secondary">{helperText}</p>
+      {shouldShowHelperText && (
+        <p className={HELPER_TEXT_CLASSES}>{helperText}</p>
       )}
     </div>
   );
@@ -56,11 +79,14 @@ interface LabelProps {
   className?: string;
 }
 
+/**
+ * @description Renders a standalone label element
+ * @param children - Label content
+ * @param className - Additional CSS classes
+ */
 export function Label({ children, className }: LabelProps) {
   return (
-    <label
-      className={cn('block text-sm font-medium text-text-primary', className)}
-    >
+    <label className={cn(FORM_LABEL_CLASSES, className)}>
       {children}
     </label>
   );
@@ -71,11 +97,16 @@ interface ErrorTextProps {
   className?: string;
 }
 
+/**
+ * @description Renders error text with an error icon
+ * @param children - Error message content
+ * @param className - Additional CSS classes
+ */
 export function ErrorText({ children, className }: ErrorTextProps) {
   return (
-    <p className={cn('text-sm text-red flex items-center gap-1', className)}>
+    <p className={cn(ERROR_TEXT_CLASSES, className)}>
       <svg
-        className="w-4 h-4"
+        className={ERROR_ICON_CLASSES}
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -96,8 +127,15 @@ interface HelperTextProps {
   className?: string;
 }
 
+/**
+ * @description Renders helper text for form fields
+ * @param children - Helper text content
+ * @param className - Additional CSS classes
+ */
 export function HelperText({ children, className }: HelperTextProps) {
   return (
-    <p className={cn('text-sm text-text-secondary', className)}>{children}</p>
+    <p className={cn(HELPER_TEXT_CLASSES, className)}>
+      {children}
+    </p>
   );
 }
