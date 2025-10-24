@@ -1,7 +1,45 @@
+/**
+ * @fileoverview Footer component with company information and navigation links
+ */
+
 'use client';
 
 import { BodyDefault, BodySmall } from '@/components/ui/Typography';
 
+interface FooterLink {
+  label: string;
+  href?: string;
+}
+
+interface FooterSection {
+  title: string;
+  links: FooterLink[];
+}
+
+const FOOTER_SECTIONS: FooterSection[] = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Features' },
+      { label: 'Pricing' },
+      { label: 'API' },
+    ],
+  },
+  {
+    title: 'Support',
+    links: [
+      { label: 'Help Center' },
+      { label: 'Contact Us' },
+      { label: 'Privacy Policy' },
+    ],
+  },
+];
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+/**
+ * @description Renders footer with company information and navigation links
+ */
 export function Footer() {
   return (
     <footer className="bg-bg-tertiary py-12">
@@ -15,46 +53,27 @@ export function Footer() {
             </BodyDefault>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-text-primary mb-4">Product</h4>
-            <ul className="space-y-2">
-              <li>
-                <BodySmall className="text-text-secondary">Features</BodySmall>
-              </li>
-              <li>
-                <BodySmall className="text-text-secondary">Pricing</BodySmall>
-              </li>
-              <li>
-                <BodySmall className="text-text-secondary">API</BodySmall>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-text-primary mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-                <BodySmall className="text-text-secondary">
-                  Help Center
-                </BodySmall>
-              </li>
-              <li>
-                <BodySmall className="text-text-secondary">
-                  Contact Us
-                </BodySmall>
-              </li>
-              <li>
-                <BodySmall className="text-text-secondary">
-                  Privacy Policy
-                </BodySmall>
-              </li>
-            </ul>
-          </div>
+          {FOOTER_SECTIONS.map((section) => (
+            <div key={section.title}>
+              <h4 className="font-semibold text-text-primary mb-4">
+                {section.title}
+              </h4>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.label}>
+                    <BodySmall className="text-text-secondary">
+                      {link.label}
+                    </BodySmall>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="border-t border-border-subtle mt-8 pt-8">
           <BodySmall className="text-text-secondary text-center">
-            © 2024 Alva. All rights reserved.
+            © {CURRENT_YEAR} Alva. All rights reserved.
           </BodySmall>
         </div>
       </div>

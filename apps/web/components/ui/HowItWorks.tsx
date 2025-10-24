@@ -1,3 +1,7 @@
+/**
+ * @fileoverview How it Works section component displaying numbered steps
+ */
+
 'use client';
 
 import { HeadingSection, HeadingCard, BodyDefault } from './Typography';
@@ -13,7 +17,16 @@ interface HowItWorksProps {
   className?: string;
 }
 
+/**
+ * @description Renders a "How it Works" section with numbered steps
+ * @param steps - Array of step objects with number, title, and description
+ * @param className - Optional additional CSS classes
+ */
 export function HowItWorks({ steps, className }: HowItWorksProps) {
+  if (!steps || steps.length === 0) {
+    throw new Error('Steps array is required and cannot be empty');
+  }
+
   return (
     <section className={`py-16 bg-bg-secondary ${className}`}>
       <div className="container mx-auto px-4">

@@ -1,8 +1,18 @@
+/**
+ * @fileoverview Social proof section component displaying customer testimonials
+ */
+
 'use client';
 
 import { HeadingSection, BodyDefault } from '@/components/ui/Typography';
 
-const testimonials = [
+interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+}
+
+const TESTIMONIALS_DATA: Testimonial[] = [
   {
     quote:
       'Alva transformed our marketing approach. We went from guessing to knowing exactly what works for our customers.',
@@ -23,6 +33,9 @@ const testimonials = [
   },
 ];
 
+/**
+ * @description Renders social proof section with customer testimonials
+ */
 export function SocialProof() {
   return (
     <section className="py-16 bg-bg-secondary">
@@ -31,7 +44,7 @@ export function SocialProof() {
           What Our Customers Say
         </HeadingSection>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {TESTIMONIALS_DATA.map((testimonial, index) => (
             <div
               key={index}
               className="bg-bg-elevated p-6 rounded-lg shadow-sm border border-border-subtle"

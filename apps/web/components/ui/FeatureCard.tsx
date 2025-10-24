@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Reusable feature card component with icon, title, and description
+ */
+
 'use client';
 
 import { HeadingCard, BodyDefault } from './Typography';
@@ -18,7 +22,7 @@ interface FeatureCardProps {
   className?: string;
 }
 
-const icons: Record<string, LucideIcon> = {
+const iconMap: Record<string, LucideIcon> = {
   brain: Brain,
   clock: Clock,
   target: Target,
@@ -27,13 +31,24 @@ const icons: Record<string, LucideIcon> = {
   zap: Zap,
 };
 
+/**
+ * @description Renders a feature card with icon, title, and description
+ * @param icon - Icon identifier to map to Lucide icon component
+ * @param title - Feature title text
+ * @param description - Feature description text
+ * @param className - Optional additional CSS classes
+ */
 export function FeatureCard({
   icon,
   title,
   description,
   className,
 }: FeatureCardProps) {
-  const IconComponent = icons[icon];
+  const IconComponent = iconMap[icon];
+
+  if (!IconComponent) {
+    throw new Error(`Icon "${icon}" not found in iconMap`);
+  }
 
   return (
     <div

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Main landing page component with hero, features, and authentication flow
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +13,13 @@ import { Footer } from '@/components/landing/Footer';
 import { useAuthStore } from '@/stores/authStore';
 import { analytics } from '@/lib/analytics';
 
-const howItWorksSteps = [
+interface Step {
+  number: number;
+  title: string;
+  description: string;
+}
+
+const HOW_IT_WORKS_STEPS: Step[] = [
   {
     number: 1,
     title: 'Tell Us About Your Business',
@@ -30,6 +40,9 @@ const howItWorksSteps = [
   },
 ];
 
+/**
+ * @description Main landing page component with authentication flow and analytics tracking
+ */
 export function LandingPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
@@ -38,12 +51,10 @@ export function LandingPage() {
   const [userEmail, setUserEmail] = useState('');
   const { user, isAuthenticated } = useAuthStore();
 
-  // Track page view
   useEffect(() => {
     analytics.trackPageView('landing-page');
   }, []);
 
-  // Redirect authenticated users
   useEffect(() => {
     if (isAuthenticated && user) {
       window.location.href = '/dashboard';
@@ -85,6 +96,8 @@ export function LandingPage() {
     setShowError(false);
   };
 
+  const modalTitle = authMode === 'signup' ? 'Get Started Free' : 'Sign In';
+
   return (
     <main className="min-h-screen bg-bg-primary">
       <Hero
@@ -97,7 +110,7 @@ export function LandingPage() {
       />
 
       <Features />
-      <HowItWorks steps={howItWorksSteps} />
+      <HowItWorks steps={HOW_IT_WORKS_STEPS} />
       <SocialProof />
       <Footer />
 
@@ -105,7 +118,7 @@ export function LandingPage() {
         <Modal isOpen={showAuthModal} onClose={handleCloseModal}>
           <div className="p-6">
             <h2 className="text-2xl font-bold text-text-primary mb-4">
-              {authMode === 'signup' ? 'Get Started Free' : 'Sign In'}
+              {modalTitle}
             </h2>
             <AuthForm
               mode={authMode}

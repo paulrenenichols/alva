@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Success component displayed after magic link is sent for login
+ */
+
 'use client';
 
 import { CheckCircle } from 'lucide-react';
@@ -13,6 +17,11 @@ interface LoginSuccessProps {
   onClose: () => void;
 }
 
+/**
+ * @description Renders success message after magic link is sent for login
+ * @param email - Email address where magic link was sent
+ * @param onClose - Function to call when user wants to close the modal
+ */
 export function LoginSuccess({ email, onClose }: LoginSuccessProps) {
   return (
     <div className="p-6 text-center">

@@ -1,50 +1,96 @@
-// Analytics utility for tracking user interactions
+/**
+ * @fileoverview Analytics utility for tracking user interactions and conversions
+ */
+
+interface GtagEvent {
+  event_category: string;
+  event_label: string;
+  value?: number;
+  custom_map?: Record<string, string>;
+}
+
+interface GtagConfig {
+  page_title: string;
+  page_location: string;
+}
+
+/**
+ * @description Checks if gtag is available in the browser environment
+ * @returns True if gtag is available
+ */
+const isGtagAvailable = (): boolean => {
+  return typeof window !== 'undefined' && typeof window.gtag === 'function';
+};
+
+/**
+ * @description Analytics tracking utilities for user interactions
+ */
 export const analytics = {
-  trackSignup: (email: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'signup', {
+  /**
+   * @description Tracks user signup events
+   * @param email - User email address
+   */
+  trackSignup: (email: string): void => {
+    if (isGtagAvailable()) {
+      const eventData: GtagEvent = {
         event_category: 'engagement',
         event_label: 'email_signup',
         value: 1,
-      });
+      };
+      window.gtag('event', 'signup', eventData);
     }
   },
 
-  trackLogin: (email: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'login', {
+  /**
+   * @description Tracks user login events
+   * @param email - User email address
+   */
+  trackLogin: (email: string): void => {
+    if (isGtagAvailable()) {
+      const eventData: GtagEvent = {
         event_category: 'engagement',
         event_label: 'magic_link_login',
         value: 1,
-      });
+      };
+      window.gtag('event', 'login', eventData);
     }
   },
 
-  trackPageView: (page: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'GA_MEASUREMENT_ID', {
+  /**
+   * @description Tracks page view events
+   * @param page - Page identifier
+   */
+  trackPageView: (page: string): void => {
+    if (isGtagAvailable()) {
+      const configData: GtagConfig = {
         page_title: page,
         page_location: window.location.href,
-      });
+      };
+      window.gtag('config', 'GA_MEASUREMENT_ID', configData);
     }
   },
 
-  trackButtonClick: (buttonName: string, location: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'click', {
+  /**
+   * @description Tracks button click events
+   * @param buttonName - Name of the button clicked
+   * @param location - Location where button was clicked
+   */
+  trackButtonClick: (buttonName: string, location: string): void => {
+    if (isGtagAvailable()) {
+      const eventData: GtagEvent = {
         event_category: 'button',
         event_label: buttonName,
         custom_map: {
           location: location,
         },
-      });
+      };
+      window.gtag('event', 'click', eventData);
     }
   },
 };
 
-// Declare gtag for TypeScript
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    gtag: (command: string, targetId: string, config?: GtagConfig | GtagEvent) => void;
   }
 }

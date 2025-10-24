@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Accessible modal component with backdrop, keyboard navigation, and body scroll lock
+ */
+
 'use client';
 
 import { useEffect } from 'react';
@@ -11,6 +15,13 @@ interface ModalProps {
   title?: string;
 }
 
+/**
+ * @description Renders an accessible modal with backdrop, keyboard navigation, and body scroll lock
+ * @param isOpen - Whether the modal is currently open
+ * @param onClose - Function to call when modal should be closed
+ * @param children - Content to render inside the modal
+ * @param title - Optional title for the modal header
+ */
 export function Modal({ isOpen, onClose, children, title }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -25,18 +36,18 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleEscapeKey);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [isOpen, onClose]);
 

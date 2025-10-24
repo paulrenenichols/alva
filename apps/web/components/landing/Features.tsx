@@ -1,9 +1,19 @@
+/**
+ * @fileoverview Features section component displaying key product features
+ */
+
 'use client';
 
 import { FeatureCard } from '@/components/ui/FeatureCard';
 import { HeadingSection } from '@/components/ui/Typography';
 
-const features = [
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const FEATURES_DATA: Feature[] = [
   {
     icon: 'brain',
     title: 'AI-Powered Strategy',
@@ -42,6 +52,9 @@ const features = [
   },
 ];
 
+/**
+ * @description Renders features section with grid of feature cards
+ */
 export function Features() {
   return (
     <section className="py-16 bg-bg-primary">
@@ -50,7 +63,7 @@ export function Features() {
           Why Choose Alva?
         </HeadingSection>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
+          {FEATURES_DATA.map((feature, index) => (
             <FeatureCard
               key={index}
               icon={feature.icon}

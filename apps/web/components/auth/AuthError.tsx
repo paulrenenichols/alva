@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Error component displayed when authentication fails
+ */
+
 'use client';
 
 import { AlertCircle } from 'lucide-react';
@@ -10,19 +14,32 @@ interface AuthErrorProps {
   onClose: () => void;
 }
 
+/**
+ * @description Maps error messages to user-friendly text
+ * @param error - Raw error message from authentication
+ * @returns User-friendly error message
+ */
+const getErrorMessage = (error: string): string => {
+  if (error.includes('network')) {
+    return 'Please check your internet connection and try again.';
+  }
+  if (error.includes('email')) {
+    return 'Please enter a valid email address.';
+  }
+  if (error.includes('exists')) {
+    return 'An account with this email already exists. Try signing in instead.';
+  }
+  return 'Something went wrong. Please try again.';
+};
+
+/**
+ * @description Renders error message with retry and close options
+ * @param error - Error message to display
+ * @param onRetry - Function to call when user wants to retry
+ * @param onClose - Function to call when user wants to close the modal
+ */
 export function AuthError({ error, onRetry, onClose }: AuthErrorProps) {
-  const getErrorMessage = (error: string) => {
-    if (error.includes('network')) {
-      return 'Please check your internet connection and try again.';
-    }
-    if (error.includes('email')) {
-      return 'Please enter a valid email address.';
-    }
-    if (error.includes('exists')) {
-      return 'An account with this email already exists. Try signing in instead.';
-    }
-    return 'Something went wrong. Please try again.';
-  };
+  const userFriendlyMessage = getErrorMessage(error);
 
   return (
     <div className="p-6 text-center">
@@ -30,7 +47,7 @@ export function AuthError({ error, onRetry, onClose }: AuthErrorProps) {
         <AlertCircle className="w-8 h-8 text-danger" />
       </div>
       <HeadingSection className="mb-4">Oops!</HeadingSection>
-      <BodyDefault className="mb-6">{getErrorMessage(error)}</BodyDefault>
+      <BodyDefault className="mb-6">{userFriendlyMessage}</BodyDefault>
       <div className="flex gap-3 justify-center">
         <Button onClick={onRetry} variant="primary">
           Try Again

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Hero section component for landing page with dual CTA buttons
+ */
+
 'use client';
 
 import { Button } from './Button';
@@ -12,6 +16,15 @@ interface HeroProps {
   onSecondaryClick: () => void;
 }
 
+/**
+ * @description Renders the main hero section with headline, subheadline, and dual call-to-action buttons
+ * @param headline - Main headline text
+ * @param subhead - Subheadline description text
+ * @param primaryCTA - Text for primary call-to-action button
+ * @param secondaryCTA - Text for secondary call-to-action button
+ * @param onPrimaryClick - Handler for primary button click
+ * @param onSecondaryClick - Handler for secondary button click
+ */
 export function Hero({
   headline,
   subhead,
