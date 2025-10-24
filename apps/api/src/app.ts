@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Fastify application builder for API service
+ */
+
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
@@ -12,14 +16,33 @@ import { planRoutes } from './routes/plans';
 import { healthRoutes } from './routes/health';
 import { createDbPool } from '@alva/database';
 
+const DEFAULT_WEB_URL = 'http://localhost:4200';
+const DEFAULT_API_HOST = 'localhost:3001';
+const DEFAULT_API_SCHEMES = ['http'];
+
 const fastify = Fastify({
   logger: true,
 });
 
+/**
+ * @description Builds and configures the Fastify application for API service
+ * @returns Configured Fastify instance
+ */
 export async function buildApp() {
-  // Register plugins
+  await registerPlugins();
+  await registerDatabase();
+  await registerMiddleware();
+  await registerRoutes();
+
+  return fastify;
+}
+
+/**
+ * @description Registers all required plugins for the application
+ */
+async function registerPlugins(): Promise<void> {
   await fastify.register(cors, {
-    origin: process.env['WEB_URL'] || 'http://localhost:4200',
+    origin: process.env['WEB_URL'] || DEFAULT_WEB_URL,
     credentials: true,
   });
 
@@ -30,8 +53,8 @@ export async function buildApp() {
         description: 'API for Alva marketing platform',
         version: '1.0.0',
       },
-      host: 'localhost:3001',
-      schemes: ['http'],
+      host: DEFAULT_API_HOST,
+      schemes: DEFAULT_API_SCHEMES,
       consumes: ['application/json'],
       produces: ['application/json'],
       securityDefinitions: {
@@ -47,21 +70,36 @@ export async function buildApp() {
   await fastify.register(swaggerUi, {
     routePrefix: '/docs',
   });
+}
 
-  // Register database
-  const db = createDbPool(process.env['DATABASE_URL']!);
+/**
+ * @description Registers database connection
+ */
+async function registerDatabase(): Promise<void> {
+  const databaseUrl = process.env['DATABASE_URL'];
+  if (!databaseUrl) {
+    throw new Error('DATABASE_URL environment variable is required');
+  }
+
+  const db = createDbPool(databaseUrl);
   fastify.decorate('db', db);
+}
 
-  // Register middleware
+/**
+ * @description Registers all middleware
+ */
+async function registerMiddleware(): Promise<void> {
   await fastify.register(monitoringPlugin);
   await fastify.register(securityPlugin);
   fastify.register(authMiddleware);
+}
 
-  // Register routes
+/**
+ * @description Registers all application routes
+ */
+async function registerRoutes(): Promise<void> {
   await fastify.register(apiRoutes, { prefix: '/api' });
   await fastify.register(onboardingRoutes, { prefix: '/onboarding' });
   await fastify.register(planRoutes, { prefix: '/plans' });
   await fastify.register(healthRoutes);
-
-  return fastify;
 }

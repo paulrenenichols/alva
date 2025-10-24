@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Authentication routes for user registration, verification, and profile management
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
@@ -7,27 +11,47 @@ import { EmailService } from '../services/email.service';
 import { TokenService } from '../services/token.service';
 import { authenticateToken } from '../middleware/auth.middleware';
 
-// Extend FastifyInstance to include db property
 declare module 'fastify' {
   interface FastifyInstance {
     db: any;
   }
 }
 
-const registerSchema = z.object({
+const REGISTER_SCHEMA = z.object({
   email: z.string().email(),
 });
 
-const verifySchema = z.object({
+const VERIFY_SCHEMA = z.object({
   token: z.string(),
 });
 
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+/**
+ * @description Registers authentication routes with the Fastify instance
+ * @param fastify - Fastify instance to register routes with
+ */
 export async function authRoutes(fastify: FastifyInstance) {
   const userService = new UserService(fastify.db);
   const emailService = new EmailService();
   const tokenService = new TokenService();
 
-  // Register user
+  await registerUserRoute(fastify, userService, emailService);
+  await verifyEmailRoute(fastify, userService, tokenService);
+  await getCurrentUserRoute(fastify);
+}
+
+/**
+ * @description Registers the user registration route
+ * @param fastify - Fastify instance
+ * @param userService - User service instance
+ * @param emailService - Email service instance
+ */
+async function registerUserRoute(
+  fastify: FastifyInstance,
+  userService: UserService,
+  emailService: EmailService
+): Promise<void> {
   fastify.post(
     '/register',
     {
@@ -42,33 +66,23 @@ export async function authRoutes(fastify: FastifyInstance) {
       },
     },
     async (
-      request: FastifyRequest<{ Body: z.infer<typeof registerSchema> }>,
+      request: FastifyRequest<{ Body: z.infer<typeof REGISTER_SCHEMA> }>,
       reply: FastifyReply
     ) => {
       const { email } = request.body;
 
       try {
-        // Check if user already exists
-        const existingUser = await fastify.db.query.users.findFirst({
-          where: eq(users.email, email),
-        });
-
+        const existingUser = await checkExistingUser(fastify, email);
         if (existingUser) {
           return reply.code(400).send({ error: 'User already exists' });
         }
 
-        // Create user
         const user = await userService.createUser(email);
-
-        // Generate verification token
         const token = await userService.createVerificationToken(user.id);
-
-        // Send verification email
         await emailService.sendVerificationEmail(email, token);
 
         return {
-          message:
-            'User registered successfully. Check your email for verification link.',
+          message: 'User registered successfully. Check your email for verification link.',
           userId: user.id,
         };
       } catch (error) {
@@ -77,8 +91,19 @@ export async function authRoutes(fastify: FastifyInstance) {
       }
     }
   );
+}
 
-  // Verify email with real token validation
+/**
+ * @description Registers the email verification route
+ * @param fastify - Fastify instance
+ * @param userService - User service instance
+ * @param tokenService - Token service instance
+ */
+async function verifyEmailRoute(
+  fastify: FastifyInstance,
+  userService: UserService,
+  tokenService: TokenService
+): Promise<void> {
   fastify.post(
     '/verify',
     {
@@ -93,35 +118,25 @@ export async function authRoutes(fastify: FastifyInstance) {
       },
     },
     async (
-      request: FastifyRequest<{ Body: z.infer<typeof verifySchema> }>,
+      request: FastifyRequest<{ Body: z.infer<typeof VERIFY_SCHEMA> }>,
       reply: FastifyReply
     ) => {
       const { token } = request.body;
 
       try {
         const userId = await userService.verifyToken(token);
-
         if (!userId) {
           return reply.code(400).send({ error: 'Invalid or expired token' });
         }
 
-        // Generate JWT tokens
         const accessToken = tokenService.generateAccessToken({
           userId,
           email: '',
         });
         const refreshToken = tokenService.generateRefreshToken();
 
-        // Store refresh token
         await userService.createRefreshToken(userId, refreshToken);
-
-        // Set refresh token cookie
-        reply.setCookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: process.env['NODE_ENV'] === 'production',
-          sameSite: 'lax',
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
+        setRefreshTokenCookie(reply, refreshToken);
 
         return {
           accessToken,
@@ -133,8 +148,13 @@ export async function authRoutes(fastify: FastifyInstance) {
       }
     }
   );
+}
 
-  // Get current user
+/**
+ * @description Registers the current user profile route
+ * @param fastify - Fastify instance
+ */
+async function getCurrentUserRoute(fastify: FastifyInstance): Promise<void> {
   fastify.get(
     '/me',
     {
@@ -146,4 +166,32 @@ export async function authRoutes(fastify: FastifyInstance) {
       };
     }
   );
+}
+
+/**
+ * @description Checks if a user with the given email already exists
+ * @param fastify - Fastify instance
+ * @param email - Email address to check
+ * @returns User object if exists, null otherwise
+ */
+async function checkExistingUser(fastify: FastifyInstance, email: string) {
+  return await fastify.db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
+}
+
+/**
+ * @description Sets the refresh token as an HTTP-only cookie
+ * @param reply - Fastify reply object
+ * @param refreshToken - Refresh token to set
+ */
+function setRefreshTokenCookie(reply: FastifyReply, refreshToken: string): void {
+  const isProduction = process.env['NODE_ENV'] === 'production';
+  
+  reply.setCookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'lax',
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+  });
 }
