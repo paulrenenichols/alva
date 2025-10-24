@@ -12,7 +12,7 @@ function VerifyPageContent() {
     'verifying'
   );
   const [error, setError] = useState('');
-  const { setAccessToken } = useAuthStore();
+  const { setUser } = useAuthStore();
 
   useEffect(() => {
     if (!token) {
@@ -23,8 +23,8 @@ function VerifyPageContent() {
 
     const verifyEmail = async () => {
       try {
-        const result = await authClient.verifyMagicLink(token!);
-        setAccessToken(result.accessToken);
+        const user = await authClient.verifyMagicLink(token!);
+        setUser(user);
         setStatus('success');
 
         // Redirect to dashboard after 2 seconds
@@ -38,17 +38,17 @@ function VerifyPageContent() {
     };
 
     verifyEmail();
-  }, [token, setAccessToken]);
+  }, [token, setUser]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-bg-primary to-bg-secondary flex items-center justify-center">
       <div className="max-w-md w-full text-center">
         {status === 'verifying' && (
           <>
-            <div className="w-16 h-16 mx-auto mb-4 bg-primary-500 rounded-full flex items-center justify-center">
-              <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-4 border-text-inverse border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <h1 className="text-2xl font-bold text-secondary-900 mb-2">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">
               Verifying your email...
             </h1>
           </>
@@ -56,9 +56,9 @@ function VerifyPageContent() {
 
         {status === 'success' && (
           <>
-            <div className="w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-success rounded-full flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-white"
+                className="w-8 h-8 text-text-inverse"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -71,10 +71,10 @@ function VerifyPageContent() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-secondary-900 mb-2">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">
               Email verified successfully!
             </h1>
-            <p className="text-secondary-600">
+            <p className="text-text-secondary">
               Redirecting to your dashboard...
             </p>
           </>
@@ -82,9 +82,9 @@ function VerifyPageContent() {
 
         {status === 'error' && (
           <>
-            <div className="w-16 h-16 mx-auto mb-4 bg-red-500 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-danger rounded-full flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-white"
+                className="w-8 h-8 text-text-inverse"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -97,13 +97,13 @@ function VerifyPageContent() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-secondary-900 mb-2">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">
               Verification failed
             </h1>
-            <p className="text-red-600 mb-6">{error}</p>
+            <p className="text-danger mb-6">{error}</p>
             <button
               onClick={() => (window.location.href = '/')}
-              className="bg-primary-500 text-white px-6 py-2 rounded-lg"
+              className="bg-primary text-text-inverse px-6 py-2 rounded-lg"
             >
               Back to Home
             </button>
@@ -116,16 +116,20 @@ function VerifyPageContent() {
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-primary-500 rounded-full flex items-center justify-center">
-            <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-bg-primary to-bg-secondary flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-4 border-text-inverse border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <h1 className="text-2xl font-bold text-text-primary mb-2">
+              Loading...
+            </h1>
           </div>
-          <h1 className="text-2xl font-bold text-secondary-900 mb-2">Loading...</h1>
         </div>
-      </div>
-    }>
+      }
+    >
       <VerifyPageContent />
     </Suspense>
   );
