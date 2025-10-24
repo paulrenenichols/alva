@@ -37,7 +37,9 @@ export async function apiRoutes(fastify: FastifyInstance) {
  * @description Registers the marketing plan generation route
  * @param fastify - Fastify instance
  */
-async function registerPlanGenerationRoute(fastify: FastifyInstance): Promise<void> {
+async function registerPlanGenerationRoute(
+  fastify: FastifyInstance
+): Promise<void> {
   fastify.post(
     '/plans/generate',
     {
@@ -81,7 +83,9 @@ async function registerPlanGenerationRoute(fastify: FastifyInstance): Promise<vo
  * @description Registers the user plans retrieval route
  * @param fastify - Fastify instance
  */
-async function registerPlanRetrievalRoute(fastify: FastifyInstance): Promise<void> {
+async function registerPlanRetrievalRoute(
+  fastify: FastifyInstance
+): Promise<void> {
   fastify.get(
     '/plans',
     {
@@ -104,7 +108,9 @@ async function registerPlanRetrievalRoute(fastify: FastifyInstance): Promise<voi
  * @description Registers the onboarding section save route
  * @param fastify - Fastify instance
  */
-async function registerOnboardingSaveRoute(fastify: FastifyInstance): Promise<void> {
+async function registerOnboardingSaveRoute(
+  fastify: FastifyInstance
+): Promise<void> {
   fastify.post(
     '/onboarding/save-section',
     {
@@ -178,7 +184,11 @@ async function getUserPlans(userId: string) {
  * @param section - Section identifier
  * @param data - Section data to save
  */
-async function saveOnboardingSection(userId: string, section: string, data: any): Promise<void> {
+async function saveOnboardingSection(
+  userId: string,
+  section: string,
+  data: any
+): Promise<void> {
   // TODO: Implement actual onboarding data saving logic
   console.log(`Saving onboarding section ${section} for user ${userId}:`, data);
 }

@@ -82,7 +82,8 @@ async function registerUserRoute(
         await emailService.sendVerificationEmail(email, token);
 
         return {
-          message: 'User registered successfully. Check your email for verification link.',
+          message:
+            'User registered successfully. Check your email for verification link.',
           userId: user.id,
         };
       } catch (error) {
@@ -185,9 +186,12 @@ async function checkExistingUser(fastify: FastifyInstance, email: string) {
  * @param reply - Fastify reply object
  * @param refreshToken - Refresh token to set
  */
-function setRefreshTokenCookie(reply: FastifyReply, refreshToken: string): void {
+function setRefreshTokenCookie(
+  reply: FastifyReply,
+  refreshToken: string
+): void {
   const isProduction = process.env['NODE_ENV'] === 'production';
-  
+
   reply.setCookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: isProduction,

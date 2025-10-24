@@ -16,7 +16,7 @@ const DEFAULT_RATE_LIMIT_MAX = 100;
 const DEFAULT_RATE_LIMIT_WINDOW = '1 minute';
 
 const fastify = Fastify({
-  logger: true
+  logger: true,
 });
 
 /**
@@ -38,16 +38,16 @@ export async function buildApp() {
 async function registerPlugins(): Promise<void> {
   await fastify.register(cors, {
     origin: process.env['WEB_URL'] || DEFAULT_WEB_URL,
-    credentials: true
+    credentials: true,
   });
 
   await fastify.register(cookie, {
-    secret: process.env['COOKIE_SECRET'] || DEFAULT_COOKIE_SECRET
+    secret: process.env['COOKIE_SECRET'] || DEFAULT_COOKIE_SECRET,
   });
 
   await fastify.register(rateLimit, {
     max: DEFAULT_RATE_LIMIT_MAX,
-    timeWindow: DEFAULT_RATE_LIMIT_WINDOW
+    timeWindow: DEFAULT_RATE_LIMIT_WINDOW,
   });
 }
 
