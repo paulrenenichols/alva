@@ -83,11 +83,12 @@ export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge variant="default">Default</Badge>
-      <Badge variant="gold">Gold</Badge>
-      <Badge variant="blue">Blue</Badge>
-      <Badge variant="green">Green</Badge>
-      <Badge variant="red">Red</Badge>
-      <Badge variant="gray">Gray</Badge>
+      <Badge variant="primary">Primary</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="success">Success</Badge>
+      <Badge variant="danger">Danger</Badge>
+      <Badge variant="warning">Warning</Badge>
+      <Badge variant="info">Info</Badge>
     </div>
   ),
 };
@@ -104,7 +105,7 @@ export const AllSizes: Story = {
 export const WithIcons: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Badge variant="gold">
+      <Badge variant="primary">
         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
@@ -114,7 +115,7 @@ export const WithIcons: Story = {
         </svg>
         Complete
       </Badge>
-      <Badge variant="blue">
+      <Badge variant="secondary">
         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
@@ -124,7 +125,7 @@ export const WithIcons: Story = {
         </svg>
         Info
       </Badge>
-      <Badge variant="red">
+      <Badge variant="danger">
         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"

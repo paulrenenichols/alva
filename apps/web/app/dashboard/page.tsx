@@ -141,7 +141,7 @@ export default function DashboardPage() {
             {win.description}
           </BodySmall>
           <Badge
-            variant="gold"
+            variant="primary"
             size="sm"
             className={QUICK_WIN_TIME_BADGE_CLASSES}
           >
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <HeadingCard>Daily Quick Wins</HeadingCard>
-                    <Badge variant="gold">⚡ High Impact</Badge>
+                    <Badge variant="primary">⚡ High Impact</Badge>
                   </div>
                 </CardHeader>
 
