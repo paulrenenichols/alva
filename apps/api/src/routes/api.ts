@@ -14,7 +14,7 @@ const GENERATE_PLAN_SCHEMA = z.object({
 
 const SAVE_SECTION_SCHEMA = z.object({
   section: z.string(),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
 });
 
 interface AuthenticatedRequest extends FastifyRequest {
