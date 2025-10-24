@@ -12,63 +12,6 @@ module.exports = {
   darkMode: 'class', // Enable manual dark mode toggle
   theme: {
     extend: {
-      // Semantic color system using CSS custom properties
-      colors: {
-        primary: {
-          DEFAULT: 'var(--color-primary)',
-          hover: 'var(--color-primary-hover)',
-          active: 'var(--color-primary-active)',
-          muted: 'var(--color-primary-muted)',
-        },
-        secondary: {
-          DEFAULT: 'var(--color-secondary)',
-          hover: 'var(--color-secondary-hover)',
-          active: 'var(--color-secondary-active)',
-          muted: 'var(--color-secondary-muted)',
-        },
-        success: {
-          DEFAULT: 'var(--color-success)',
-          hover: 'var(--color-success-hover)',
-          active: 'var(--color-success-active)',
-          muted: 'var(--color-success-muted)',
-        },
-        danger: {
-          DEFAULT: 'var(--color-danger)',
-          hover: 'var(--color-danger-hover)',
-          active: 'var(--color-danger-active)',
-          muted: 'var(--color-danger-muted)',
-        },
-        warning: {
-          DEFAULT: 'var(--color-warning)',
-          hover: 'var(--color-warning-hover)',
-          active: 'var(--color-warning-active)',
-          muted: 'var(--color-warning-muted)',
-        },
-        info: {
-          DEFAULT: 'var(--color-info)',
-          hover: 'var(--color-info-hover)',
-          active: 'var(--color-info-active)',
-          muted: 'var(--color-info-muted)',
-        },
-        text: {
-          primary: 'var(--color-text-primary)',
-          secondary: 'var(--color-text-secondary)',
-          tertiary: 'var(--color-text-tertiary)',
-          inverse: 'var(--color-text-inverse)',
-        },
-        bg: {
-          primary: 'var(--color-bg-primary)',
-          secondary: 'var(--color-bg-secondary)',
-          tertiary: 'var(--color-bg-tertiary)',
-          elevated: 'var(--color-bg-elevated)',
-        },
-        border: {
-          subtle: 'var(--color-border-subtle)',
-          DEFAULT: 'var(--color-border-default)',
-          strong: 'var(--color-border-strong)',
-          focus: 'var(--color-border-focus)',
-        },
-      },
       fontFamily: {
         sans: ['var(--font-family-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
