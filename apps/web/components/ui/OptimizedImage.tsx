@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Optimized image component with loading states and error handling
+ */
+
 import Image from 'next/image';
 import { useState } from 'react';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Main layout component providing consistent page structure with header
+ */
+
 import { Header } from './Header';
 import { PageLayout } from '@/components/ui/Layout';
 

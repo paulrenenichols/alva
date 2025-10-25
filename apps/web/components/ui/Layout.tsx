@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Layout components for consistent page structure and spacing
+ */
+
 import { cn } from '@/lib/utils';
 
 interface PageLayoutProps {

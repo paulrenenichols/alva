@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Root page component that renders the main landing page
+ */
+
 import { LandingPage } from '@/components/landing/LandingPage';
 
 // Force dynamic rendering to avoid prerender issues

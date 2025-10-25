@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Main entry point for the API server application
+ */
+
 import { buildApp } from './app';
 
 const start = async () => {

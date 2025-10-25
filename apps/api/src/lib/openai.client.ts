@@ -1,3 +1,7 @@
+/**
+ * @fileoverview OpenAI client service for generating PPC marketing plans
+ */
+
 import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 

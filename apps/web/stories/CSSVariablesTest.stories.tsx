@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for CSS variables testing
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {

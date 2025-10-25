@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook configuration for web application
+ */
+
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {

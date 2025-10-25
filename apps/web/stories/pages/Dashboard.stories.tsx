@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Dashboard page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import DashboardPage from '@/app/dashboard/page';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Badge component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from '@/components/ui/Badge';
 

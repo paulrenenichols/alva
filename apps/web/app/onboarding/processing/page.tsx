@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Onboarding processing page showing AI plan generation progress
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';

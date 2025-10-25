@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Progress component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { ProgressBar, ProgressDots, Spinner } from '@/components/ui/Progress';
 

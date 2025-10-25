@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard quick wins page displaying actionable marketing opportunities
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';

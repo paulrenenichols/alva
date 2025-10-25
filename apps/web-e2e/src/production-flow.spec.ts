@@ -1,3 +1,7 @@
+/**
+ * @fileoverview End-to-end test for production deployment flow
+ */
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Production Flow Tests', () => {
@@ -23,8 +27,8 @@ test.describe('Production Flow Tests', () => {
     await page.click("text=Let's Go");
 
     // Complete all onboarding cards
-    for (let i = 1; i <= 26; i++) {
-      await page.waitForURL(`/onboarding/${i}`);
+    for (let cardNumber = 1; cardNumber <= 26; cardNumber++) {
+      await page.waitForURL(`/onboarding/${cardNumber}`);
       await page.waitForLoadState('networkidle');
 
       // Fill required fields based on card type

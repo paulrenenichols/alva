@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Server startup script for the authentication service
+ */
+
 import { buildApp } from './app';
 
 const start = async () => {

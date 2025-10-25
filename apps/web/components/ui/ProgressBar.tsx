@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Progress bar component for displaying completion status
+ */
+
 import { cn } from '@/lib/utils';
 
 interface ProgressBarProps {

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Tasks page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import TasksPage from '@/app/dashboard/tasks/page';
 

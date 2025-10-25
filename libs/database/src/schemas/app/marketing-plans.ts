@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Database schema definitions for marketing plans
+ */
+
 import { pgTable, uuid, jsonb, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { users } from '../auth/users';
 

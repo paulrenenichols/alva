@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard marketing plan page displaying AI-generated strategy and recommendations
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

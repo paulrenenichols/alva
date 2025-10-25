@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Jest configuration for API server testing
+ */
+
 export default {
   displayName: 'api',
   preset: '../../jest.preset.js',

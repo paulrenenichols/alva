@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Multi-selector component for choosing multiple options in onboarding forms
+ */
+
 'use client';
 
 import { cn } from '@/lib/utils';

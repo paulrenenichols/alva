@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Theme toggle component for switching between light and dark modes
+ */
+
 import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 

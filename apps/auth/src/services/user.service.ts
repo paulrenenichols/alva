@@ -1,3 +1,7 @@
+/**
+ * @fileoverview User service for managing user accounts, verification, and authentication
+ */
+
 import { eq } from 'drizzle-orm';
 import { users, verificationTokens, refreshTokens } from '@alva/database';
 import { Database } from '@alva/database';

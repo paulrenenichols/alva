@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Service for generating blog content using OpenAI
+ */
+
 import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 
@@ -46,7 +50,12 @@ Return JSON with:
         response_format: { type: 'json_object' },
       });
 
-      return JSON.parse(response.choices[0]?.message?.content || '{}');
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No content generated for blog post');
+      }
+      
+      return JSON.parse(content);
     } catch (error) {
       console.error('Blog generation error:', error);
       throw new Error('Failed to generate blog post');

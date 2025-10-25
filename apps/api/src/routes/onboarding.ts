@@ -1,3 +1,7 @@
+/**
+ * @fileoverview API routes for onboarding data collection and processing
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { ProfileMapperService } from '../services/profile/profile-mapper.service';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview End-to-end test for MVP user flow
+ */
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Complete MVP Flow', () => {

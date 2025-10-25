@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for RadioSelector component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { RadioSelector } from '@/components/onboarding/inputs/RadioSelector';
 import { useState } from 'react';

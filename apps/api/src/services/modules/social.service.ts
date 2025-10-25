@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Service for generating social media content using OpenAI
+ */
+
 import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 
@@ -31,7 +35,12 @@ export class SocialMediaService {
         response_format: { type: 'json_object' },
       });
 
-      return JSON.parse(response.choices[0]?.message?.content || '{}');
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No content generated for social media post');
+      }
+      
+      return JSON.parse(content);
     } catch (error) {
       console.error('Social media generation error:', error);
       throw new Error('Failed to generate social media content');

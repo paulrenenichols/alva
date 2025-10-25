@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Authentication middleware plugin for API server JWT token validation
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import jwt from 'jsonwebtoken';
 

@@ -105,8 +105,8 @@ async function registerPlanRetrievalRoute(
 }
 
 /**
- * @description Registers the onboarding section save route
- * @param fastify - Fastify instance
+ * @description Registers the onboarding save section route for collecting user data
+ * @param fastify - Fastify instance for route registration
  */
 async function registerOnboardingSaveRoute(
   fastify: FastifyInstance

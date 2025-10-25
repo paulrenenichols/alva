@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Jest configuration for web application testing
+ */
+
 export default {
   displayName: 'web',
   preset: '../../jest.preset.js',

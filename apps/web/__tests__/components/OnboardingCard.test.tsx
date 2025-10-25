@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Unit tests for OnboardingCard component
+ */
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import { OnboardingCard } from '@/components/onboarding/OnboardingCard';
 import { useOnboardingStore } from '@/stores/onboardingStore';

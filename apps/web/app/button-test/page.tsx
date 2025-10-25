@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Button test page for component development and testing
+ */
+
 import { Button } from '@/components/ui/Button';
 
 export default function ButtonTestPage() {

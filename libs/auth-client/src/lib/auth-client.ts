@@ -2,6 +2,10 @@
  * @fileoverview Authentication client for API communication with auth service
  */
 
+/**
+ * @fileoverview Authentication client library for user authentication
+ */
+
 const AUTH_BASE_URL =
   process.env['NEXT_PUBLIC_AUTH_URL'] || 'http://localhost:3002';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Pill selector component for tag-like selection in onboarding forms
+ */
+
 'use client';
 
 import { useState } from 'react';

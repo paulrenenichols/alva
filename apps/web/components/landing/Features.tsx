@@ -63,9 +63,9 @@ export function Features() {
           Why Choose Alva?
         </HeadingSection>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES_DATA.map((feature, index) => (
+          {FEATURES_DATA.map((feature, featureIndex) => (
             <FeatureCard
-              key={index}
+              key={featureIndex}
               icon={feature.icon}
               title={feature.title}
               description={feature.description}

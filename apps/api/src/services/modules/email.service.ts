@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Email service for generating email marketing content using AI
+ */
+
 import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 

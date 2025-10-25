@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Onboarding card component for collecting user information with progress tracking
+ */
+
 'use client';
 
 import { useOnboardingStore } from '@/stores/onboardingStore';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Welcome page for onboarding flow with progress overview
+ */
+
 'use client';
 
 import { useOnboardingStore } from '@/stores/onboardingStore';

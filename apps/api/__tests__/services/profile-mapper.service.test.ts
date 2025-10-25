@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Unit tests for ProfileMapperService
+ */
+
 import { ProfileMapperService } from '../../src/services/profile/profile-mapper.service';
 import { ClientProfile } from '@alva/shared-types';
 

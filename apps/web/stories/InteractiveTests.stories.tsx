@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for interactive component testing
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';

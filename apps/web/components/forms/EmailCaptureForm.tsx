@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Email capture form component for collecting user email addresses
+ */
+
 'use client';
 
 import { useState } from 'react';

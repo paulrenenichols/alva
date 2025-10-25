@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Central export file for all database schemas
+ */
+
 // Export all schemas
 export * from './auth/users';
 export * from './auth/refresh-tokens';

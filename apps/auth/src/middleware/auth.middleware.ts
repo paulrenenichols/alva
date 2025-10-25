@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Authentication middleware for validating JWT tokens and user sessions
+ */
+
 import { FastifyRequest, FastifyReply } from 'fastify';
 import jwt from 'jsonwebtoken';
 import { eq } from 'drizzle-orm';

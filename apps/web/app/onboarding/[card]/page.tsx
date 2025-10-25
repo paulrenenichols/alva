@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dynamic onboarding card page for collecting user information
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

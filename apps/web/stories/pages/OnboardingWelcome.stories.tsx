@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for OnboardingWelcome page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import OnboardingWelcome from '@/app/onboarding/welcome/page';
 

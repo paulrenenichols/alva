@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Central export file for all UI components in the design system
+ */
+
 // Core Components
 export { Button } from './Button';
 export { Card, CardHeader, CardBody, CardFooter } from './Card';

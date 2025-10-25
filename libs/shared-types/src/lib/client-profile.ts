@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Shared types and interfaces for client profiles
+ */
+
 import { z } from 'zod';
 
 export const ClientProfileSchema = z.object({

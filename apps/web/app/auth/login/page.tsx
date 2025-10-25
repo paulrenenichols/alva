@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Login page component for user authentication
+ */
+
 export default function LoginPage() {
   return (
     <div>

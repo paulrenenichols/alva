@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Radio selector component for single-choice options in onboarding forms
+ */
+
 'use client';
 
 import { cn } from '@/lib/utils';

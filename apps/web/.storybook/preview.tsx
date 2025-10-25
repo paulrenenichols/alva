@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook preview configuration and global decorators
+ */
+
 import type { Preview } from '@storybook/react';
 import React from 'react';
 import '../app/global.css'; // Import Tailwind CSS

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Main entry point for the authentication service application
+ */
+
 import { buildApp } from './app';
 
 const start = async () => {

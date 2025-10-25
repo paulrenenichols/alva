@@ -122,8 +122,8 @@ export const useOnboardingStore = create<OnboardingState>()(
         const state = get();
         let cardIndex = 0;
         
-        for (let i = 0; i < onboardingSections.length; i++) {
-          const section = onboardingSections[i];
+        for (let sectionIndex = 0; sectionIndex < onboardingSections.length; sectionIndex++) {
+          const section = onboardingSections[sectionIndex];
           if (state.currentCard <= cardIndex + section.cards.length) {
             const cardInSection = state.currentCard - cardIndex - 1;
             return section.cards[cardInSection];
@@ -173,10 +173,10 @@ export const useOnboardingStore = create<OnboardingState>()(
 function getCurrentSectionForCard(cardNumber: number): number {
   let cardIndex = 0;
   
-  for (let i = 0; i < onboardingSections.length; i++) {
-    const section = onboardingSections[i];
+  for (let sectionIndex = 0; sectionIndex < onboardingSections.length; sectionIndex++) {
+    const section = onboardingSections[sectionIndex];
     if (cardNumber <= cardIndex + section.cards.length) {
-      return i + 1; // Return 1-based index
+      return sectionIndex + 1; // Return 1-based index
     }
     cardIndex += section.cards.length;
   }

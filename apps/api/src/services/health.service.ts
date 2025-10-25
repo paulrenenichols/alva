@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Health service for API server status monitoring
+ */
+
 import { Database } from '@alva/database';
 import { createServiceLogger } from '@alva/utils';
 

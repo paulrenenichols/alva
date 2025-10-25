@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Authentication layout component for login/signup pages
+ */
+
 export default function AuthLayout({
   children,
 }: {

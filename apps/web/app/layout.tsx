@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Root layout component providing global metadata, fonts, and HTML structure
+ */
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './global.css';

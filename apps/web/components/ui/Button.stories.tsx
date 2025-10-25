@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Button component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/Button';
 

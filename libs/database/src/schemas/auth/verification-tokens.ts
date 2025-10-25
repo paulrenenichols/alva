@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Database schema definitions for verification tokens
+ */
+
 import { pgTable, uuid, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { users } from './users';
 

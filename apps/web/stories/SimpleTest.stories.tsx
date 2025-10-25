@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for simple component testing
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {

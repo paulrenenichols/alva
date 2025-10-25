@@ -61,18 +61,28 @@ export function LandingPage() {
     }
   }, [isAuthenticated, user]);
 
+  /**
+   * @description Handles signup button click, tracks analytics and opens auth modal
+   */
   const handleSignupClick = () => {
     analytics.trackButtonClick('get-started-free', 'hero-section');
     setAuthMode('signup');
     setShowAuthModal(true);
   };
 
+  /**
+   * @description Handles login button click, tracks analytics and opens auth modal
+   */
   const handleLoginClick = () => {
     analytics.trackButtonClick('sign-in', 'hero-section');
     setAuthMode('login');
     setShowAuthModal(true);
   };
 
+  /**
+   * @description Handles successful authentication, shows success modal for login or closes modal for signup
+   * @param email - Optional email address for login success display
+   */
   const handleAuthSuccess = (email?: string) => {
     if (authMode === 'login' && email) {
       setUserEmail(email);
@@ -82,16 +92,26 @@ export function LandingPage() {
     }
   };
 
+  /**
+   * @description Handles authentication errors by showing error modal
+   * @param error - Error message from authentication attempt
+   */
   const handleAuthError = (error: string) => {
     setShowError(true);
   };
 
+  /**
+   * @description Closes all modals and resets modal state
+   */
   const handleCloseModal = () => {
     setShowAuthModal(false);
     setShowSuccess(false);
     setShowError(false);
   };
 
+  /**
+   * @description Retries authentication by hiding error modal
+   */
   const handleRetry = () => {
     setShowError(false);
   };

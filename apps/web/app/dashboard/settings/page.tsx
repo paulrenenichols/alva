@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard settings page for user preferences and account management
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';

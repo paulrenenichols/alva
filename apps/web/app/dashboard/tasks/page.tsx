@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard tasks page for managing marketing tasks and progress
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';
