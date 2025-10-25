@@ -179,8 +179,8 @@ export const AccessibilityTest: Story = {
 
 export const OnboardingExample: Story = {
   render: () => (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+    <div className="bg-bg-primary min-h-screen flex items-center justify-center p-4">
+      <div className="bg-bg-elevated rounded-lg shadow-lg p-8 max-w-md w-full text-center">
         <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="text-2xl font-bold text-text-primary">A</span>
         </div>
@@ -205,7 +205,7 @@ export const OnboardingExample: Story = {
         <a href="#" className="text-secondary hover:underline text-sm">
           Back to Home
         </a>
-        <p className="text-xs text-gray-400 mt-8">
+        <p className="text-xs text-text-tertiary mt-8">
           Bringing your marketing into the light.
         </p>
       </div>
