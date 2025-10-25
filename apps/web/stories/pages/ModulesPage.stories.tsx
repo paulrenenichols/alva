@@ -1,20 +1,20 @@
 /**
- * @fileoverview Storybook stories for Dashboard page
+ * @fileoverview Storybook stories for ModulesPage
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import DashboardPage from '@/app/dashboard/page';
+import ModulesPage from '@/app/dashboard/modules/page';
 import { withDashboardContext } from '../mocks/pageDecorators';
 
-const meta: Meta<typeof DashboardPage> = {
-  title: 'Pages/Dashboard',
-  component: DashboardPage,
+const meta: Meta<typeof ModulesPage> = {
+  title: 'Pages/ModulesPage',
+  component: ModulesPage,
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         component:
-          'Main dashboard page showing user overview, quick wins, and navigation to key features.',
+          'Modules page component for managing marketing modules and features with progress tracking.',
       },
     },
   },
@@ -43,7 +43,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Default dashboard view with all sections visible.',
+        story: 'Default modules page view with all marketing modules and their progress.',
       },
     },
   },
@@ -57,7 +57,7 @@ export const Loading: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Dashboard in loading state with skeleton placeholders.',
+        story: 'Modules page in loading state with skeleton placeholders.',
       },
     },
   },
@@ -71,7 +71,7 @@ export const Empty: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Dashboard with no data available.',
+        story: 'Modules page with no data available.',
       },
     },
   },
@@ -86,7 +86,7 @@ export const Mobile: Story = {
     docs: {
       description: {
         story:
-          'Dashboard optimized for mobile devices. Resize your browser window to test mobile layout.',
+          'Modules page optimized for mobile devices. Resize your browser window to test mobile layout.',
       },
     },
   },
@@ -101,8 +101,25 @@ export const Tablet: Story = {
     docs: {
       description: {
         story:
-          'Dashboard layout for tablet devices. Resize your browser window to test tablet layout.',
+          'Modules page layout for tablet devices. Resize your browser window to test tablet layout.',
       },
+    },
+  },
+};
+
+export const DarkMode: Story = {
+  args: {
+    isLoading: false,
+    hasData: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Modules page in dark mode theme.',
+      },
+    },
+    backgrounds: {
+      default: 'dark',
     },
   },
 };

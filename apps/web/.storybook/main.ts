@@ -3,6 +3,7 @@
  */
 
 import type { StorybookConfig } from '@storybook/nextjs';
+import path from 'path';
 
 const config: StorybookConfig = {
   stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
@@ -25,10 +26,20 @@ const config: StorybookConfig = {
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
   },
+  webpackFinal: async (config) => {
+    if (config.resolve) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@alva/api-client': path.resolve(__dirname, '../stories/mocks/api-client.ts'),
+        '@alva/auth-client': path.resolve(__dirname, '../stories/mocks/auth-client.ts'),
+        'next/navigation': path.resolve(__dirname, '../stories/mocks/next-navigation.ts'),
+        '@/lib/utils': path.resolve(__dirname, '../lib/utils.ts'),
+        '@/stores/onboardingStore': path.resolve(__dirname, '../stories/mocks/onboardingStore.ts'),
+        '@/data/onboarding-cards': path.resolve(__dirname, '../stories/mocks/onboarding-cards.ts'),
+      };
+    }
+    return config;
+  },
 };
 
 export default config;
-
-// To customize your webpack configuration you can use the webpackFinal field.
-// Check https://storybook.js.org/docs/react/builders/webpack#extending-storybooks-webpack-config
-// and https://nx.dev/recipes/storybook/custom-builder-configs
