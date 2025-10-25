@@ -24,9 +24,21 @@ const nextConfig = {
       use: 'ignore-loader',
     });
     
-    // Also exclude Storybook configuration files
+    // Exclude Storybook configuration files
     config.module.rules.push({
       test: /\.storybook\//,
+      use: 'ignore-loader',
+    });
+    
+    // Exclude Storybook mock files
+    config.module.rules.push({
+      test: /stories\/mocks\//,
+      use: 'ignore-loader',
+    });
+    
+    // Exclude all files in stories directory from Next.js build
+    config.module.rules.push({
+      test: /stories\//,
       use: 'ignore-loader',
     });
     

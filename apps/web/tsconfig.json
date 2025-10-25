@@ -53,7 +53,8 @@
     "**/*.stories.tsx",
     "**/*.stories.js",
     "**/*.stories.jsx",
-    ".storybook/**/*"
+    ".storybook/**/*",
+    "stories/**/*"
   ],
   "references": [
     {
