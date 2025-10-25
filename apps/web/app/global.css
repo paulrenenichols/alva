@@ -103,9 +103,9 @@
   --color-border-focus: #ffd701;
 }
 
-/* Dark Mode Theme */
+/* Dark Mode Theme - Only apply when no manual theme class is present */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     /* Dark Mode Semantic Colors */
     --color-text-primary: #fafafa;
     --color-text-secondary: #a0a0a0;
@@ -155,7 +155,11 @@
   }
 }
 
-/* Manual Dark Mode Toggle Support */
+/* Manual Theme Toggle Support */
+.light {
+  /* Light theme colors are already defined in :root */
+}
+
 .dark {
   --color-text-primary: #fafafa;
   --color-text-secondary: #a0a0a0;
