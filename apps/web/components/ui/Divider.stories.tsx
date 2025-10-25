@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Divider component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Divider } from './Divider';
 

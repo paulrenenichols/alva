@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Input component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from '@/components/ui/Input';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Header component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Header } from '../../components/layout/Header';
 

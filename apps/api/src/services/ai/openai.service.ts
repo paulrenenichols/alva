@@ -1,3 +1,7 @@
+/**
+ * @fileoverview OpenAI service for generating marketing plans using AI
+ */
+
 import OpenAI from 'openai';
 import { ClientProfile } from '@alva/shared-types';
 

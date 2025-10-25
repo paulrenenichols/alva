@@ -123,6 +123,9 @@ importers:
       '@storybook/addon-a11y':
         specifier: ^9.1.13
         version: 9.1.13(storybook@9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)))
+      '@storybook/addon-themes':
+        specifier: ^9.1.15
+        version: 9.1.15(storybook@9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)))
       '@storybook/nextjs':
         specifier: ^9.1.13
         version: 9.1.13(@rspack/core@1.5.8(@swc/helpers@0.5.17))(@swc/core@1.5.29(@swc/helpers@0.5.17))(babel-plugin-macros@3.1.0)(esbuild@0.19.12)(next@15.5.6(@babel/core@7.28.4)(@playwright/test@1.56.1)(babel-plugin-macros@3.1.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.93.2))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass-embedded@1.93.2)(sass@1.93.2)(storybook@9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)))(type-fest@4.41.0)(typescript@5.9.3)(webpack-dev-server@5.2.2(webpack@5.102.1(@swc/core@1.5.29(@swc/helpers@0.5.17))(esbuild@0.19.12)))(webpack-hot-middleware@2.26.1)(webpack@5.102.1(@swc/core@1.5.29(@swc/helpers@0.5.17))(esbuild@0.19.12))
@@ -2917,6 +2920,11 @@ packages:
     resolution: {integrity: sha512-4enIl1h2XSZnFKUQJJoZbp1X40lzdj7f5JE15ZhU1al4z6hHWp7i2zD7ySyDpEbMypBCz1xnLvyiyw79m1fp7w==}
     peerDependencies:
       storybook: ^9.1.13
+
+  '@storybook/addon-themes@9.1.15':
+    resolution: {integrity: sha512-h/pYtprMm3JB++fgs+1AUCb8QaZvckYDISS5wJgQx/VtODOCbcZDVbEAFfKrJLnKq09LMH4XTOndYZCRUl7oaA==}
+    peerDependencies:
+      storybook: ^9.1.15
 
   '@storybook/builder-webpack5@9.1.13':
     resolution: {integrity: sha512-BoFXrTlc22ryLl6U5QwgV/gHVbHBcXeVSjYOyu6XZ9SPV5GGbw5T/G7NJYJAZcsz1ZxuMEYYSMFryfZ5qcjRsA==}
@@ -12429,6 +12437,11 @@ snapshots:
       '@storybook/global': 5.0.0
       axe-core: 4.11.0
       storybook: 9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
+
+  '@storybook/addon-themes@9.1.15(storybook@9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)))':
+    dependencies:
+      storybook: 9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
+      ts-dedent: 2.2.0
 
   '@storybook/builder-webpack5@9.1.13(@rspack/core@1.5.8(@swc/helpers@0.5.17))(@swc/core@1.5.29(@swc/helpers@0.5.17))(esbuild@0.19.12)(storybook@9.1.13(@testing-library/dom@10.4.1)(prettier@2.8.8)(vite@7.1.11(@types/node@20.19.9)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)))(typescript@5.9.3)':
     dependencies:

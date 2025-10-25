@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Welcome page for onboarding flow with progress overview
+ */
+
 'use client';
 
 import { useOnboardingStore } from '@/stores/onboardingStore';
@@ -14,8 +18,8 @@ export default function OnboardingWelcome() {
         <Card className="p-6 text-center" variant="elevated">
           {/* Logo/Brand Area */}
           <div className="mb-6">
-            <div className="w-16 h-16 bg-gold rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span className="text-2xl font-bold text-text-primary">A</span>
+            <div className="w-16 h-16 bg-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+              <span className="text-2xl font-bold text-text-inverse">A</span>
             </div>
             <h1 className="text-2xl font-bold text-text-primary mb-2">
               Welcome to Alva!
@@ -26,7 +30,7 @@ export default function OnboardingWelcome() {
           </div>
 
           {/* Progress Info */}
-          <div className="bg-gold-muted rounded-lg p-4 mb-6">
+          <div className="bg-primary-muted rounded-lg p-4 mb-6">
             <p className="text-text-primary font-medium text-sm">
               {progress.total} cards • 5 minutes
             </p>

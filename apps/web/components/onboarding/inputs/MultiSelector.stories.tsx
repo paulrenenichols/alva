@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for MultiSelector component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { MultiSelector } from '@/components/onboarding/inputs/MultiSelector';
 import { useState } from 'react';

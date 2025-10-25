@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Security middleware plugin for API server with headers and CORS configuration
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export async function securityPlugin(fastify: FastifyInstance) {

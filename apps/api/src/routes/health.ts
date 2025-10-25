@@ -1,3 +1,7 @@
+/**
+ * @fileoverview API routes for health checks and system monitoring
+ */
+
 import { FastifyInstance } from 'fastify';
 
 // Extend FastifyInstance to include db property

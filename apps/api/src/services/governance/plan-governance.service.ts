@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Plan governance service for merging and validating marketing plans
+ */
+
 import { ClientProfile } from '@alva/shared-types';
 
 export interface PlanTask {

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview TypeScript declaration file for global types
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '*.svg' {
   const content: any;

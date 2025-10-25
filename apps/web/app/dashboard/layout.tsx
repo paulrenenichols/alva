@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard layout component with navigation and sidebar
+ */
+
 import { DashboardNav } from '@/components/dashboard/DashboardNav';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 

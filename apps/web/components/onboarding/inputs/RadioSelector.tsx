@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Radio selector component for single-choice options in onboarding forms
+ */
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -28,7 +32,7 @@ export function RadioSelector({
             value={option}
             checked={value === option}
             onChange={(e) => onChange(e.target.value)}
-            className="w-4 h-4 text-gold border-border-default focus:ring-gold"
+            className="w-4 h-4 text-primary border-border-default focus:ring-primary"
           />
           <span className="text-text-primary">{option}</span>
         </label>

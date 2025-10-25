@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Onboarding cards data structure and configuration for user information collection
+ */
+
 export interface OnboardingCard {
   id: string;
   question: string;

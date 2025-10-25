@@ -1,3 +1,7 @@
+/**
+ * @fileoverview End-to-end test for basic application flow
+ */
+
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {

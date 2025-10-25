@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for MainLayout component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { MainLayout } from '../../components/layout/MainLayout';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for PillSelector component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { PillSelector } from '@/components/onboarding/inputs/PillSelector';
 import { useState } from 'react';

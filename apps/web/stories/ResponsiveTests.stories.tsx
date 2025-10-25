@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for responsive design testing
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardBody } from '@/components/ui/Card';

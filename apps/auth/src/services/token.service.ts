@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Token service for generating and validating JWT tokens and refresh tokens
+ */
+
 import jwt from 'jsonwebtoken';
 import { randomBytes } from 'crypto';
 

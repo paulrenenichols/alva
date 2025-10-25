@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Settings page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import SettingsPage from '@/app/dashboard/settings/page';
 

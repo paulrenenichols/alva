@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Jest configuration for auth client library testing
+ */
+
 export default {
   displayName: 'auth-client',
   preset: '../../jest.preset.js',

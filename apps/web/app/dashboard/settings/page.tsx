@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard settings page for user preferences and account management
+ */
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -39,7 +43,10 @@ export default function SettingsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -74,18 +81,24 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       // TODO: Save settings via API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setMessage({ type: 'success', text: 'Settings saved successfully!' });
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
+      setMessage({
+        type: 'error',
+        text: 'Failed to save settings. Please try again.',
+      });
     } finally {
       setSaving(false);
       setTimeout(() => setMessage(null), 3000);
     }
   };
 
-  const handleNotificationChange = (key: keyof UserSettings['notifications'], value: boolean) => {
-    setSettings(prev => ({
+  const handleNotificationChange = (
+    key: keyof UserSettings['notifications'],
+    value: boolean
+  ) => {
+    setSettings((prev) => ({
       ...prev,
       notifications: {
         ...prev.notifications,
@@ -94,8 +107,11 @@ export default function SettingsPage() {
     }));
   };
 
-  const handlePreferenceChange = (key: keyof UserSettings['preferences'], value: string) => {
-    setSettings(prev => ({
+  const handlePreferenceChange = (
+    key: keyof UserSettings['preferences'],
+    value: string
+  ) => {
+    setSettings((prev) => ({
       ...prev,
       preferences: {
         ...prev.preferences,
@@ -130,16 +146,22 @@ export default function SettingsPage() {
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}>
+        <div
+          className={`p-4 rounded-lg ${
+            message.type === 'success'
+              ? 'bg-success-muted text-success'
+              : 'bg-danger-muted text-danger'
+          }`}
+        >
           {message.text}
         </div>
       )}
 
       {/* Account Information */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Account Information
+        </h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -147,7 +169,12 @@ export default function SettingsPage() {
             </label>
             <Input
               value={settings.businessName}
-              onChange={(e) => setSettings(prev => ({ ...prev, businessName: e.target.value }))}
+              onChange={(e) =>
+                setSettings((prev) => ({
+                  ...prev,
+                  businessName: e.target.value,
+                }))
+              }
               placeholder="Enter your business name"
             />
           </div>
@@ -158,7 +185,9 @@ export default function SettingsPage() {
             <Input
               type="email"
               value={settings.email}
-              onChange={(e) => setSettings(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) =>
+                setSettings((prev) => ({ ...prev, email: e.target.value }))
+              }
               placeholder="Enter your email"
             />
           </div>
@@ -168,7 +197,9 @@ export default function SettingsPage() {
             </label>
             <select
               value={settings.timezone}
-              onChange={(e) => setSettings(prev => ({ ...prev, timezone: e.target.value }))}
+              onChange={(e) =>
+                setSettings((prev) => ({ ...prev, timezone: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="UTC">UTC</option>
@@ -186,7 +217,9 @@ export default function SettingsPage() {
 
       {/* Notifications */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Notifications
+        </h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -197,7 +230,9 @@ export default function SettingsPage() {
               <input
                 type="checkbox"
                 checked={settings.notifications.email}
-                onChange={(e) => handleNotificationChange('email', e.target.checked)}
+                onChange={(e) =>
+                  handleNotificationChange('email', e.target.checked)
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
@@ -206,13 +241,17 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-medium text-gray-900">Push Notifications</h3>
-              <p className="text-sm text-gray-600">Receive browser notifications</p>
+              <p className="text-sm text-gray-600">
+                Receive browser notifications
+              </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={settings.notifications.push}
-                onChange={(e) => handleNotificationChange('push', e.target.checked)}
+                onChange={(e) =>
+                  handleNotificationChange('push', e.target.checked)
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
@@ -221,13 +260,17 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-medium text-gray-900">Weekly Digest</h3>
-              <p className="text-sm text-gray-600">Receive a weekly summary of your progress</p>
+              <p className="text-sm text-gray-600">
+                Receive a weekly summary of your progress
+              </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={settings.notifications.weeklyDigest}
-                onChange={(e) => handleNotificationChange('weeklyDigest', e.target.checked)}
+                onChange={(e) =>
+                  handleNotificationChange('weeklyDigest', e.target.checked)
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
@@ -238,7 +281,9 @@ export default function SettingsPage() {
 
       {/* Preferences */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Preferences</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Preferences
+        </h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -260,7 +305,9 @@ export default function SettingsPage() {
             </label>
             <select
               value={settings.preferences.language}
-              onChange={(e) => handlePreferenceChange('language', e.target.value)}
+              onChange={(e) =>
+                handlePreferenceChange('language', e.target.value)
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="en">English</option>

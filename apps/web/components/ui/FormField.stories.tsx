@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for FormField component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   FormField,

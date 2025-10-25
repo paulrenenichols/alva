@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Reusable input component with label, error states, and helper text
+ */
+
 import { cn } from '@/lib/utils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -7,6 +11,25 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
+const BASE_INPUT_CLASSES = 'block w-full px-3 py-2 h-11 border rounded-md bg-bg-elevated text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-border-focus focus:border-border-focus transition-colors disabled:bg-bg-tertiary disabled:cursor-not-allowed';
+
+const ERROR_INPUT_CLASSES = 'border-danger focus:ring-danger focus:border-danger';
+const DEFAULT_INPUT_CLASSES = 'border-border-default';
+
+const LABEL_CLASSES = 'block text-sm font-medium text-text-primary mb-2';
+
+const HELPER_TEXT_CLASSES = 'mt-1 text-sm';
+const ERROR_HELPER_CLASSES = 'text-danger';
+const DEFAULT_HELPER_CLASSES = 'text-text-secondary';
+
+/**
+ * @description Renders an input field with optional label, error state, and helper text
+ * @param className - Additional CSS classes
+ * @param error - Whether to show error styling
+ * @param helperText - Helper text to display below input
+ * @param label - Label text for the input
+ * @param props - Additional input HTML attributes
+ */
 export function Input({
   className,
   error,
@@ -14,30 +37,30 @@ export function Input({
   label,
   ...props
 }: InputProps) {
+  const inputClasses = cn(
+    BASE_INPUT_CLASSES,
+    error ? ERROR_INPUT_CLASSES : DEFAULT_INPUT_CLASSES,
+    className
+  );
+
+  const helperTextClasses = cn(
+    HELPER_TEXT_CLASSES,
+    error ? ERROR_HELPER_CLASSES : DEFAULT_HELPER_CLASSES
+  );
+
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-text-primary mb-2">
+        <label className={LABEL_CLASSES}>
           {label}
         </label>
       )}
       <input
-        className={cn(
-          'block w-full px-3 py-2 h-11 border rounded-md bg-bg-elevated text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-border-focus focus:border-border-focus transition-colors disabled:bg-bg-tertiary disabled:cursor-not-allowed',
-          error
-            ? 'border-danger focus:ring-danger focus:border-danger'
-            : 'border-border-default',
-          className
-        )}
+        className={inputClasses}
         {...props}
       />
       {helperText && (
-        <p
-          className={cn(
-            'mt-1 text-sm',
-            error ? 'text-danger' : 'text-text-secondary'
-          )}
-        >
+        <p className={helperTextClasses}>
           {helperText}
         </p>
       )}

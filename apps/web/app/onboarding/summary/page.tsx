@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Onboarding summary page displaying collected information before plan generation
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

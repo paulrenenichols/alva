@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Multi-selector component for choosing multiple options in onboarding forms
+ */
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -41,7 +45,7 @@ export function MultiSelector({
               maxSelections !== undefined &&
               value.length >= maxSelections
             }
-            className="w-4 h-4 text-gold border-border-default rounded focus:ring-gold disabled:opacity-50"
+            className="w-4 h-4 text-primary border-border-default rounded focus:ring-primary disabled:opacity-50"
           />
           <span className="text-text-primary">{option}</span>
         </label>

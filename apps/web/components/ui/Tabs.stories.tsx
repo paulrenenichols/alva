@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for Tabs component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Dashboard modules page for managing marketing modules and features
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

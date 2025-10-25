@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Monitoring middleware plugin for API server performance tracking and logging
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { performance } from 'perf_hooks';
 

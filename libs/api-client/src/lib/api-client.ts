@@ -1,3 +1,7 @@
+/**
+ * @fileoverview API client library for communicating with the API server
+ */
+
 const API_BASE_URL =
   process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:3001';
 

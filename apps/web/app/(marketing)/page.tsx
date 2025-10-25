@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Marketing landing page component for promotional content
+ */
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-50">

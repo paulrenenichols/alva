@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Database schema definitions for application tables
+ */
+
 import { pgTable, uuid, jsonb, timestamp } from 'drizzle-orm/pg-core';
 import { users } from '../auth/users';
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for ThemeToggle component
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { ThemeToggle } from './ThemeToggle';
 

@@ -1,5 +1,10 @@
+/**
+ * @fileoverview Storybook stories for Dashboard page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import DashboardPage from '@/app/dashboard/page';
+import { withDashboardContext } from '../mocks/pageDecorators';
 
 const meta: Meta<typeof DashboardPage> = {
   title: 'Pages/Dashboard',
@@ -13,13 +18,28 @@ const meta: Meta<typeof DashboardPage> = {
       },
     },
   },
+  decorators: [withDashboardContext],
   tags: ['autodocs'],
+  argTypes: {
+    isLoading: {
+      control: 'boolean',
+      description: 'Whether the page is in loading state',
+    },
+    hasData: {
+      control: 'boolean',
+      description: 'Whether the page has data to display',
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    isLoading: false,
+    hasData: true,
+  },
   parameters: {
     docs: {
       description: {
@@ -29,7 +49,39 @@ export const Default: Story = {
   },
 };
 
+export const Loading: Story = {
+  args: {
+    isLoading: true,
+    hasData: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Dashboard in loading state with skeleton placeholders.',
+      },
+    },
+  },
+};
+
+export const Empty: Story = {
+  args: {
+    isLoading: false,
+    hasData: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Dashboard with no data available.',
+      },
+    },
+  },
+};
+
 export const Mobile: Story = {
+  args: {
+    isLoading: false,
+    hasData: true,
+  },
   parameters: {
     docs: {
       description: {
@@ -41,6 +93,10 @@ export const Mobile: Story = {
 };
 
 export const Tablet: Story = {
+  args: {
+    isLoading: false,
+    hasData: true,
+  },
   parameters: {
     docs: {
       description: {

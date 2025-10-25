@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Database schema definitions for authentication tables
+ */
+
 import {
   pgTable,
   uuid,

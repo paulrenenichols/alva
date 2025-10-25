@@ -1,3 +1,7 @@
+/**
+ * @fileoverview API routes for marketing plan generation and management
+ */
+
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { openaiService } from '../lib/openai.client';

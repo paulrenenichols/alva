@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Logger utility for service-level logging
+ */
+
 import * as winston from 'winston';
 
 const logFormat = winston.format.combine(

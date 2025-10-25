@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Storybook stories for QuickWins page
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import QuickWinsPage from '@/app/dashboard/quick-wins/page';
 

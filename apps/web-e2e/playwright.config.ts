@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Playwright configuration for end-to-end testing
+ */
+
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';

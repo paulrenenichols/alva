@@ -1,3 +1,7 @@
+/**
+ * @fileoverview End-to-end test for basic user flow
+ */
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Basic Application Flow', () => {

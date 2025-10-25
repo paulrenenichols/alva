@@ -1,3 +1,7 @@
+/**
+ * @fileoverview End-to-end test for application performance
+ */
+
 import { test, expect } from '@playwright/test';
 
 test.describe('Performance Tests', () => {
