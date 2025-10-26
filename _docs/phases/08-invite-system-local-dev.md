@@ -7,6 +7,7 @@
 ## Overview
 
 This phase implements:
+
 1. **Invite-only authentication** (no self-service signup)
 2. **Admin application** for managing invites
 3. **Expiring invite links** with resend functionality
@@ -65,6 +66,7 @@ export const invites = pgTable('invites', {
 ```
 
 **Tasks**:
+
 - [ ] Create database migration for invites table
 - [ ] Run migration to create table
 - [ ] Test table creation and relationships
@@ -90,12 +92,15 @@ export class InviteService {
     const token = this.generateInviteToken();
     const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
 
-    const [invite] = await db.insert(invites).values({
-      email,
-      token,
-      createdBy,
-      expiresAt,
-    }).returning();
+    const [invite] = await db
+      .insert(invites)
+      .values({
+        email,
+        token,
+        createdBy,
+        expiresAt,
+      })
+      .returning();
 
     return invite;
   }
@@ -111,9 +116,7 @@ export class InviteService {
   }
 
   async markInviteAsUsed(token: string, userId: string) {
-    return await db.update(invites)
-      .set({ usedBy: userId, usedAt: new Date() })
-      .where(eq(invites.token, token));
+    return await db.update(invites).set({ usedBy: userId, usedAt: new Date() }).where(eq(invites.token, token));
   }
 
   async getInvites(page: number = 1, limit: number = 20) {
@@ -127,6 +130,7 @@ export class InviteService {
 ```
 
 **Tasks**:
+
 - [ ] Implement `InviteService` class
 - [ ] Write unit tests for invite service
 - [ ] Test all invite operations
@@ -138,40 +142,45 @@ export class InviteService {
 Update registration to require invite token:
 
 ```typescript
-fastify.post('/register', {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['email', 'inviteToken'],
-      properties: {
-        email: { type: 'string', format: 'email' },
-        inviteToken: { type: 'string' },
+fastify.post(
+  '/register',
+  {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['email', 'inviteToken'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+          inviteToken: { type: 'string' },
+        },
       },
     },
   },
-}, async (request, reply) => {
-  const { email, inviteToken } = request.body as { email: string; inviteToken: string };
+  async (request, reply) => {
+    const { email, inviteToken } = request.body as { email: string; inviteToken: string };
 
-  const inviteService = new InviteService();
-  const validation = await inviteService.validateInvite(inviteToken);
+    const inviteService = new InviteService();
+    const validation = await inviteService.validateInvite(inviteToken);
 
-  if (!validation.valid) {
-    return reply.code(400).send({ error: validation.error });
+    if (!validation.valid) {
+      return reply.code(400).send({ error: validation.error });
+    }
+
+    const user = await userService.createUser(email);
+    await inviteService.markInviteAsUsed(inviteToken, user.id);
+    const token = await userService.createVerificationToken(user.id);
+    await emailService.sendVerificationEmail(email, token);
+
+    return {
+      message: 'User registered successfully. Check your email for verification link.',
+      userId: user.id,
+    };
   }
-
-  const user = await userService.createUser(email);
-  await inviteService.markInviteAsUsed(inviteToken, user.id);
-  const token = await userService.createVerificationToken(user.id);
-  await emailService.sendVerificationEmail(email, token);
-
-  return {
-    message: 'User registered successfully. Check your email for verification link.',
-    userId: user.id,
-  };
-});
+);
 ```
 
 **Tasks**:
+
 - [ ] Update registration endpoint
 - [ ] Update auth client to send invite token
 - [ ] Test registration with invite flow
@@ -201,6 +210,7 @@ apps/admin/
 ```
 
 **Tasks**:
+
 - [ ] Generate Next.js app for admin portal
 - [ ] Set up admin authentication
 - [ ] Create invite list page
@@ -253,6 +263,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
 ```
 
 **Tasks**:
+
 - [ ] Create admin routes
 - [ ] Create admin middleware
 - [ ] Test admin API endpoints
@@ -268,6 +279,7 @@ Already updated! ✅ MailHog integration is complete.
 #### Test Email Flow
 
 **Tasks**:
+
 - [ ] Start MailHog: `pnpm docker:up`
 - [ ] Send test invite from admin app
 - [ ] Verify email appears in MailHog UI at `http://localhost:8025`
@@ -305,24 +317,28 @@ Already updated! ✅ MailHog integration is complete.
 ## Success Criteria
 
 ✅ **Invite-only authentication working**
+
 - No self-service signup
 - Invites required for registration
 - Invite tokens expire after 7 days
 - Registration flow validates and marks invites as used
 
 ✅ **Admin app functional**
+
 - Admin can send invites by email
 - Admin can view invite list
 - Admin can resend expired invites
 - Admin authentication secure
 
 ✅ **Local development working**
+
 - MailHog integration working
 - Email testing in development environment
 - Invite flow tested locally
 - All services run in Docker Compose
 
 ✅ **Database migrations complete**
+
 - Invites table created
 - Relationships properly set up
 - Indexes added for performance
@@ -332,8 +348,8 @@ Already updated! ✅ MailHog integration is complete.
 ## Next Steps
 
 After Phase 8 completion:
+
 - Move to Phase 9: AWS Staging Deployment
 - Set up CloudFormation infrastructure
 - Configure CI/CD pipeline
 - Deploy to staging environment
-
