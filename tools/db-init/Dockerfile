@@ -22,5 +22,5 @@ RUN chmod +x tools/scripts/db-init.sh
 RUN chmod +x tools/scripts/db-init.ts
 
 # Run database initialization
-CMD ["tsx", "tools/scripts/db-init.ts"]
+CMD ["npx", "tsx", "tools/scripts/db-init.ts"]
 
