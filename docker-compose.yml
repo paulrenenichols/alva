@@ -29,6 +29,7 @@ services:
 
   mailhog:
     image: mailhog/mailhog:latest
+    platform: linux/amd64  # Explicitly specify platform for Apple Silicon compatibility
     ports:
       - '1025:1025'  # SMTP server
       - '8025:8025'  # Web UI
