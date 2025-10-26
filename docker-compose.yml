@@ -15,6 +15,19 @@ services:
       timeout: 5s
       retries: 5
 
+  db-init:
+    build:
+      context: .
+      dockerfile: tools/db-init/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/alva
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - alva-network
+    restart: "no"
+
   redis:
     image: redis:7-alpine
     ports:
@@ -71,8 +84,8 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - NODE_ENV=development
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     networks:
@@ -92,8 +105,8 @@ services:
       - RESEND_API_KEY=${RESEND_API_KEY}
       - NODE_ENV=development
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     networks:
       - alva-network
 
