@@ -6,6 +6,7 @@
     "generate:keys": "tsx tools/scripts/generate-keys.ts",
     "db:init": "tsx tools/scripts/init-db.ts",
     "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
     "seed:roles": "tsx tools/scripts/seed-roles.ts",
     "seed:admins": "tsx tools/scripts/seed-admins.ts",
     "seed:all": "pnpm seed:roles && pnpm seed:admins",
