@@ -21,5 +21,5 @@ COPY . .
 RUN chmod +x tools/scripts/db-init.sh
 
 # Run database initialization
-CMD ["tools/scripts/db-init.sh"]
+CMD ["sh", "tools/scripts/db-init.sh"]
 
