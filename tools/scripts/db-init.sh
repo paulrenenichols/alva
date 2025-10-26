@@ -2,20 +2,30 @@
 
 set -e
 
-# Wait for PostgreSQL to be ready (max 30 seconds)
-echo "Waiting for PostgreSQL to be ready..."
-timeout=30
-counter=0
+echo "Starting database initialization..."
 
-while ! nc -z postgres 5432; do
-  sleep 1
-  counter=$((counter+1))
-  if [ $counter -ge $timeout ]; then
-    echo "PostgreSQL not ready after $timeout seconds"
-    exit 1
+# Wait for PostgreSQL by attempting connection
+echo "Checking PostgreSQL connection..."
+max_attempts=30
+attempt=0
+
+while [ $attempt -lt $max_attempts ]; do
+  # Try to connect using psql (in postgres container)
+  if nc -z "$POSTGRES_HOST" "${POSTGRES_PORT:-5432}" 2>/dev/null || 
+     echo "SELECT 1" | psql "$DATABASE_URL" >/dev/null 2>&1; then
+    echo "PostgreSQL is ready!"
+    break
   fi
+  
+  attempt=$((attempt+1))
+  echo "Waiting for PostgreSQL... ($attempt/$max_attempts)"
+  sleep 1
 done
-echo "PostgreSQL is ready!"
+
+if [ $attempt -eq $max_attempts ]; then
+  echo "❌ PostgreSQL not ready after $max_attempts attempts"
+  exit 1
+fi
 
 # Run migrations
 echo "Running database migrations..."
@@ -26,4 +36,3 @@ echo "Seeding database..."
 pnpm seed:all
 
 echo "✅ Database initialization complete!"
-

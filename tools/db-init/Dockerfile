@@ -19,7 +19,8 @@ COPY . .
 
 # Make init script executable
 RUN chmod +x tools/scripts/db-init.sh
+RUN chmod +x tools/scripts/db-init.ts
 
 # Run database initialization
-CMD ["sh", "tools/scripts/db-init.sh"]
+CMD ["tsx", "tools/scripts/db-init.ts"]
 
