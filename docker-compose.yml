@@ -14,6 +14,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - alva-network
 
   db-init:
     build:
@@ -39,6 +41,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - alva-network
 
   mailhog:
     image: mailhog/mailhog:latest
@@ -51,6 +55,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - alva-network
 
   web:
     build:
