@@ -7,6 +7,7 @@
 ## Overview
 
 This phase implements:
+
 1. **Invite-only authentication** (no self-service signup)
 2. **User roles system** (admin and app user, many-to-many)
 3. **Password authentication** for admin users
@@ -74,6 +75,7 @@ export const userRoles = pgTable('user_roles', {
 ```
 
 **Tasks**:
+
 - [ ] Create roles schema file
 - [ ] Create userRoles junction table
 - [ ] Export from index files
@@ -96,6 +98,7 @@ export const users = pgTable('users', {
 ```
 
 **Tasks**:
+
 - [ ] Add passwordHash field (nullable)
 - [ ] Add mustResetPassword field
 - [ ] Run database migration
@@ -121,6 +124,7 @@ export const passwordResetTokens = pgTable('password_reset_tokens', {
 ```
 
 **Tasks**:
+
 - [ ] Create password reset tokens schema
 - [ ] Export from index files
 - [ ] Run database migration
@@ -149,6 +153,7 @@ export const invites = pgTable('invites', {
 ```
 
 **Tasks**:
+
 - [ ] Create invites schema file
 - [ ] Export from index files
 - [ ] Run database migration
@@ -166,10 +171,7 @@ import { users, roles, userRoles } from '@alva/database/schemas';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
-const ADMIN_EMAILS = [
-  'nicholaspino209@gmail.com',
-  'paul.rene.nichols@gmail.com'
-];
+const ADMIN_EMAILS = ['nicholaspino209@gmail.com', 'paul.rene.nichols@gmail.com'];
 
 const DEFAULT_PASSWORD = 'admin';
 
@@ -177,10 +179,7 @@ export async function seedAdmins() {
   console.log('🌱 Seeding admin users...');
 
   // Get admin role
-  const [adminRole] = await db.select()
-    .from(roles)
-    .where(eq(roles.name, 'admin'))
-    .limit(1);
+  const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
 
   if (!adminRole) {
     throw new Error('Admin role not found. Run seed:roles first.');
@@ -188,23 +187,16 @@ export async function seedAdmins() {
 
   // Create each admin
   for (const email of ADMIN_EMAILS) {
-    const [existing] = await db.select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
     if (existing) {
       console.log(`User ${email} already exists, skipping...`);
-      
+
       // Ensure admin role
-      const [userRole] = await db.select()
+      const [userRole] = await db
+        .select()
         .from(userRoles)
-        .where(
-          and(
-            eq(userRoles.userId, existing.id),
-            eq(userRoles.roleId, adminRole.id)
-          )
-        )
+        .where(and(eq(userRoles.userId, existing.id), eq(userRoles.roleId, adminRole.id)))
         .limit(1);
 
       if (!userRole) {
@@ -221,12 +213,15 @@ export async function seedAdmins() {
     const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
     // Create user
-    const [user] = await db.insert(users).values({
-      email,
-      passwordHash,
-      emailVerified: true,
-      mustResetPassword: true, // Force password reset
-    }).returning();
+    const [user] = await db
+      .insert(users)
+      .values({
+        email,
+        passwordHash,
+        emailVerified: true,
+        mustResetPassword: true, // Force password reset
+      })
+      .returning();
 
     // Assign admin role
     await db.insert(userRoles).values({
@@ -244,6 +239,7 @@ export async function seedAdmins() {
 ```
 
 **Tasks**:
+
 - [ ] Create seed script
 - [ ] Add to package.json scripts
 - [ ] Test seeding
@@ -274,20 +270,21 @@ export class InviteService {
     const token = this.generateInviteToken();
     const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
 
-    const [invite] = await db.insert(invites).values({
-      email,
-      token,
-      createdBy,
-      expiresAt,
-    }).returning();
+    const [invite] = await db
+      .insert(invites)
+      .values({
+        email,
+        token,
+        createdBy,
+        expiresAt,
+      })
+      .returning();
 
     return invite;
   }
 
   async validateInvite(token: string) {
-    const [invite] = await db.select()
-      .from(invites)
-      .where(eq(invites.token, token));
+    const [invite] = await db.select().from(invites).where(eq(invites.token, token));
 
     if (!invite) return { valid: false, error: 'Invalid invite token' };
     if (invite.usedAt) return { valid: false, error: 'Invite has already been used' };
@@ -297,35 +294,28 @@ export class InviteService {
   }
 
   async markInviteAsUsed(token: string, userId: string) {
-    return await db
-      .update(invites)
-      .set({ usedBy: userId, usedAt: new Date() })
-      .where(eq(invites.token, token));
+    return await db.update(invites).set({ usedBy: userId, usedAt: new Date() }).where(eq(invites.token, token));
   }
 
   async getInvites(page: number = 1, limit: number = 20) {
     const offset = (page - 1) * limit;
-    const result = await db.select()
-      .from(invites)
-      .limit(limit)
-      .offset(offset);
+    const result = await db.select().from(invites).limit(limit).offset(offset);
 
-    const [{ count }] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(invites);
+    const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(invites);
 
     return {
       invites: result,
       total: count,
       page,
       limit,
-      totalPages: Math.ceil(count / limit)
+      totalPages: Math.ceil(count / limit),
     };
   }
 }
 ```
 
 **Tasks**:
+
 - [ ] Implement InviteService
 - [ ] Write unit tests
 - [ ] Test all operations
@@ -355,46 +345,47 @@ export async function adminRoutes(fastify: FastifyInstance) {
   const emailService = new EmailService();
 
   // Send invite
-  fastify.post('/admin/invites', {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['email'],
-        properties: {
-          email: { type: 'string', format: 'email' },
+  fastify.post(
+    '/admin/invites',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['email'],
+          properties: {
+            email: { type: 'string', format: 'email' },
+          },
         },
       },
     },
-  }, async (request, reply) => {
-    try {
-      const { email } = request.body as { email: string };
-      const userId = request.user?.id;
+    async (request, reply) => {
+      try {
+        const { email } = request.body as { email: string };
+        const userId = request.user?.id;
 
-      if (!userId) {
-        return reply.code(401).send({ error: 'Unauthorized' });
+        if (!userId) {
+          return reply.code(401).send({ error: 'Unauthorized' });
+        }
+
+        const invite = await inviteService.createInvite(email, userId);
+        await emailService.sendInviteEmail(email, invite.token);
+
+        return {
+          message: 'Invite sent successfully',
+          invite,
+        };
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.code(500).send({ error: 'Failed to send invite' });
       }
-
-      const invite = await inviteService.createInvite(email, userId);
-      await emailService.sendInviteEmail(email, invite.token);
-
-      return {
-        message: 'Invite sent successfully',
-        invite
-      };
-    } catch (error) {
-      fastify.log.error(error);
-      return reply.code(500).send({ error: 'Failed to send invite' });
     }
-  });
+  );
 
   // List invites
   fastify.get('/admin/invites', async (request, reply) => {
     try {
       const { page = '1', limit = '20' } = request.query as { page?: string; limit?: string };
-      const result = await inviteService.getInvites(
-        parseInt(page),
-        parseInt(limit)
-      );
+      const result = await inviteService.getInvites(parseInt(page), parseInt(limit));
 
       return result;
     } catch (error) {
@@ -408,9 +399,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
     try {
       const { inviteId } = request.params as { inviteId: string };
 
-      const [invite] = await db.select()
-        .from(invites)
-        .where(eq(invites.id, inviteId));
+      const [invite] = await db.select().from(invites).where(eq(invites.id, inviteId));
 
       if (!invite) {
         return reply.code(404).send({ error: 'Invite not found' });
@@ -432,6 +421,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
 ```
 
 **Tasks**:
+
 - [ ] Create admin routes
 - [ ] Implement admin middleware
 - [ ] Add role checking
@@ -468,7 +458,7 @@ fastify.post(
     if (!validation.valid) {
       return reply.code(400).send({
         error: validation.error,
-        code: 'INVALID_INVITE'
+        code: 'INVALID_INVITE',
       });
     }
 
@@ -478,7 +468,7 @@ fastify.post(
       if (existingUser) {
         return reply.code(400).send({
           error: 'User already exists',
-          code: 'USER_EXISTS'
+          code: 'USER_EXISTS',
         });
       }
 
@@ -505,6 +495,7 @@ fastify.post(
 ```
 
 **Tasks**:
+
 - [ ] Update registration endpoint
 - [ ] Require invite token
 - [ ] Test with valid/invalid/expired/used invites
@@ -527,6 +518,7 @@ npx nx g @nx/next:app admin --directory=apps/admin --style=css --appDir=true
 ```
 
 **Structure**:
+
 ```
 apps/admin/
   ├── src/
@@ -547,6 +539,7 @@ apps/admin/
 ```
 
 **Tasks**:
+
 - [ ] Generate admin app
 - [ ] Copy Storybook config from web app
 - [ ] Configure admin-specific settings
@@ -558,77 +551,79 @@ apps/admin/
 
 ```typescript
 // Add password login endpoint
-fastify.post('/login-password', {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['email', 'password'],
-      properties: {
-        email: { type: 'string', format: 'email' },
-        password: { type: 'string' },
+fastify.post(
+  '/login-password',
+  {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['email', 'password'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+          password: { type: 'string' },
+        },
       },
     },
   },
-}, async (request, reply) => {
-  const { email, password } = request.body as { email: string; password: string };
+  async (request, reply) => {
+    const { email, password } = request.body as { email: string; password: string };
 
-  // Find user
-  const [user] = await db.select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+    // Find user
+    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
-  // Check user exists and has password
-  if (!user || !user.passwordHash) {
-    return reply.code(401).send({ error: 'Invalid credentials' });
-  }
+    // Check user exists and has password
+    if (!user || !user.passwordHash) {
+      return reply.code(401).send({ error: 'Invalid credentials' });
+    }
 
-  // Verify password
-  const isValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isValid) {
-    return reply.code(401).send({ error: 'Invalid credentials' });
-  }
+    // Verify password
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
+      return reply.code(401).send({ error: 'Invalid credentials' });
+    }
 
-  // Check if password reset required
-  if (user.mustResetPassword) {
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    
-    await db.insert(passwordResetTokens).values({
-      userId: user.id,
-      token: resetToken,
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+    // Check if password reset required
+    if (user.mustResetPassword) {
+      const resetToken = crypto.randomBytes(32).toString('hex');
+
+      await db.insert(passwordResetTokens).values({
+        userId: user.id,
+        token: resetToken,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+      });
+
+      // Send password reset email
+      await emailService.sendPasswordResetEmail(user.email, resetToken);
+
+      return reply.code(403).send({
+        error: 'Password reset required',
+        code: 'MUST_RESET_PASSWORD',
+        resetToken: resetToken,
+      });
+    }
+
+    // Generate tokens
+    const accessToken = tokenService.generateAccessToken(user.id, user.email);
+    const refreshToken = await tokenService.generateRefreshToken(user.id);
+
+    // Set refresh token as httpOnly cookie
+    reply.setCookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send password reset email
-    await emailService.sendPasswordResetEmail(user.email, resetToken);
-
-    return reply.code(403).send({
-      error: 'Password reset required',
-      code: 'MUST_RESET_PASSWORD',
-      resetToken: resetToken
-    });
+    return {
+      accessToken,
+      user: { id: user.id, email: user.email },
+    };
   }
-
-  // Generate tokens
-  const accessToken = tokenService.generateAccessToken(user.id, user.email);
-  const refreshToken = await tokenService.generateRefreshToken(user.id);
-
-  // Set refresh token as httpOnly cookie
-  reply.setCookie('refresh_token', refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  return {
-    accessToken,
-    user: { id: user.id, email: user.email }
-  };
-});
+);
 ```
 
 **Tasks**:
+
 - [ ] Add password login endpoint
 - [ ] Add password reset endpoint
 - [ ] Handle mustResetPassword flow
@@ -676,7 +671,7 @@ export default function LoginPage() {
 
       // Store access token
       localStorage.setItem('accessToken', data.accessToken);
-      
+
       // Redirect to admin dashboard
       router.push('/');
     } catch (err: any) {
@@ -688,46 +683,25 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-bg-primary">
       <div className="bg-white rounded-lg shadow p-8 w-full max-w-md">
         <h1 className="heading-page mb-6">Admin Login</h1>
-        
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
-            {error}
-          </div>
-        )}
+
+        {error && <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2 font-medium">
               Email
             </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded"
-              required
-            />
+            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border rounded" required />
           </div>
 
           <div className="mb-6">
             <label htmlFor="password" className="block mb-2 font-medium">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded"
-              required
-            />
+            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded" required />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600"
-          >
+          <button type="submit" className="w-full bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600">
             Login
           </button>
         </form>
@@ -738,6 +712,7 @@ export default function LoginPage() {
 ```
 
 **Tasks**:
+
 - [ ] Create login page
 - [ ] Handle password login
 - [ ] Handle password reset redirect
@@ -803,51 +778,26 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-bg-primary">
       <div className="bg-white rounded-lg shadow p-8 w-full max-w-md">
         <h1 className="heading-page mb-2">Set Your Password</h1>
-        <p className="body-default text-text-secondary mb-6">
-          This is your first login. Please set a new password.
-        </p>
+        <p className="body-default text-text-secondary mb-6">This is your first login. Please set a new password.</p>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
-            {error}
-          </div>
-        )}
+        {error && <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="password" className="block mb-2 font-medium">
               New Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded"
-              required
-              minLength={8}
-            />
+            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded" required minLength={8} />
           </div>
 
           <div className="mb-6">
             <label htmlFor="confirmPassword" className="block mb-2 font-medium">
               Confirm Password
             </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded"
-              required
-              minLength={8}
-            />
+            <input type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-2 border rounded" required minLength={8} />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600"
-          >
+          <button type="submit" className="w-full bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600">
             Set Password
           </button>
         </form>
@@ -858,6 +808,7 @@ export default function ResetPasswordPage() {
 ```
 
 **Tasks**:
+
 - [ ] Create password reset page
 - [ ] Handle password reset
 - [ ] Validate password strength
@@ -896,6 +847,7 @@ pnpm seed:admins
 ```
 
 **Tasks**:
+
 - [ ] Test admin login with default password
 - [ ] Test password reset flow
 - [ ] Test invite sending
@@ -907,6 +859,7 @@ pnpm seed:admins
 ## Updated Implementation Checklist
 
 ### Week 1: Database & Roles
+
 - [ ] Create roles schema (roles, userRoles)
 - [ ] Create password reset tokens schema
 - [ ] Create invites schema
@@ -917,6 +870,7 @@ pnpm seed:admins
 - [ ] Test database setup
 
 ### Week 2: Invite System & Admin API
+
 - [ ] Implement InviteService
 - [ ] Create admin routes
 - [ ] Create admin middleware with role checking
@@ -926,6 +880,7 @@ pnpm seed:admins
 - [ ] Update auth client
 
 ### Week 3: Admin App & Testing
+
 - [ ] Generate admin Next.js app
 - [ ] Copy Storybook config
 - [ ] Create admin login page
@@ -941,24 +896,28 @@ pnpm seed:admins
 ## Success Criteria
 
 ✅ **Roles system working**
+
 - Users can have roles
 - Many-to-many relationship functional
 - Admin middleware checks roles correctly
 - Default admin users created
 
 ✅ **Password authentication working**
+
 - Admins can login with password
 - Password hashing with bcrypt
 - First login forces password reset
 - Password reset flow complete
 
 ✅ **Invite-only authentication working**
+
 - No self-service signup
 - Invites required for registration
 - Invite tokens expire after 7 days
 - Used invites cannot be reused
 
 ✅ **Admin app functional**
+
 - Admin can login with password
 - Admin can send invites
 - Admin can view invite list
@@ -966,6 +925,7 @@ pnpm seed:admins
 - Admin authentication secure
 
 ✅ **Local development working**
+
 - MailHog integration working
 - All services run in Docker Compose
 - Invite flow tested end-to-end
@@ -976,6 +936,7 @@ pnpm seed:admins
 ## Next Steps
 
 After Phase 8 completion:
+
 - Move to Phase 9: AWS Staging Deployment
 - Set up CloudFormation infrastructure
 - Configure CI/CD pipeline

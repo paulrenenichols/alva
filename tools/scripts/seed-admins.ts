@@ -2,10 +2,12 @@
  * @fileoverview Seed script to create initial admin users
  */
 
-import { db } from '@alva/database';
-import { users, roles, userRoles } from '@alva/database/schemas';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
+import { createDbPool } from '../../libs/database/src/lib/database';
+import { users, roles, userRoles } from '../../libs/database/src/schemas';
+
+const db = createDbPool(process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/alva');
 
 const ADMIN_EMAILS = [
   'nicholaspino209@gmail.com',

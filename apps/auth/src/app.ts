@@ -8,6 +8,7 @@ import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 
 import { authRoutes } from './routes/auth';
+import { adminRoutes } from './routes/admin';
 import { createDbPool } from '@alva/database';
 
 const DEFAULT_WEB_URL = 'http://localhost:4200';
@@ -69,6 +70,7 @@ async function registerDatabase(): Promise<void> {
  */
 async function registerRoutes(): Promise<void> {
   await fastify.register(authRoutes, { prefix: '/auth' });
+  await fastify.register(adminRoutes);
 }
 
 /**

@@ -2,9 +2,11 @@
  * @fileoverview Seed script to create initial user roles
  */
 
-import { db } from '@alva/database';
-import { roles } from '@alva/database/schemas';
 import { eq } from 'drizzle-orm';
+import { createDbPool } from '../../libs/database/src/lib/database';
+import { roles } from '../../libs/database/src/schemas';
+
+const db = createDbPool(process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/alva');
 
 export const INITIAL_ROLES = [
   {
