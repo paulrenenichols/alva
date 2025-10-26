@@ -12,6 +12,7 @@
     "dev:web": "nx serve web",
     "dev:api": "nx serve api",
     "dev:auth": "nx serve auth",
+    "dev:admin": "nx serve admin",
     "dev": "docker compose up",
     "build": "nx run-many --target=build --all",
     "test": "nx run-many --target=test --all",
