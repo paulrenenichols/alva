@@ -73,6 +73,19 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  admin:
+    image: ghcr.io/${GITHUB_REPOSITORY}/admin:latest
+    ports:
+      - '3003:3003'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${API_URL}
+      - NEXT_PUBLIC_AUTH_URL=${AUTH_URL}
+    depends_on:
+      - api
+      - auth
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:

@@ -89,10 +89,29 @@ services:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - COOKIE_SECRET=${COOKIE_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
       - NODE_ENV=development
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - alva-network
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - '3003:3003'
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_AUTH_URL=http://localhost:3002
+      - NODE_ENV=development
+    depends_on:
+      api:
+        condition: service_started
+      auth:
+        condition: service_started
     networks:
       - alva-network
 
