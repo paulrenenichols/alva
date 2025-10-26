@@ -1,0 +1,110 @@
+'use client';
+
+/**
+ * @fileoverview Admin login page with password authentication
+ */
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:3002/auth/login-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.code === 'MUST_RESET_PASSWORD') {
+          // Redirect to password reset page
+          router.push(`/reset-password?token=${data.resetToken}`);
+          return;
+        }
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Store access token
+      localStorage.setItem('accessToken', data.accessToken);
+
+      // Redirect to admin dashboard
+      router.push('/');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Admin Login</h1>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-2 font-medium">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="password" className="block mb-2 font-medium">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary-500 text-white px-6 py-3 rounded hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          Default credentials: use seeded admin email with password "admin"
+        </p>
+      </div>
+    </div>
+  );
+}
+
