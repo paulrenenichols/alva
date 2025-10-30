@@ -42,7 +42,7 @@ export function OptimizedImage({
         }`}
       />
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        <div className="absolute inset-0 bg-bg-tertiary animate-pulse" />
       )}
     </div>
   );

@@ -76,13 +76,13 @@ export default function ProcessingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center">
       <div className="max-w-md mx-auto text-center">
         <div className="w-20 h-20 mx-auto mb-8 bg-primary-500 rounded-full flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
         </div>
 
-        <h1 className="text-3xl font-bold text-secondary-900 mb-4">
+        <h1 className="text-3xl font-bold text-text-primary mb-4">
           Crunching your answers...
         </h1>
 
@@ -92,14 +92,14 @@ export default function ProcessingPage() {
         </p>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+        <div className="w-full bg-bg-tertiary rounded-full h-2 mb-4">
           <div
             className="bg-primary-500 h-2 rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
 
-        <p className="text-sm text-gray-500">{progress}% Complete</p>
+        <p className="text-sm text-text-secondary">{progress}% Complete</p>
 
         {status === 'error' && (
           <div className="mt-8 p-4 bg-danger-muted border border-danger rounded-lg">

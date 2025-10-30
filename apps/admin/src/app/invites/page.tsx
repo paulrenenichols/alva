@@ -85,7 +85,7 @@ export default function InvitesPage() {
       case 'Pending':
         return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-bg-secondary text-text-primary';
     }
   };
 
@@ -110,22 +110,22 @@ export default function InvitesPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-bg-elevated rounded-lg shadow overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Expires</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+              <tr className="border-b border-border-subtle bg-bg-secondary">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-text-primary">Email</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-text-primary">Created</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-text-primary">Expires</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-text-primary">Status</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-text-primary">Actions</th>
               </tr>
             </thead>
             <tbody>
               {invites.map((invite) => {
                 const status = getStatus(invite);
                 return (
-                  <tr key={invite.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  <tr key={invite.id} className="border-b border-border-subtle hover:bg-bg-secondary">
                     <td className="px-6 py-4">{invite.email}</td>
                     <td className="px-6 py-4">
                       {new Date(invite.createdAt).toLocaleDateString()}

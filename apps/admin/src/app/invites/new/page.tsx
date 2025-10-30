@@ -59,7 +59,7 @@ export default function NewInvitePage() {
 
         {error && <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6">
+        <form onSubmit={handleSubmit} className="bg-bg-elevated rounded-lg shadow-lg p-6">
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2 font-medium">
               Email Address
@@ -79,7 +79,7 @@ export default function NewInvitePage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary-500 text-white px-6 py-3 rounded hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="bg-primary-500 text-text-inverse px-6 py-3 rounded hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {loading ? 'Sending...' : 'Send Invite'}
             </button>
@@ -87,7 +87,7 @@ export default function NewInvitePage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="bg-gray-100 text-gray-700 px-6 py-3 rounded hover:bg-gray-200 font-medium"
+              className="bg-bg-secondary text-text-primary px-6 py-3 rounded hover:bg-bg-tertiary font-medium"
             >
               Cancel
             </button>

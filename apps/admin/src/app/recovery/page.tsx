@@ -33,7 +33,7 @@ export default function RecoveryPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <div className="bg-bg-elevated rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">
           Admin Account Recovery
         </h1>
@@ -68,7 +68,7 @@ export default function RecoveryPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white px-6 py-3 rounded hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full bg-primary text-text-inverse px-6 py-3 rounded hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {loading ? 'Sending…' : 'Send recovery link'}
             </button>

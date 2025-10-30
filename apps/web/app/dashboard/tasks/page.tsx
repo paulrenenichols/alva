@@ -112,13 +112,13 @@ export default function TasksPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tasks & To-Do</h1>
-          <p className="text-gray-600">Loading your tasks...</p>
+          <h1 className="text-2xl font-bold text-text-primary">Tasks & To-Do</h1>
+          <p className="text-text-secondary">Loading your tasks...</p>
         </div>
         <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
         </div>
       </div>
     );
@@ -128,14 +128,14 @@ export default function TasksPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tasks & To-Do</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-text-primary">Tasks & To-Do</h1>
+          <p className="text-text-secondary">
             Manage your marketing tasks and track progress
           </p>
         </div>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-primary-500 text-white"
+          className="bg-primary-500 text-text-inverse"
         >
           Add Task
         </Button>
@@ -154,7 +154,7 @@ export default function TasksPage() {
             />
             <Button
               onClick={handleAddTask}
-              className="bg-primary-500 text-white"
+              className="bg-primary-500 text-text-inverse"
             >
               Add
             </Button>
@@ -185,7 +185,7 @@ export default function TasksPage() {
       <div className="grid gap-4">
         {filteredTasks.length === 0 ? (
           <Card className="p-8 text-center">
-            <div className="text-gray-500">
+            <div className="text-text-secondary">
               <p className="text-lg mb-2">No tasks found</p>
               <p className="text-sm">Add a task to get started!</p>
             </div>
@@ -199,8 +199,8 @@ export default function TasksPage() {
                     <h3
                       className={`text-lg font-semibold ${
                         task.status === 'completed'
-                          ? 'line-through text-gray-500'
-                          : 'text-gray-900'
+                          ? 'line-through text-text-secondary'
+                          : 'text-text-primary'
                       }`}
                     >
                       {task.title}
@@ -221,9 +221,9 @@ export default function TasksPage() {
                     </span>
                   </div>
                   {task.description && (
-                    <p className="text-gray-600 mb-3">{task.description}</p>
+                    <p className="text-text-secondary mb-3">{task.description}</p>
                   )}
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-text-secondary">
                     {task.dueDate && (
                       <span>
                         📅 Due: {new Date(task.dueDate).toLocaleDateString()}
@@ -240,7 +240,7 @@ export default function TasksPage() {
                   {task.status === 'todo' && (
                     <Button
                       onClick={() => handleUpdateStatus(task.id, 'in-progress')}
-                      className="bg-primary-500 text-white"
+                      className="bg-primary-500 text-text-inverse"
                     >
                       Start
                     </Button>

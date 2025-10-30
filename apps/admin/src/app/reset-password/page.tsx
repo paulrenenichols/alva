@@ -62,9 +62,9 @@ function ResetPasswordForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <div className="bg-bg-elevated rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-2">Set Your Password</h1>
-        <p className="text-gray-600 mb-6">This is your first login. Please set a new password.</p>
+        <p className="text-text-secondary mb-6">This is your first login. Please set a new password.</p>
 
         {success && (
           <div className="bg-green-50 border border-green-200 rounded p-4 mb-4">
@@ -92,7 +92,7 @@ function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-2 flex items-center text-text-secondary hover:text-text-primary"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -117,7 +117,7 @@ function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirm((v) => !v)}
-                className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-2 flex items-center text-text-secondary hover:text-text-primary"
                 aria-label={showConfirm ? 'Hide password' : 'Show password'}
               >
                 {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}

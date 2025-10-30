@@ -40,12 +40,12 @@ export default function OnboardingCardPage({
 
   if (!resolvedParams) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-primary-500 rounded-full flex items-center justify-center">
             <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <h1 className="text-2xl font-bold text-secondary-900 mb-2">
+          <h1 className="text-2xl font-bold text-text-primary mb-2">
             Loading...
           </h1>
         </div>
@@ -61,12 +61,12 @@ export default function OnboardingCardPage({
 
   if (!card || !section) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-bg-secondary to-bg-tertiary flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-text-primary mb-4">
             Card not found
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             The requested onboarding card could not be found.
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function OnboardingCardPage({
 
       default:
         return (
-          <div className="text-gray-500 text-center py-8">
+          <div className="text-text-secondary text-center py-8">
             Unsupported input type: {card.component}
           </div>
         );

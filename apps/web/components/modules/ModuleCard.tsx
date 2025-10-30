@@ -24,12 +24,12 @@ const CARD_BASE_CLASSES = 'p-6 transition-all';
 const CARD_ACTIVE_CLASSES = 'ring-2 ring-primary-500';
 const HEADER_CONTAINER_CLASSES = 'flex items-start justify-between mb-4';
 const ICON_CONTAINER_CLASSES = 'flex items-center space-x-3';
-const ICON_WRAPPER_CLASSES = 'w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center';
-const TITLE_CLASSES = 'text-lg font-semibold text-gray-900';
-const DESCRIPTION_CLASSES = 'text-sm text-gray-600';
+const ICON_WRAPPER_CLASSES = 'w-10 h-10 bg-primary-muted rounded-lg flex items-center justify-center';
+const TITLE_CLASSES = 'text-lg font-semibold text-text-primary';
+const DESCRIPTION_CLASSES = 'text-sm text-text-secondary';
 const PROGRESS_CONTAINER_CLASSES = 'mb-4';
-const PROGRESS_HEADER_CLASSES = 'flex justify-between text-sm text-gray-600 mb-1';
-const PROGRESS_TRACK_CLASSES = 'w-full bg-gray-200 rounded-full h-2';
+const PROGRESS_HEADER_CLASSES = 'flex justify-between text-sm text-text-secondary mb-1';
+const PROGRESS_TRACK_CLASSES = 'w-full bg-bg-tertiary rounded-full h-2';
 const PROGRESS_FILL_CLASSES = 'bg-primary-500 h-2 rounded-full transition-all';
 const BUTTON_CLASSES = 'w-full';
 

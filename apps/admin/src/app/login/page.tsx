@@ -53,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <div className="bg-bg-elevated rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Admin Login</h1>
 
         {error && (
@@ -95,7 +95,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                className="absolute inset-y-0 right-2 flex items-center text-text-secondary hover:text-text-primary"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
