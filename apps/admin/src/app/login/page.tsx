@@ -100,9 +100,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-sm text-gray-600 mt-4 text-center">
-          Default credentials: use seeded admin email with password "admin"
-        </p>
+        <div className="text-sm text-text-secondary mt-4 text-center">
+          <a href="/recovery" className="text-primary hover:underline">Forgot password? Request a recovery link</a>
+        </div>
       </div>
     </div>
   );
