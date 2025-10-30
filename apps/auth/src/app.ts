@@ -40,10 +40,18 @@ async function registerPlugins(): Promise<void> {
   const corsOriginsEnv = process.env['CORS_ORIGINS'];
   const allowAll = corsOriginsEnv === '*';
   const allowedOrigins = !allowAll
-    ? (corsOriginsEnv
-        ? corsOriginsEnv.split(',').map((o) => o.trim()).filter(Boolean)
-        : [process.env['WEB_URL'] || DEFAULT_WEB_URL])
+    ? corsOriginsEnv
+      ? corsOriginsEnv
+          .split(',')
+          .map((o) => o.trim())
+          .filter(Boolean)
+      : [process.env['WEB_URL'] || DEFAULT_WEB_URL]
     : [];
+
+  // Development diagnostics for CORS
+  if (process.env['NODE_ENV'] === 'development') {
+    fastify.log.info({ allowAll, allowedOrigins, corsOriginsEnv }, 'CORS configuration (auth)');
+  }
 
   await fastify.register(cors, {
     origin: allowAll
@@ -51,6 +59,9 @@ async function registerPlugins(): Promise<void> {
       : (origin, cb) => {
           if (!origin) return cb(null, true);
           const isAllowed = allowedOrigins.includes(origin);
+          if (process.env['NODE_ENV'] === 'development') {
+            fastify.log.info({ origin, isAllowed }, 'CORS origin check (auth)');
+          }
           cb(null, isAllowed);
         },
     credentials: true,
