@@ -112,6 +112,7 @@ services:
       - RESEND_API_KEY=${RESEND_API_KEY}
       - NODE_ENV=development
       - CORS_ORIGINS=*
+      - WEB_URL=http://localhost:3003
     depends_on:
       db-init:
         condition: service_completed_successfully
