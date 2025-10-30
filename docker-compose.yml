@@ -89,7 +89,7 @@ services:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - NODE_ENV=development
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:3003
+      - CORS_ORIGINS=*
     depends_on:
       db-init:
         condition: service_completed_successfully
@@ -111,7 +111,7 @@ services:
       - COOKIE_SECRET=${COOKIE_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - NODE_ENV=development
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:3003
+      - CORS_ORIGINS=*
     depends_on:
       db-init:
         condition: service_completed_successfully
