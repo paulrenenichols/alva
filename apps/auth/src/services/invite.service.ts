@@ -3,11 +3,15 @@
  */
 
 import crypto from 'crypto';
-import { db } from '@alva/database';
-import { invites } from '@alva/database/schemas';
+import { invites, type Database } from '@alva/database';
 import { eq, sql } from 'drizzle-orm';
 
 export class InviteService {
+  private readonly database: Database;
+
+  constructor(database: Database) {
+    this.database = database;
+  }
   /**
    * @description Generates a random invite token
    * @returns A hex-encoded token string (64 characters)
@@ -27,7 +31,7 @@ export class InviteService {
     const token = this.generateInviteToken();
     const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
 
-    const [invite] = await db
+    const [invite] = await this.database
       .insert(invites)
       .values({
         email,
@@ -46,7 +50,7 @@ export class InviteService {
    * @returns Validation result with invite data if valid
    */
   async validateInvite(token: string) {
-    const [invite] = await db.select().from(invites).where(eq(invites.token, token));
+    const [invite] = await this.database.select().from(invites).where(eq(invites.token, token));
 
     if (!invite) return { valid: false, error: 'Invalid invite token' };
     if (invite.usedAt) return { valid: false, error: 'Invite has already been used' };
@@ -61,7 +65,7 @@ export class InviteService {
    * @param userId - User ID who used the invite
    */
   async markInviteAsUsed(token: string, userId: string) {
-    return await db.update(invites).set({ usedBy: userId, usedAt: new Date() }).where(eq(invites.token, token));
+    return await this.database.update(invites).set({ usedBy: userId, usedAt: new Date() }).where(eq(invites.token, token));
   }
 
   /**
@@ -71,9 +75,9 @@ export class InviteService {
    */
   async getInvites(page: number = 1, limit: number = 20) {
     const offset = (page - 1) * limit;
-    const result = await db.select().from(invites).limit(limit).offset(offset);
+    const result = await this.database.select().from(invites).limit(limit).offset(offset);
 
-    const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(invites);
+    const [{ count }] = await this.database.select({ count: sql<number>`count(*)` }).from(invites);
 
     return {
       invites: result,
@@ -89,7 +93,7 @@ export class InviteService {
    * @param inviteId - Invite ID
    */
   async getInviteById(inviteId: string) {
-    const [invite] = await db.select().from(invites).where(eq(invites.id, inviteId));
+    const [invite] = await this.database.select().from(invites).where(eq(invites.id, inviteId));
     return invite;
   }
 }

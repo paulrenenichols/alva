@@ -108,6 +108,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/alva
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - JWT_SECRET=${JWT_SECRET}
       - COOKIE_SECRET=${COOKIE_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - NODE_ENV=development

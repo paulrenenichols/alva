@@ -5,9 +5,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
-import { users, verificationTokens, passwordResetTokens, refreshTokens } from '@alva/database';
-import { roles, userRoles } from '@alva/database/schemas';
-import { db } from '@alva/database';
+import { users, verificationTokens, passwordResetTokens, refreshTokens, roles, userRoles } from '@alva/database';
 import { UserService } from '../services/user.service';
 import { EmailService } from '../services/email.service';
 import { TokenService } from '../services/token.service';
@@ -40,7 +38,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   const userService = new UserService(fastify.db);
   const emailService = new EmailService();
   const tokenService = new TokenService();
-  const inviteService = new InviteService();
+  const inviteService = new InviteService(fastify.db);
 
   await registerUserRoute(fastify, userService, emailService, inviteService);
   await verifyEmailRoute(fastify, userService, tokenService);
@@ -200,7 +198,7 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
 
       try {
         // Find user
-        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+        const [user] = await fastify.db.select().from(users).where(eq(users.email, email)).limit(1);
 
         if (!user || !user.passwordHash) {
           return reply.code(401).send({ error: 'Invalid credentials' });
@@ -216,7 +214,7 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
         if (user.mustResetPassword) {
           const resetToken = crypto.randomBytes(32).toString('hex');
 
-          await db.insert(passwordResetTokens).values({
+          await fastify.db.insert(passwordResetTokens).values({
             userId: user.id,
             token: resetToken,
             expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
@@ -275,7 +273,7 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
 
       try {
         // Validate token
-        const [resetToken] = await db
+        const [resetToken] = await fastify.db
           .select()
           .from(passwordResetTokens)
           .where(eq(passwordResetTokens.token, token))
@@ -297,7 +295,7 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
         const passwordHash = await bcrypt.hash(newPassword, 10);
 
         // Update user
-        await db.update(users)
+        await fastify.db.update(users)
           .set({
             passwordHash,
             mustResetPassword: false,
@@ -305,7 +303,7 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
           .where(eq(users.id, resetToken.userId));
 
         // Mark token as used
-        await db.update(passwordResetTokens)
+        await fastify.db.update(passwordResetTokens)
           .set({ usedAt: new Date() })
           .where(eq(passwordResetTokens.token, token));
 
@@ -314,7 +312,9 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
         const accessToken = tokenService.generateAccessToken({ userId: resetToken.userId, email: '' });
         const refreshToken = tokenService.generateRefreshToken();
 
-        await db.insert(refreshTokens).values({ userId: resetToken.userId, token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+        // Store hashed refresh token via service helper (handles hashing/tokenHash column)
+        const userService = new UserService(fastify.db);
+        await userService.createRefreshToken(resetToken.userId, refreshToken);
         setRefreshTokenCookie(reply, refreshToken);
 
         return { message: 'Password reset successful', accessToken };
@@ -331,7 +331,7 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
  */
 async function recoveryRequestRoute(fastify: FastifyInstance, emailService: EmailService): Promise<void> {
   fastify.post(
-    '/admin/recovery-request',
+    '/recovery-request',
     {
       schema: {
         body: {
@@ -345,13 +345,13 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
       const { email } = request.body as { email: string };
       try {
         // Lookup user
-        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+        const [user] = await fastify.db.select().from(users).where(eq(users.email, email)).limit(1);
 
         if (user) {
           // Check admin role
-          const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
+          const [adminRole] = await fastify.db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
           if (adminRole) {
-            const [userRole] = await db
+            const [userRole] = await fastify.db
               .select()
               .from(userRoles)
               .where(and(eq(userRoles.userId, user.id), eq(userRoles.roleId, adminRole.id)))
@@ -360,7 +360,7 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             if (userRole) {
               // Create reset token (1 hour expiry)
               const resetToken = crypto.randomBytes(32).toString('hex');
-              await db.insert(passwordResetTokens).values({ userId: user.id, token: resetToken, expiresAt: new Date(Date.now() + 60 * 60 * 1000) });
+              await fastify.db.insert(passwordResetTokens).values({ userId: user.id, token: resetToken, expiresAt: new Date(Date.now() + 60 * 60 * 1000) });
               // Send recovery email
               await emailService.sendPasswordResetEmail(email, resetToken);
             }

@@ -3,19 +3,10 @@
  */
 
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { db } from '@alva/database';
-import { userRoles, roles } from '@alva/database/schemas';
+import { userRoles, roles } from '@alva/database';
 import { eq, and } from 'drizzle-orm';
 
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: {
-      id: string;
-      email: string;
-      role?: string;
-    };
-  }
-}
+// Uses the user property declared in auth.middleware
 
 /**
  * @description Middleware to require admin role
@@ -29,7 +20,7 @@ export async function requireAdmin(request: FastifyRequest, reply: FastifyReply)
   }
 
   // Check if user has admin role
-  const isAdmin = await checkAdminStatus(user.id);
+  const isAdmin = await checkAdminStatus(request, user.id);
 
   if (!isAdmin) {
     return reply.code(403).send({ error: 'Admin access required' });
@@ -41,8 +32,9 @@ export async function requireAdmin(request: FastifyRequest, reply: FastifyReply)
  * @param userId - User ID to check
  * @returns True if user has admin role
  */
-async function checkAdminStatus(userId: string): Promise<boolean> {
+async function checkAdminStatus(request: FastifyRequest, userId: string): Promise<boolean> {
   try {
+    const db = request.server.db;
     // Get admin role
     const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
 

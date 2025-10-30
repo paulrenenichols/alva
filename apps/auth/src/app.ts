@@ -30,6 +30,10 @@ export async function buildApp() {
   await registerRoutes();
   await registerHealthCheck();
 
+  // After registering routes, ensure Fastify is ready and print all routes for diagnostics
+  await fastify.ready();
+  fastify.printRoutes();
+
   return fastify;
 }
 
@@ -48,9 +52,13 @@ async function registerPlugins(): Promise<void> {
       : [process.env['WEB_URL'] || DEFAULT_WEB_URL]
     : [];
 
+  console.log('node env', process.env['NODE_ENV']);
   // Development diagnostics for CORS
   if (process.env['NODE_ENV'] === 'development') {
-    fastify.log.info({ allowAll, allowedOrigins, corsOriginsEnv }, 'CORS configuration (auth)');
+    fastify.log.info(
+      { allowAll, allowedOrigins, corsOriginsEnv },
+      'CORS configuration (auth)'
+    );
   }
 
   await fastify.register(cors, {
