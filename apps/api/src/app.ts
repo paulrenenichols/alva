@@ -41,8 +41,13 @@ export async function buildApp() {
  * @description Registers all required plugins for the application
  */
 async function registerPlugins(): Promise<void> {
+  const corsOriginsEnv = process.env['CORS_ORIGINS'];
+  const allowedOrigins = corsOriginsEnv
+    ? corsOriginsEnv.split(',').map((o) => o.trim()).filter(Boolean)
+    : [process.env['WEB_URL'] || DEFAULT_WEB_URL];
+
   await fastify.register(cors, {
-    origin: process.env['WEB_URL'] || DEFAULT_WEB_URL,
+    origin: allowedOrigins,
     credentials: true,
   });
 
