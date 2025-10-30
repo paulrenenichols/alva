@@ -17,7 +17,7 @@ export default function RecoveryPage() {
     setError(null);
     setLoading(true);
     try {
-      await fetch('http://localhost:3002/admin/recovery-request', {
+      await fetch('http://localhost:3002/auth/admin/recovery-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
