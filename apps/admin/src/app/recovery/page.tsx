@@ -17,7 +17,7 @@ export default function RecoveryPage() {
     setError(null);
     setLoading(true);
     try {
-      await fetch('http://localhost:3002/auth/admin/recovery-request', {
+      await fetch('http://localhost:3002/admin/recovery-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -34,7 +34,9 @@ export default function RecoveryPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center">Admin Account Recovery</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">
+          Admin Account Recovery
+        </h1>
 
         {submitted ? (
           <div className="bg-green-50 border border-green-200 rounded p-4">
@@ -43,7 +45,9 @@ export default function RecoveryPage() {
         ) : (
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>
+              <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
+                {error}
+              </div>
             )}
 
             <div className="mb-4">
@@ -74,5 +78,3 @@ export default function RecoveryPage() {
     </div>
   );
 }
-
-
