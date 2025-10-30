@@ -47,8 +47,15 @@ async function registerPlugins(): Promise<void> {
     : [process.env['WEB_URL'] || DEFAULT_WEB_URL];
 
   await fastify.register(cors, {
-    origin: allowedOrigins,
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      const isAllowed = allowedOrigins.includes(origin);
+      cb(null, isAllowed);
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
   });
 
   await fastify.register(swagger, {
