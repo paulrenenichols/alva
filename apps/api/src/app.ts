@@ -42,16 +42,21 @@ export async function buildApp() {
  */
 async function registerPlugins(): Promise<void> {
   const corsOriginsEnv = process.env['CORS_ORIGINS'];
-  const allowedOrigins = corsOriginsEnv
-    ? corsOriginsEnv.split(',').map((o) => o.trim()).filter(Boolean)
-    : [process.env['WEB_URL'] || DEFAULT_WEB_URL];
+  const allowAll = corsOriginsEnv === '*';
+  const allowedOrigins = !allowAll
+    ? (corsOriginsEnv
+        ? corsOriginsEnv.split(',').map((o) => o.trim()).filter(Boolean)
+        : [process.env['WEB_URL'] || DEFAULT_WEB_URL])
+    : [];
 
   await fastify.register(cors, {
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      const isAllowed = allowedOrigins.includes(origin);
-      cb(null, isAllowed);
-    },
+    origin: allowAll
+      ? true
+      : (origin, cb) => {
+          if (!origin) return cb(null, true);
+          const isAllowed = allowedOrigins.includes(origin);
+          cb(null, isAllowed);
+        },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
