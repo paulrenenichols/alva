@@ -4,8 +4,9 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { users, verificationTokens, passwordResetTokens, refreshTokens } from '@alva/database';
+import { roles, userRoles } from '@alva/database/schemas';
 import { db } from '@alva/database';
 import { UserService } from '../services/user.service';
 import { EmailService } from '../services/email.service';
