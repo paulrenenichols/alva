@@ -10,10 +10,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d alva']
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     networks:
       - alva-network
 
@@ -28,7 +28,7 @@ services:
         condition: service_healthy
     networks:
       - alva-network
-    restart: "no"
+    restart: 'no'
 
   redis:
     image: redis:7-alpine
@@ -46,10 +46,10 @@ services:
 
   mailhog:
     image: mailhog/mailhog:latest
-    platform: linux/amd64  # Explicitly specify platform for Apple Silicon compatibility
+    platform: linux/amd64 # Explicitly specify platform for Apple Silicon compatibility
     ports:
-      - '1025:1025'  # SMTP server
-      - '8025:8025'  # Web UI
+      - '1025:1025' # SMTP server
+      - '8025:8025' # Web UI
     healthcheck:
       test: ['CMD', 'nc', '-z', 'localhost', '1025']
       interval: 10s
