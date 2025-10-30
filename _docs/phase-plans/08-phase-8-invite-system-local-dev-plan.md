@@ -203,7 +203,7 @@ pnpm seed:admins
 
 ## Week 2: Invite System & Admin API
 
-### Day 1-3: Invite Service Implementation
+### Day 1-2: Invite Service Implementation
 
 #### Task 5.1: Implement Invite Service
 **Estimated Time**: 6 hours
@@ -230,7 +230,7 @@ Implement:
 - Prevents reuse
 - Handles errors gracefully
 
-### Day 4-5: Admin API Endpoints
+### Day 3-4: Admin API Endpoints
 
 #### Task 6.1: Create Admin Routes
 **Estimated Time**: 6 hours
@@ -258,7 +258,32 @@ Create `requireAdmin` middleware that checks user has admin role.
 - Endpoints work correctly
 - Proper error handling
 
-#### Task 6.2: Password Authentication
+#### Task 6.2: Admin Recovery Request Endpoint (NEW)
+
+Add endpoint: `POST /admin/recovery-request`
+
+```typescript
+// Request a recovery email for an admin
+fastify.post('/admin/recovery-request', async (request, reply) => {
+  const { email } = request.body as { email: string };
+
+  // Always return success to prevent enumeration
+  // If user exists AND has admin role, create password reset token (1h expiry) and send recovery email
+
+  return { message: 'If an account exists, a recovery link has been sent.' };
+});
+```
+
+Deliverables:
+- [ ] Endpoint created and documented
+- [ ] Email template for admin recovery with expiring link
+- [ ] Generic success response (no enumeration)
+
+Acceptance Criteria:
+- Submitting a valid admin email sends a recovery link
+- Non-admin or non-existent emails do not reveal user existence
+
+#### Task 6.3: Password Authentication
 
 **File**: `apps/auth/src/routes/auth.ts`
 
@@ -342,6 +367,7 @@ fastify.post('/reset-password', async (request, reply) => {
 - First login forces reset
 - Reset token expires
 - Password hashing with bcrypt
+ - Reset endpoint returns tokens so admin UI can auto-sign-in after reset
 
 ---
 
@@ -416,17 +442,16 @@ Add Storybook commands for both apps:
 - Storybook works for both apps
 - No conflicts with web app
 
-### Day 3-4: Admin UI Implementation
+### Day 3-4: Admin UI Implementation (UPDATED)
 
-#### Task 8.1: Admin Login Page
+#### Task 8.1: Replace Admin Login with Recovery Screen
 
 **File**: `apps/admin/src/app/login/page.tsx`
 
-- Login form (email, password)
-- Handle password login
-- Redirect to reset password if needed
-- Store access token
-- Navigate to dashboard on success
+- Single email field and “Send recovery link” button
+- Calls `POST /admin/recovery-request`
+- Remove helper text about default credentials
+- Show success state regardless of email validity
 
 #### Task 8.2: Password Reset Page
 
@@ -436,7 +461,7 @@ Add Storybook commands for both apps:
 - Password and confirm password fields
 - Validate passwords match and strength
 - Submit reset request
-- Redirect to login on success
+- On success, store tokens and redirect to dashboard
 
 #### Task 8.3: Invite List Page
 
@@ -487,14 +512,13 @@ pnpm dev
 # 2. Seed initial data
 pnpm seed:all
 
-# 3. Login to admin app
+# 3. Request recovery on admin app
 # http://localhost:3003/login
-# Email: paul.rene.nichols@gmail.com
-# Password: admin
+# Enter seeded admin email → submit → check MailHog for recovery email
 
-# 4. Should be redirected to password reset
-# 5. Set new password
-# 6. Login with new password
+# 4. Click recovery link → reset-password page
+# 5. Set new password (enforced strength)
+# 6. After submit, user should be signed in and land on dashboard
 # 7. Send invite to test@example.com
 # 8. Check MailHog: http://localhost:8025
 # 9. Click invite link
@@ -502,10 +526,10 @@ pnpm seed:all
 ```
 
 **Test Cases**:
-1. ✅ Admin can login with default password
-2. ✅ Admin redirected to reset password
-3. ✅ Admin can set new password
-4. ✅ Admin can login with new password
+1. ✅ Admin cannot login directly; must request recovery
+2. ✅ Recovery email appears in MailHog
+3. ✅ Recovery link expires appropriately
+4. ✅ Admin can set new password
 5. ✅ Admin can send invites
 6. ✅ Invite email appears in MailHog
 7. ✅ Invite link works
@@ -546,20 +570,21 @@ pnpm seed:all
 - [ ] Test database setup
 
 ### Week 2: Invite System & Admin API
-- [ ] Implement InviteService
-- [ ] Create admin routes
-- [ ] Create admin middleware with role checking
-- [ ] Add password login endpoint
-- [ ] Add password reset endpoint
-- [ ] Create password reset token service
-- [ ] Update registration flow to require invite
-- [ ] Update auth client
+-- [ ] Implement InviteService
+-- [ ] Create admin routes
+-- [ ] Create admin middleware with role checking
+-- [ ] Add admin recovery request endpoint
+-- [ ] Add password reset endpoint (returns tokens on success)
+-- [ ] Create password reset token service
+-- [ ] Update registration flow to require invite
+-- [ ] Update auth client
 
 ### Week 3: Admin App & Testing
 - [ ] Generate admin Next.js app
 - [ ] Copy Storybook config
 - [ ] Update package.json scripts
-- [ ] Create admin login page
+- [ ] Create admin recovery screen (email-only)
+- [ ] Remove default credentials helper text
 - [ ] Create password reset page
 - [ ] Create invite list page
 - [ ] Create send invite form
@@ -593,7 +618,7 @@ pnpm seed:all
 
 ### Admin App
 - [ ] `apps/admin/` (generated)
-- [ ] `apps/admin/src/app/login/page.tsx`
+- [ ] `apps/admin/src/app/login/page.tsx` (Recovery screen)
 - [ ] `apps/admin/src/app/reset-password/page.tsx`
 - [ ] `apps/admin/src/app/invites/page.tsx`
 - [ ] `apps/admin/src/app/invites/new/page.tsx`
@@ -605,6 +630,8 @@ pnpm seed:all
 - ✅ Updated `libs/database/src/schemas/index.ts`
 - ✅ Updated `libs/database/src/schemas/auth/users.ts`
 - ✅ Updated `package.json`
+ - [ ] Remove default credentials helper text from admin login UI
+ - [ ] Add admin recovery request endpoint to auth service
 
 ---
 
@@ -618,11 +645,11 @@ pnpm seed:all
 - [ ] Cascade deletes working
 
 ### Password Authentication
-- [ ] Admins can login with password
+- [ ] Admins cannot login directly from admin UI; must use recovery
 - [ ] Password hashing with bcrypt
 - [ ] First login forces password reset
 - [ ] Password reset tokens expire
-- [ ] Reset flow complete
+- [ ] Reset endpoint returns tokens and signs admin into app
 
 ### Invite System
 - [ ] No self-service signup
@@ -632,7 +659,7 @@ pnpm seed:all
 - [ ] Admin can send invites
 
 ### Admin App
-- [ ] Admin can login with password
+- [ ] Admin recovery flow works (email-only)
 - [ ] Admin can send invites
 - [ ] Admin can view invite list
 - [ ] Admin can resend invites

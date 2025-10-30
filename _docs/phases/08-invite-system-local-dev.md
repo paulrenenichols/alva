@@ -427,6 +427,29 @@ export async function adminRoutes(fastify: FastifyInstance) {
 - [ ] Add role checking
 - [ ] Test all endpoints
 
+#### Task 5.2: Admin Recovery-only Login Flow (NEW)
+
+Goal: Existing admins must not log in directly via password in the admin app. Instead, they must request a recovery email and complete a password reset before gaining access.
+
+API changes:
+- Add `POST /admin/recovery-request`
+  - Body: `{ email: string }`
+  - Behavior: If an admin user exists for the email, create a password reset token (1-hour expiry) and send a recovery email with a link to the admin reset page. Always return 200 with a generic success message to avoid email enumeration.
+- Reuse existing `POST /reset-password` endpoint
+  - On success: also generate access/refresh tokens and return them so the admin app can immediately sign the user in and redirect to the dashboard.
+
+Admin app changes:
+- Replace password login UI with a “Recovery” screen at `/login`:
+  - Single email field + “Send recovery link” button
+  - On submit: call `POST /admin/recovery-request`
+  - Remove helper text: Default credentials message should be removed from the UI
+- Keep `/reset-password` page; after submit, store returned tokens and navigate to the admin dashboard.
+
+Security/behavior notes:
+- Enforce `mustResetPassword = true` for seeded admins so direct password login is blocked until reset.
+- Return generic success from recovery to prevent account enumeration.
+- Recovery links expire in 1 hour (existing password reset tokens).
+
 #### Task 5.2: Update Registration Flow
 
 **File**: `apps/auth/src/routes/auth.ts`
@@ -545,7 +568,17 @@ apps/admin/
 - [ ] Configure admin-specific settings
 - [ ] Update nx.json
 
-#### Task 6.2: Password Authentication
+#### Task 6.2: Replace Admin Login with Recovery Screen (NEW)
+
+Files:
+- `apps/admin/src/app/login/page.tsx` → Recovery screen (email-only)
+- Remove helper text: Default credentials line
+
+Flow:
+- Submit email → call `POST /admin/recovery-request` → show success state regardless of existence
+- Email link → `/reset-password?token=...` → submit new password → receive tokens → redirect to dashboard
+
+#### Task 6.3: Password Authentication
 
 **File**: `apps/auth/src/routes/auth.ts`
 
@@ -629,11 +662,13 @@ fastify.post(
 - [ ] Handle mustResetPassword flow
 - [ ] Test password authentication
 
+Note: Admin UI does not offer password login. The endpoint remains available for automated flows or future needs; access for seeded admins is still blocked until reset via `mustResetPassword`.
+
 ### Day 3-5: Admin UI & Testing
 
 #### Task 7.1: Admin Login Page
 
-**File**: `apps/admin/src/app/login/page.tsx`
+**File**: `apps/admin/src/app/login/page.tsx` (now Recovery Screen)
 
 ```typescript
 'use client';
@@ -694,15 +729,8 @@ export default function LoginPage() {
             <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border rounded" required />
           </div>
 
-          <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 font-medium">
-              Password
-            </label>
-            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded" required />
-          </div>
-
           <button type="submit" className="w-full bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600">
-            Login
+            Send recovery link
           </button>
         </form>
       </div>
@@ -713,10 +741,10 @@ export default function LoginPage() {
 
 **Tasks**:
 
-- [ ] Create login page
-- [ ] Handle password login
+- [ ] Create recovery screen (email-only)
+- [ ] Call recovery API and display success state
 - [ ] Handle password reset redirect
-- [ ] Store access token
+- [ ] Store access token after reset and redirect
 
 #### Task 7.2: Password Reset Page
 
@@ -812,7 +840,7 @@ export default function ResetPasswordPage() {
 - [ ] Create password reset page
 - [ ] Handle password reset
 - [ ] Validate password strength
-- [ ] Redirect to login
+- [ ] On success: store tokens and redirect to dashboard
 
 #### Task 7.3: MailHog Testing
 
@@ -878,12 +906,15 @@ pnpm seed:admins
 - [ ] Add password login endpoint
 - [ ] Add password reset endpoint
 - [ ] Update auth client
+- [ ] Add admin recovery request endpoint
+- [ ] Return tokens on successful password reset
 
 ### Week 3: Admin App & Testing
 
 - [ ] Generate admin Next.js app
 - [ ] Copy Storybook config
-- [ ] Create admin login page
+- [ ] Create admin recovery screen at /login (email-only)
+- [ ] Remove default credentials helper text from UI
 - [ ] Create password reset page
 - [ ] Create invite list page
 - [ ] Create send invite form
@@ -908,6 +939,7 @@ pnpm seed:admins
 - Password hashing with bcrypt
 - First login forces password reset
 - Password reset flow complete
+- Admins cannot log in via password from the admin UI without recovery
 
 ✅ **Invite-only authentication working**
 
