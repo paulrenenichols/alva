@@ -45,6 +45,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   await verifyEmailRoute(fastify, userService, tokenService);
   await loginPasswordRoute(fastify, userService, tokenService);
   await resetPasswordRoute(fastify);
+  await recoveryRequestRoute(fastify, emailService);
   await getCurrentUserRoute(fastify);
 }
 
@@ -307,10 +308,70 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
           .set({ usedAt: new Date() })
           .where(eq(passwordResetTokens.token, token));
 
-        return { message: 'Password reset successful' };
+        // Generate tokens and set refresh cookie
+        const tokenService = new TokenService();
+        const accessToken = tokenService.generateAccessToken({ userId: resetToken.userId, email: '' });
+        const refreshToken = tokenService.generateRefreshToken();
+
+        await db.insert(refreshTokens).values({ userId: resetToken.userId, token: refreshToken, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+        setRefreshTokenCookie(reply, refreshToken);
+
+        return { message: 'Password reset successful', accessToken };
       } catch (error) {
         fastify.log.error(error);
         return reply.code(500).send({ error: 'Internal server error' });
+      }
+    }
+  );
+}
+
+/**
+ * @description Admin recovery request route (no auth). Sends password reset email if admin user exists.
+ */
+async function recoveryRequestRoute(fastify: FastifyInstance, emailService: EmailService): Promise<void> {
+  fastify.post(
+    '/admin/recovery-request',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['email'],
+          properties: { email: { type: 'string', format: 'email' } },
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { email } = request.body as { email: string };
+      try {
+        // Lookup user
+        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+        if (user) {
+          // Check admin role
+          const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
+          if (adminRole) {
+            const [userRole] = await db
+              .select()
+              .from(userRoles)
+              .where(and(eq(userRoles.userId, user.id), eq(userRoles.roleId, adminRole.id)))
+              .limit(1);
+
+            if (userRole) {
+              // Create reset token (1 hour expiry)
+              const resetToken = crypto.randomBytes(32).toString('hex');
+              await db.insert(passwordResetTokens).values({ userId: user.id, token: resetToken, expiresAt: new Date(Date.now() + 60 * 60 * 1000) });
+              // Send recovery email
+              await emailService.sendPasswordResetEmail(email, resetToken);
+            }
+          }
+        }
+
+        // Always return success (no enumeration)
+        return { message: 'If an account exists, a recovery link has been sent.' };
+      } catch (error) {
+        fastify.log.error(error);
+        // Still return success to avoid leaking state
+        return { message: 'If an account exists, a recovery link has been sent.' };
       }
     }
   );
