@@ -69,7 +69,7 @@ export default function NewInvitePage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded bg-bg-elevated text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-text-tertiary"
+                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-text-tertiary"
               required
               disabled={loading}
             />
