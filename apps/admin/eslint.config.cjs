@@ -1,7 +1,14 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const { fixupConfigRules } = require('@eslint/compat');
-const baseConfig = require('../../.eslintrc.json');
+// Base config - using path import that works in Nx monorepo
+let baseConfig = {};
+try {
+  baseConfig = require('../../.eslintrc.json');
+} catch (e) {
+  // If .eslintrc.json doesn't exist, use empty config
+  baseConfig = {};
+}
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,

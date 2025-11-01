@@ -1,0 +1,21 @@
+# @fileoverview Development Dockerfile for Next.js admin app with hot reload support
+# Source code will be mounted as volume in docker-compose.dev.yml
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies (including dev dependencies)
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install
+
+# Source code will be mounted as volume in docker-compose.dev.yml
+
+ENV NODE_ENV=development
+ENV PORT=3003
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 3003
+
+# Run Next.js dev server with hot reload
+CMD ["pnpm", "nx", "serve", "admin"]
+

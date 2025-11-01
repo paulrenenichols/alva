@@ -1,0 +1,21 @@
+# @fileoverview Development Dockerfile for API service with auto-restart on file changes
+# Source code will be mounted as volume in docker-compose.dev.yml
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies (including dev dependencies)
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install
+
+# Source code will be mounted as volume in docker-compose.dev.yml
+
+ENV NODE_ENV=development
+
+EXPOSE 3001
+# Debug port
+EXPOSE 9229
+
+# Run API with nx serve (which has continuous mode enabled for auto-restart on file changes)
+CMD ["pnpm", "nx", "serve", "api"]
+
