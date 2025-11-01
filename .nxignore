@@ -1,0 +1,5 @@
+# @fileoverview Nx ignore file to exclude build artifacts and generated files
+.next
+dist
+node_modules
+

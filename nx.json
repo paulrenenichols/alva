@@ -20,7 +20,7 @@
         "serveStaticTargetName": "serve-static",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
+      },
     },
     {
       "plugin": "@nx/playwright/plugin",

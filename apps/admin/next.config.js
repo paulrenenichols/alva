@@ -13,6 +13,18 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],
   },
+  webpack: (config, { isServer, dev }) => {
+    // Enable polling for file watching in Docker development
+    // This is necessary because Docker volume mounts don't always trigger file system events
+    if (dev && !isServer) {
+      config.watchOptions = {
+        poll: 1000, // Check for changes every second
+        aggregateTimeout: 300, // Delay before rebuilding once the first file changed
+        ignored: /node_modules/,
+      };
+    }
+    return config;
+  },
 };
 
 const plugins = [
