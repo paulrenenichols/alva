@@ -37,7 +37,7 @@ export async function authenticateToken(
     
     // Validate user in appropriate table based on userType
     if (decoded.userType === 'admin') {
-      const user = await request.db.query.adminUsers.findFirst({
+      const user = await request.server.db.query.adminUsers.findFirst({
         where: eq(adminUsers.id, decoded.userId),
       });
       if (!user) {
@@ -47,7 +47,7 @@ export async function authenticateToken(
       request.user = { ...user, userType: 'admin' };
       request.server.log.debug(`Admin user authenticated: ${user.email}`);
     } else if (decoded.userType === 'web') {
-      const user = await request.db.query.webUsers.findFirst({
+      const user = await request.server.db.query.webUsers.findFirst({
         where: eq(webUsers.id, decoded.userId),
       });
       if (!user) {
