@@ -44,7 +44,7 @@ const validateEmail = (email: string): void => {
 const handleApiError = async (response: Response, defaultMessage: string): Promise<never> => {
   try {
     const errorData = await response.json();
-    throw new Error(errorData.message || defaultMessage);
+    throw new Error(errorData.error || errorData.message || defaultMessage);
   } catch {
     throw new Error(defaultMessage);
   }
