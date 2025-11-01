@@ -32,26 +32,6 @@ const VERIFY_SCHEMA = z.object({
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 /**
- * @description Registers authentication routes with the Fastify instance
- * @param fastify - Fastify instance to register routes with
- */
-export async function authRoutes(fastify: FastifyInstance) {
-  const webUserService = new WebUserService(fastify.db);
-  const adminUserService = new AdminUserService(fastify.db);
-  const emailService = new EmailService();
-  const tokenService = new TokenService();
-  const webInviteService = new WebInviteService(fastify.db);
-
-  await registerUserRoute(fastify, webUserService, emailService, webInviteService);
-  await verifyEmailRoute(fastify, webUserService, tokenService);
-  await loginPasswordRoute(fastify, adminUserService, tokenService);
-  await loginWebPasswordRoute(fastify, webUserService, tokenService);
-  await resetPasswordRoute(fastify, adminUserService);
-  await recoveryRequestRoute(fastify, emailService, adminUserService);
-  await getCurrentUserRoute(fastify);
-}
-
-/**
  * @description Registers the user registration route
  * @param fastify - Fastify instance
  * @param userService - User service instance
@@ -474,4 +454,24 @@ function setRefreshTokenCookie(
     sameSite: 'lax',
     maxAge: REFRESH_TOKEN_MAX_AGE,
   });
+}
+
+/**
+ * @description Registers authentication routes with the Fastify instance
+ * @param fastify - Fastify instance to register routes with
+ */
+export async function authRoutes(fastify: FastifyInstance) {
+  const webUserService = new WebUserService(fastify.db);
+  const adminUserService = new AdminUserService(fastify.db);
+  const emailService = new EmailService();
+  const tokenService = new TokenService();
+  const webInviteService = new WebInviteService(fastify.db);
+
+  await registerUserRoute(fastify, webUserService, emailService, webInviteService);
+  await verifyEmailRoute(fastify, webUserService, tokenService);
+  await loginPasswordRoute(fastify, adminUserService, tokenService);
+  await loginWebPasswordRoute(fastify, webUserService, tokenService);
+  await resetPasswordRoute(fastify, adminUserService);
+  await recoveryRequestRoute(fastify, emailService, adminUserService);
+  await getCurrentUserRoute(fastify);
 }
