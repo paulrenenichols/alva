@@ -38,6 +38,55 @@ export async function buildApp() {
 }
 
 /**
+ * @description Normalizes a URL for CORS origin matching (removes trailing slashes, normalizes protocol)
+ * @param url - URL string to normalize
+ * @returns Normalized URL string
+ */
+function normalizeOrigin(url: string): string {
+  if (!url) return '';
+  // Remove trailing slashes
+  let normalized = url.trim().replace(/\/+$/, '');
+  // Ensure protocol is present
+  if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
+    normalized = `http://${normalized}`;
+  }
+  // Normalize http://localhost:80 -> http://localhost, https://localhost:443 -> https://localhost
+  normalized = normalized.replace(/:80$/, '');
+  normalized = normalized.replace(/:443$/, '');
+  return normalized;
+}
+
+/**
+ * @description Checks if an origin is allowed by comparing against normalized allowed origins
+ * @param origin - Origin to check
+ * @param allowedOrigins - Array of allowed origin strings
+ * @returns True if origin is allowed, false otherwise
+ */
+function isOriginAllowed(origin: string, allowedOrigins: string[]): boolean {
+  if (!origin || allowedOrigins.length === 0) return false;
+
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  // Check exact match
+  if (
+    allowedOrigins.some(
+      (allowed) => normalizeOrigin(allowed) === normalizedOrigin
+    )
+  ) {
+    return true;
+  }
+
+  // Check without protocol (for flexibility)
+  const originWithoutProtocol = normalizedOrigin.replace(/^https?:\/\//, '');
+  return allowedOrigins.some((allowed) => {
+    const normalizedAllowed = normalizeOrigin(allowed);
+    return (
+      normalizedAllowed.replace(/^https?:\/\//, '') === originWithoutProtocol
+    );
+  });
+}
+
+/**
  * @description Registers all required plugins for the application
  */
 async function registerPlugins(): Promise<void> {
@@ -49,10 +98,10 @@ async function registerPlugins(): Promise<void> {
           .split(',')
           .map((o) => o.trim())
           .filter(Boolean)
-      : [process.env['WEB_URL'] || DEFAULT_WEB_URL]
+          .map(normalizeOrigin)
+      : [normalizeOrigin(process.env['WEB_URL'] || DEFAULT_WEB_URL)]
     : [];
 
-  console.log('node env', process.env['NODE_ENV']);
   // Development diagnostics for CORS
   if (process.env['NODE_ENV'] === 'development') {
     fastify.log.info(
@@ -65,11 +114,38 @@ async function registerPlugins(): Promise<void> {
     origin: allowAll
       ? true
       : (origin, cb) => {
-          if (!origin) return cb(null, true);
-          const isAllowed = allowedOrigins.includes(origin);
-          if (process.env['NODE_ENV'] === 'development') {
-            fastify.log.info({ origin, isAllowed }, 'CORS origin check (auth)');
+          // Allow requests with no origin (same-origin requests, mobile apps, etc.)
+          if (!origin) {
+            if (process.env['NODE_ENV'] === 'development') {
+              fastify.log.info(
+                { origin: 'null', allowed: true },
+                'CORS origin check (auth) - no origin'
+              );
+            }
+            return cb(null, true);
           }
+
+          const isAllowed = isOriginAllowed(origin, allowedOrigins);
+
+          if (process.env['NODE_ENV'] === 'development') {
+            fastify.log.info(
+              {
+                origin,
+                normalizedOrigin: normalizeOrigin(origin),
+                isAllowed,
+                allowedOrigins,
+              },
+              'CORS origin check (auth)'
+            );
+          }
+
+          if (!isAllowed) {
+            fastify.log.warn(
+              { origin, allowedOrigins },
+              'CORS blocked origin (auth)'
+            );
+          }
+
           cb(null, isAllowed);
         },
     credentials: true,
