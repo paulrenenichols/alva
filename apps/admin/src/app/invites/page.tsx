@@ -125,11 +125,11 @@ export default function InvitesPage() {
                 const status = getStatus(invite);
                 return (
                   <tr key={invite.id} className="border-b border-border-subtle hover:bg-bg-secondary">
-                    <td className="px-6 py-4">{invite.email}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-text-primary">{invite.email}</td>
+                    <td className="px-6 py-4 text-text-primary">
                       {new Date(invite.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-text-primary">
                       {new Date(invite.expiresAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
@@ -162,7 +162,7 @@ export default function InvitesPage() {
           >
             Previous
           </button>
-          <span>
+          <span className="text-text-primary">
             Page {page} of {totalPages}
           </span>
           <button
