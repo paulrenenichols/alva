@@ -174,7 +174,7 @@ export default function QuickWinsPage() {
                   {win.status === 'planned' && (
                     <Button
                       onClick={() => handleUpdateStatus(win.id, 'in-progress')}
-                      className="bg-primary-500 text-white"
+                      className="bg-primary text-text-inverse"
                     >
                       Start
                     </Button>

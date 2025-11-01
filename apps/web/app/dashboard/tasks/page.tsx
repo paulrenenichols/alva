@@ -135,7 +135,7 @@ export default function TasksPage() {
         </div>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-primary-500 text-text-inverse"
+          className="bg-primary text-text-inverse"
         >
           Add Task
         </Button>
@@ -154,7 +154,7 @@ export default function TasksPage() {
             />
             <Button
               onClick={handleAddTask}
-              className="bg-primary-500 text-text-inverse"
+              className="bg-primary text-text-inverse"
             >
               Add
             </Button>
@@ -240,7 +240,7 @@ export default function TasksPage() {
                   {task.status === 'todo' && (
                     <Button
                       onClick={() => handleUpdateStatus(task.id, 'in-progress')}
-                      className="bg-primary-500 text-text-inverse"
+                      className="bg-primary text-text-inverse"
                     >
                       Start
                     </Button>

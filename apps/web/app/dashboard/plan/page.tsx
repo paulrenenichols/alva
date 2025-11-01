@@ -61,19 +61,19 @@ export default function MarketingPlanPage() {
   if (loading) {
     return (
       <Card className="p-6 text-center">
-        <div className="w-12 h-12 mx-auto mb-4 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-600">Loading your marketing plan...</p>
+        <div className="w-12 h-12 mx-auto mb-4 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-text-secondary">Loading your marketing plan...</p>
       </Card>
     );
   }
 
   if (!plan) {
     return (
-      <Card className="p-6 text-center text-gray-500">
+      <Card className="p-6 text-center text-text-tertiary">
         No marketing plan found. Please complete the onboarding to generate one.
         <Button
           onClick={() => (window.location.href = '/onboarding/welcome')}
-          className="mt-4 bg-primary-500 text-white"
+          className="mt-4 bg-primary text-text-inverse"
         >
           Start Onboarding
         </Button>
@@ -125,10 +125,10 @@ export default function MarketingPlanPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-text-primary">
           Your Marketing Plan
         </h1>
-        <p className="text-gray-600">
+        <p className="text-text-secondary">
           A comprehensive strategy across all marketing channels
         </p>
       </div>
@@ -144,17 +144,17 @@ export default function MarketingPlanPage() {
         <TabsContent value="overview" className="space-y-6">
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Plan Summary
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Total Tasks:</span>
-                  <span className="font-medium">{plan.tasks?.length || 0}</span>
+                  <span className="text-text-secondary">Total Tasks:</span>
+                  <span className="font-medium text-text-primary">{plan.tasks?.length || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Estimated Hours:</span>
-                  <span className="font-medium">
+                  <span className="text-text-secondary">Estimated Hours:</span>
+                  <span className="font-medium text-text-primary">
                     {plan.tasks?.reduce(
                       (sum: number, task: Task) => sum + task.estimated_hours,
                       0
@@ -163,8 +163,8 @@ export default function MarketingPlanPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Weekly Capacity:</span>
-                  <span className="font-medium">
+                  <span className="text-text-secondary">Weekly Capacity:</span>
+                  <span className="font-medium text-text-primary">
                     {plan.plan?.weekly_capacity_hours || 10}h
                   </span>
                 </div>
@@ -172,27 +172,27 @@ export default function MarketingPlanPage() {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Progress
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Completed:</span>
+                  <span className="text-text-secondary">Completed:</span>
                   <span className="font-medium text-success">
                     {plan.tasks?.filter((t: Task) => t.status === 'completed')
                       .length || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">In Progress:</span>
+                  <span className="text-text-secondary">In Progress:</span>
                   <span className="font-medium text-secondary">
                     {plan.tasks?.filter((t: Task) => t.status === 'in-progress')
                       .length || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Planned:</span>
-                  <span className="font-medium text-gray-600">
+                  <span className="text-text-secondary">Planned:</span>
+                  <span className="font-medium text-text-secondary">
                     {plan.tasks?.filter((t: Task) => t.status === 'planned')
                       .length || 0}
                   </span>
@@ -201,16 +201,16 @@ export default function MarketingPlanPage() {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Modules Active
               </h3>
               <div className="space-y-2">
                 {plan.meta?.modules_merged?.map((module: string) => (
                   <div key={module} className="flex items-center">
-                    <span className="w-2 h-2 bg-primary-500 rounded-full mr-2"></span>
-                    <span className="text-sm capitalize">{module}</span>
+                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                    <span className="text-sm capitalize text-text-primary">{module}</span>
                   </div>
-                )) || <span className="text-gray-500">No modules active</span>}
+                )) || <span className="text-text-tertiary">No modules active</span>}
               </div>
             </Card>
           </div>
@@ -220,15 +220,15 @@ export default function MarketingPlanPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Object.entries(tasksByCategory).map(([category, tasks]) => (
               <Card key={category} className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
                   <span className="mr-2">{getCategoryIcon(category)}</span>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </h3>
                 <div className="space-y-3">
                   {(tasks as Task[]).map((task) => (
-                    <div key={task.id} className="p-3 bg-gray-50 rounded-lg">
+                    <div key={task.id} className="p-3 bg-bg-secondary rounded-lg">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-gray-900 text-sm">
+                        <h4 className="font-medium text-text-primary text-sm">
                           {task.title}
                         </h4>
                         <span
@@ -239,10 +239,10 @@ export default function MarketingPlanPage() {
                           {task.priority}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-text-secondary mb-2">
                         {task.description}
                       </p>
-                      <div className="flex justify-between text-xs text-gray-500">
+                      <div className="flex justify-between text-xs text-text-tertiary">
                         <span>{task.estimated_hours}h</span>
                         <span>
                           {new Date(task.due_date).toLocaleDateString()}
@@ -258,7 +258,7 @@ export default function MarketingPlanPage() {
 
         <TabsContent value="timeline" className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-text-primary mb-4">
               Task Timeline
             </h3>
             <div className="space-y-4">
@@ -271,22 +271,22 @@ export default function MarketingPlanPage() {
                 .map((task: Task) => (
                   <div
                     key={task.id}
-                    className="flex items-center p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center p-3 bg-bg-secondary rounded-lg"
                   >
-                    <div className="w-3 h-3 bg-primary-500 rounded-full mr-3"></div>
+                    <div className="w-3 h-3 bg-primary rounded-full mr-3"></div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">
+                      <h4 className="font-medium text-text-primary">
                         {task.title}
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-text-secondary">
                         {task.description}
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-text-primary">
                         {new Date(task.due_date).toLocaleDateString()}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-text-tertiary">
                         {task.estimated_hours}h
                       </div>
                     </div>
@@ -299,49 +299,49 @@ export default function MarketingPlanPage() {
         <TabsContent value="modules" className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Blog Module
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-text-secondary mb-4">
                 Generate blog content and manage your content calendar
               </p>
-              <Button className="bg-primary-500 text-white">
+              <Button className="bg-primary text-text-inverse">
                 Generate Blog Post
               </Button>
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Email Module
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-text-secondary mb-4">
                 Create email campaigns and automate your email marketing
               </p>
-              <Button className="bg-primary-500 text-white">
+              <Button className="bg-primary text-text-inverse">
                 Create Email Campaign
               </Button>
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Social Media Module
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-text-secondary mb-4">
                 Generate social media content for all platforms
               </p>
-              <Button className="bg-primary-500 text-white">
+              <Button className="bg-primary text-text-inverse">
                 Generate Social Content
               </Button>
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Analytics Module
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-text-secondary mb-4">
                 Track performance and optimize your marketing efforts
               </p>
-              <Button className="bg-primary-500 text-white">
+              <Button className="bg-primary text-text-inverse">
                 View Analytics
               </Button>
             </Card>

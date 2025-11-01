@@ -324,7 +324,7 @@ export default function SettingsPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary-500 text-white px-8"
+          className="bg-primary text-text-inverse px-8"
         >
           {saving ? 'Saving...' : 'Save Settings'}
         </Button>
