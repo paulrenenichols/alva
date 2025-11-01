@@ -49,7 +49,7 @@ export default function NewInvitePage() {
   return (
     <div className="min-h-screen bg-bg-primary p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Send New Invite</h1>
+        <h1 className="text-3xl font-bold mb-6 text-text-primary">Send New Invite</h1>
 
         {success && (
           <div className="bg-green-50 border border-green-200 rounded p-4 mb-4">

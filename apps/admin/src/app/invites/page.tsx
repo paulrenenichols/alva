@@ -101,10 +101,10 @@ export default function InvitesPage() {
     <div className="min-h-screen bg-bg-primary p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Invite Management</h1>
+          <h1 className="text-3xl font-bold text-text-primary">Invite Management</h1>
           <Link
             href="/invites/new"
-            className="bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600"
+            className="bg-primary-500 text-text-inverse px-6 py-2 rounded hover:bg-primary-600"
           >
             Send New Invite
           </Link>

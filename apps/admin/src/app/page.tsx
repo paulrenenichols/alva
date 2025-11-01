@@ -45,12 +45,12 @@ export default function AdminDashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link href="/invites" className="bg-bg-elevated rounded-lg shadow p-6 hover:shadow-lg transition">
-            <h2 className="text-2xl font-semibold mb-2">Manage Invites</h2>
+            <h2 className="text-2xl font-semibold mb-2 text-text-primary">Manage Invites</h2>
             <p className="text-text-secondary">View and send user invites</p>
           </Link>
 
           <div className="bg-bg-elevated rounded-lg shadow p-6">
-            <h2 className="text-2xl font-semibold mb-2">Statistics</h2>
+            <h2 className="text-2xl font-semibold mb-2 text-text-primary">Statistics</h2>
             <p className="text-text-secondary">Coming soon...</p>
           </div>
         </div>
