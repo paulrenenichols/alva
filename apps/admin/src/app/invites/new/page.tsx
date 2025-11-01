@@ -39,8 +39,8 @@ export default function NewInvitePage() {
 
       setSuccess(true);
       setTimeout(() => router.push('/invites'), 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send invite');
     } finally {
       setLoading(false);
     }

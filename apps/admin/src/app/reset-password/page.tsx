@@ -55,8 +55,8 @@ function ResetPasswordForm() {
 
       setSuccess(true);
       setTimeout(() => router.push('/login?message=Password reset successful'), 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Password reset failed');
     }
   };
 

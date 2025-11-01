@@ -4,8 +4,7 @@
  * @fileoverview Admin page for viewing and managing invites
  */
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
 interface Invite {
@@ -23,11 +22,7 @@ export default function InvitesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchInvites();
-  }, [page]);
-
-  const fetchInvites = async () => {
+  const fetchInvites = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
@@ -46,7 +41,11 @@ export default function InvitesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
+
+  useEffect(() => {
+    fetchInvites();
+  }, [fetchInvites]);
 
   const handleResend = async (inviteId: string) => {
     try {
@@ -65,7 +64,7 @@ export default function InvitesPage() {
         const data = await response.json();
         alert(data.error || 'Failed to resend invite');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to resend invite');
     }
   };

@@ -23,7 +23,7 @@ export default function RecoveryPage() {
         body: JSON.stringify({ email }),
       });
       setSubmitted(true);
-    } catch (err: any) {
+    } catch {
       // Show generic success; don't reveal details
       setSubmitted(true);
     } finally {

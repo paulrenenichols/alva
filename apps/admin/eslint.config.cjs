@@ -1,7 +1,6 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const { fixupConfigRules } = require('@eslint/compat');
-const nx = require('@nx/eslint-plugin');
 const baseConfig = require('../../.eslintrc.json');
 
 const compat = new FlatCompat({
@@ -11,12 +10,12 @@ const compat = new FlatCompat({
 
 module.exports = [
   ...fixupConfigRules(compat.extends('next')),
-
   ...fixupConfigRules(compat.extends('next/core-web-vitals')),
-
-  ...baseConfig,
-  ...nx.configs['flat/react-typescript'],
+  ...fixupConfigRules(compat.config(baseConfig)),
   {
     ignores: ['.next/**/*'],
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off',
+    },
   },
 ];
