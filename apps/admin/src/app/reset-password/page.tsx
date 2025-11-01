@@ -76,7 +76,7 @@ function ResetPasswordForm() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="password" className="block mb-2 font-medium">
+            <label htmlFor="password" className="block mb-2 font-medium text-text-primary">
               New Password
             </label>
             <div className="relative">
@@ -101,7 +101,7 @@ function ResetPasswordForm() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="confirmPassword" className="block mb-2 font-medium">
+            <label htmlFor="confirmPassword" className="block mb-2 font-medium text-text-primary">
               Confirm Password
             </label>
             <div className="relative">

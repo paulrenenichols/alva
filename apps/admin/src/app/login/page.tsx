@@ -69,7 +69,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 font-medium">
+            <label htmlFor="email" className="block mb-2 font-medium text-text-primary">
               Email
             </label>
             <input
@@ -77,14 +77,14 @@ export default function LoginPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] placeholder:text-text-tertiary"
+              className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] placeholder:text-text-tertiary"
               required
               disabled={loading}
             />
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 font-medium">
+            <label htmlFor="password" className="block mb-2 font-medium text-text-primary">
               Password
             </label>
             <div className="relative">

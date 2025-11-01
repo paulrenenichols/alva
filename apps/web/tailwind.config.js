@@ -18,6 +18,7 @@ module.exports = {
         'bg-secondary': 'var(--color-bg-secondary)',
         'bg-tertiary': 'var(--color-bg-tertiary)',
         'bg-elevated': 'var(--color-bg-elevated)',
+        'bg-input': 'var(--color-bg-input)',
         'text-primary': 'var(--color-text-primary)',
         'text-secondary': 'var(--color-text-secondary)',
         'text-tertiary': 'var(--color-text-tertiary)',

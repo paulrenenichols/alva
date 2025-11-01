@@ -61,7 +61,7 @@ export default function NewInvitePage() {
 
         <form onSubmit={handleSubmit} className="bg-bg-elevated rounded-lg shadow-lg p-6">
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 font-medium">
+            <label htmlFor="email" className="block mb-2 font-medium text-text-primary">
               Email Address
             </label>
             <input

@@ -51,7 +51,7 @@ export default function RecoveryPage() {
             )}
 
             <div className="mb-4">
-              <label htmlFor="email" className="block mb-2 font-medium">
+              <label htmlFor="email" className="block mb-2 font-medium text-text-primary">
                 Email
               </label>
               <input
