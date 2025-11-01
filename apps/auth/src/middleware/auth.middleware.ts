@@ -3,9 +3,9 @@
  */
 
 import { FastifyRequest, FastifyReply } from 'fastify';
-import jwt from 'jsonwebtoken';
 import { eq } from 'drizzle-orm';
 import { adminUsers, webUsers } from '@alva/database';
+import { TokenService } from '../services/token.service';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -14,6 +14,9 @@ declare module 'fastify' {
     db?: any;
   }
 }
+
+// Create a singleton token service instance
+const tokenService = new TokenService();
 
 export async function authenticateToken(
   request: FastifyRequest,
@@ -28,7 +31,8 @@ export async function authenticateToken(
       return reply.code(401).send({ error: 'Access token required' });
     }
 
-    const decoded = jwt.verify(token, process.env['JWT_SECRET']!) as any;
+    // Use TokenService to verify token
+    const decoded = tokenService.verifyAccessToken(token);
     request.server.log.debug(`Token verified, userType: ${decoded.userType}, userId: ${decoded.userId}`);
     
     // Validate user in appropriate table based on userType
