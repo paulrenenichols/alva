@@ -258,9 +258,11 @@ if (decoded.userType === 'admin') {
 - ✅ Separate authentication works for both apps
 - ✅ All existing features preserved
 - ✅ Zero data loss during migration
-- ⏳ Web app password-based login implemented
-- ⏳ Invite-based signup flow with password setup
-- ⏳ Proper login/signup pages at /login and /signup
+- ✅ Web app password-based login implemented
+- ✅ Invite-based signup flow with password setup
+- ✅ Proper login/signup pages at /login and /signup
+- ✅ Dark mode styling fixes for dashboard
+- ✅ WEB_URL configured for invite emails
 
 ### Technical
 - ✅ Clean schema separation
