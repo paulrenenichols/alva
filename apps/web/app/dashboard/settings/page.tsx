@@ -124,13 +124,13 @@ export default function SettingsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600">Loading your settings...</p>
+          <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
+          <p className="text-text-secondary">Loading your settings...</p>
         </div>
         <div className="animate-pulse space-y-4">
-          <div className="h-32 bg-gray-200 rounded-lg"></div>
-          <div className="h-32 bg-gray-200 rounded-lg"></div>
-          <div className="h-32 bg-gray-200 rounded-lg"></div>
+          <div className="h-32 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-32 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-32 bg-bg-tertiary rounded-lg"></div>
         </div>
       </div>
     );
@@ -139,8 +139,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
+        <p className="text-text-secondary">
           Manage your account settings and preferences
         </p>
       </div>
@@ -159,12 +159,12 @@ export default function SettingsPage() {
 
       {/* Account Information */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-text-primary mb-4">
           Account Information
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               Business Name
             </label>
             <Input
@@ -179,7 +179,7 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               Email Address
             </label>
             <Input
@@ -192,7 +192,7 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               Timezone
             </label>
             <select
@@ -217,14 +217,14 @@ export default function SettingsPage() {
 
       {/* Notifications */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-text-primary mb-4">
           Notifications
         </h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-gray-900">Email Notifications</h3>
-              <p className="text-sm text-gray-600">Receive updates via email</p>
+              <h3 className="font-medium text-text-primary">Email Notifications</h3>
+              <p className="text-sm text-text-secondary">Receive updates via email</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -235,13 +235,13 @@ export default function SettingsPage() {
                 }
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+              <div className="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-bg-elevated after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
             </label>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-gray-900">Push Notifications</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-text-primary">Push Notifications</h3>
+              <p className="text-sm text-text-secondary">
                 Receive browser notifications
               </p>
             </div>
@@ -254,13 +254,13 @@ export default function SettingsPage() {
                 }
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+              <div className="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-bg-elevated after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
             </label>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-gray-900">Weekly Digest</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-text-primary">Weekly Digest</h3>
+              <p className="text-sm text-text-secondary">
                 Receive a weekly summary of your progress
               </p>
             </div>

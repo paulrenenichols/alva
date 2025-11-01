@@ -7,14 +7,14 @@
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/Button';
 
-const NAV_CONTAINER_CLASSES = 'bg-white shadow-sm border-b';
+const NAV_CONTAINER_CLASSES = 'bg-bg-elevated shadow-sm border-b';
 const NAV_CONTENT_CLASSES = 'px-6 py-4';
 const NAV_HEADER_CLASSES = 'flex items-center justify-between';
 const BRAND_CONTAINER_CLASSES = 'flex items-center space-x-4';
 const BRAND_TITLE_CLASSES = 'text-xl font-bold text-primary-600';
-const BRAND_SUBTITLE_CLASSES = 'text-sm text-gray-500';
+const BRAND_SUBTITLE_CLASSES = 'text-sm text-text-secondary';
 const ACTIONS_CONTAINER_CLASSES = 'flex items-center space-x-4';
-const LOGOUT_BUTTON_CLASSES = 'text-gray-600';
+const LOGOUT_BUTTON_CLASSES = 'text-text-secondary';
 
 /**
  * @description Renders the dashboard navigation bar with brand and logout functionality

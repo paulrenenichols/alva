@@ -68,12 +68,12 @@ export function OnboardingCard({
     }
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
+    <div className="min-h-screen bg-gradient-to-br from-bg-secondary to-bg-tertiary">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* Progress Bar */}
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="flex justify-between text-sm text-text-secondary mb-2">
               <span>
                 Card {currentProgress.current} of {currentProgress.total}
               </span>
@@ -87,14 +87,14 @@ export function OnboardingCard({
             <h2 className="text-sm font-medium text-primary-600 mb-2">
               {sectionTitle}
             </h2>
-            <h1 className="text-3xl font-bold text-secondary-900 mb-4">
+            <h1 className="text-3xl font-bold text-text-primary mb-4">
               {question}
             </h1>
-            {description && <p className="text-secondary-600">{description}</p>}
+            {description && <p className="text-text-secondary">{description}</p>}
           </div>
 
           {/* Card Content */}
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+          <div className="bg-bg-elevated rounded-lg shadow-sm border p-6 mb-8">
             {children}
           </div>
 

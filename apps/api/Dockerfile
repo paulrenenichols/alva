@@ -12,10 +12,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Build shared libraries first, then the API service with all dependencies
-RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api
+RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api --configuration=production
 
-# Verify the build output exists
-RUN ls -la /app/dist/apps/api || echo "API build output not found"
+# Verify the build output exists and show structure
+RUN echo "Checking build output..." && \
+    ls -la /app/dist/ || echo "dist directory not found" && \
+    ls -la /app/dist/apps/ 2>/dev/null || echo "dist/apps not found" && \
+    ls -la /app/dist/apps/api/ 2>/dev/null || echo "dist/apps/api not found" && \
+    find /app/dist -name "main.js" -type f 2>/dev/null | head -5 || echo "No main.js files found"
 
 # Production image
 FROM base AS runner

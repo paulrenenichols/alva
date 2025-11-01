@@ -10,10 +10,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d alva']
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+    networks:
+      - alva-network
+
+  db-init:
+    build:
+      context: .
+      dockerfile: tools/db-init/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/alva
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - alva-network
+    restart: 'no'
 
   redis:
     image: redis:7-alpine
@@ -26,6 +41,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - alva-network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '1025:1025' # SMTP server
+      - '8025:8025' # Web UI
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --quiet --tries=1 --spider http://localhost:8025/api/v1/messages || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - alva-network
 
   web:
     build:
@@ -58,9 +92,10 @@ services:
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - NODE_ENV=development
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3003
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     networks:
@@ -76,11 +111,32 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/alva
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - JWT_SECRET=${JWT_SECRET}
       - COOKIE_SECRET=${COOKIE_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - NODE_ENV=development
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3003
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - alva-network
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - '3003:3003'
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_AUTH_URL=http://localhost:3002
       - NODE_ENV=development
     depends_on:
-      postgres:
-        condition: service_healthy
+      api:
+        condition: service_started
+      auth:
+        condition: service_started
     networks:
       - alva-network
 

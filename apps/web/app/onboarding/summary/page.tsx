@@ -88,14 +88,14 @@ export default function SummaryPreview() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
+    <div className="min-h-screen bg-gradient-to-br from-bg-secondary to-bg-tertiary">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-secondary-900 mb-4">
+            <h1 className="text-3xl font-bold text-text-primary mb-4">
               Your Marketing Plan is Ready!
             </h1>
-            <p className="text-secondary-600">
+            <p className="text-text-secondary">
               Here's a summary of what we learned about your business
             </p>
           </div>
@@ -103,16 +103,16 @@ export default function SummaryPreview() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {summarySections.map((section, index) => (
               <Card key={index} className="p-6">
-                <h3 className="text-lg font-semibold text-secondary-900 mb-4">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">
                   {section.title}
                 </h3>
                 <div className="space-y-2">
                   {Object.entries(section.data).map(([key, value]) => (
                     <div key={key}>
-                      <span className="text-sm font-medium text-secondary-700">
+                      <span className="text-sm font-medium text-text-primary">
                         {key}:
                       </span>
-                      <p className="text-sm text-secondary-600 mt-1">{value}</p>
+                      <p className="text-sm text-text-secondary mt-1">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -122,20 +122,20 @@ export default function SummaryPreview() {
 
           {plan && (
             <Card className="p-6 mb-8">
-              <h3 className="text-lg font-semibold text-secondary-900 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
                 Your Marketing Plan Preview
               </h3>
               <div className="space-y-3">
                 {plan.tasks?.slice(0, 3).map((task: any) => (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-bg-secondary rounded-lg"
                   >
                     <div>
-                      <h4 className="font-medium text-secondary-900">
+                      <h4 className="font-medium text-text-primary">
                         {task.title}
                       </h4>
-                      <p className="text-sm text-secondary-600">
+                      <p className="text-sm text-text-secondary">
                         {task.description}
                       </p>
                     </div>
@@ -151,7 +151,7 @@ export default function SummaryPreview() {
           <div className="text-center space-y-4">
             <Button
               onClick={() => (window.location.href = '/verify')}
-              className="bg-primary-500 text-white px-8 py-3"
+              className="bg-primary-500 text-text-inverse px-8 py-3"
             >
               Verify Email & Access Full Plan
             </Button>
@@ -161,7 +161,7 @@ export default function SummaryPreview() {
                 onClick={() =>
                   (window.location.href = '/onboarding/1')
                 }
-                className="text-secondary-600"
+                className="text-text-secondary"
               >
                 Edit My Answers
               </Button>
