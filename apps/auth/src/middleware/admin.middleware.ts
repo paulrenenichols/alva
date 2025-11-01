@@ -16,6 +16,7 @@ export async function requireAdmin(request: FastifyRequest, reply: FastifyReply)
   const user = request.user;
 
   if (!user || user.userType !== 'admin') {
+    request.server.log.info(`Admin access denied: ${!user ? 'no user' : `wrong userType: ${user.userType}`}`);
     return reply.code(401).send({ error: 'Unauthorized' });
   }
 
@@ -23,8 +24,11 @@ export async function requireAdmin(request: FastifyRequest, reply: FastifyReply)
   const isAdmin = await checkAdminStatus(request, user.id);
 
   if (!isAdmin) {
+    request.server.log.info(`Admin role check failed for user ${user.id} (${user.email})`);
     return reply.code(403).send({ error: 'Admin access required' });
   }
+
+  request.server.log.info(`Admin access granted for user ${user.id} (${user.email})`);
 }
 
 /**
@@ -39,6 +43,7 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
     const [adminRole] = await db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
 
     if (!adminRole) {
+      request.server.log.warn('Admin role not found in database');
       return false;
     }
 
@@ -49,9 +54,13 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
       .where(and(eq(adminUserRoles.adminUserId, userId), eq(adminUserRoles.roleId, adminRole.id)))
       .limit(1);
 
+    if (!userRole) {
+      request.server.log.debug(`No admin role found for user ${userId}`);
+    }
+
     return !!userRole;
   } catch (error) {
-    console.error('Error checking admin status:', error);
+    request.server.log.error('Error checking admin status:', error);
     return false;
   }
 }
