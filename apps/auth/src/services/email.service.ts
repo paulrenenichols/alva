@@ -1,6 +1,6 @@
 /**
  * @fileoverview Email service for sending authentication and verification emails
- * Supports MailHog for local development and Resend for production
+ * Supports Mailpit (compatible with MailHog) for local development and Resend for production
  */
 
 import { Resend } from 'resend';
@@ -15,9 +15,9 @@ export class EmailService {
     const verificationUrl = `${process.env['WEB_URL']}/verify?token=${token}`;
     const html = this.getVerificationEmailTemplate(verificationUrl);
 
-    // Use MailHog in development
+    // Use Mailpit in development (MailHog compatible)
     if (process.env['NODE_ENV'] === 'development') {
-      return this.sendViaMailHog(email, 'Verify your email - Alva', html);
+      return this.sendViaMailpit(email, 'Verify your email - Alva', html);
     }
 
     // Use Resend in production
@@ -31,9 +31,9 @@ export class EmailService {
     const inviteUrl = `${process.env['WEB_URL']}/signup?token=${token}`;
     const html = this.getInviteEmailTemplate(inviteUrl, token);
 
-    // Use MailHog in development
+    // Use Mailpit in development (MailHog compatible)
     if (process.env['NODE_ENV'] === 'development') {
-      return this.sendViaMailHog(email, 'You\'re invited to join Alva', html);
+      return this.sendViaMailpit(email, 'You\'re invited to join Alva', html);
     }
 
     // Use Resend in production
@@ -49,7 +49,7 @@ export class EmailService {
     const html = this.getPasswordResetTemplate(resetUrl);
 
     if (process.env['NODE_ENV'] === 'development') {
-      return this.sendViaMailHog(email, 'Reset your admin password - Alva', html);
+      return this.sendViaMailpit(email, 'Reset your admin password - Alva', html);
     }
 
     return this.sendViaResend(email, 'Reset your admin password - Alva', html);
@@ -80,12 +80,12 @@ export class EmailService {
   }
 
   /**
-   * @description Sends email via SMTP to MailHog (development)
+   * @description Sends email via SMTP to Mailpit (development) - MailHog compatible
    */
-  private async sendViaMailHog(email: string, subject: string, html: string) {
+  private async sendViaMailpit(email: string, subject: string, html: string) {
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      host: 'mailhog',  // Docker service name
+      host: 'mailhog',  // Docker service name (kept as 'mailhog' for backward compatibility)
       port: 1025,
       secure: false,
     });
@@ -98,10 +98,10 @@ export class EmailService {
         html,
       });
 
-      console.log(`Email sent to MailHog (dev): ${email}`);
+      console.log(`Email sent to Mailpit (dev): ${email}`);
       return { success: true, messageId: info.messageId };
     } catch (error) {
-      console.error('MailHog email error:', error);
+      console.error('Mailpit email error:', error);
       return { success: false, error: 'Failed to send email' };
     }
   }

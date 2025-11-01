@@ -45,13 +45,12 @@ services:
       - alva-network
 
   mailhog:
-    image: mailhog/mailhog:latest
-    platform: linux/amd64 # Explicitly specify platform for Apple Silicon compatibility
+    image: axllent/mailpit:latest
     ports:
       - '1025:1025' # SMTP server
       - '8025:8025' # Web UI
     healthcheck:
-      test: ['CMD', 'nc', '-z', 'localhost', '1025']
+      test: ['CMD-SHELL', 'wget --quiet --tries=1 --spider http://localhost:8025/api/v1/messages || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
