@@ -103,7 +103,7 @@ export default function InvitesPage() {
           <h1 className="text-3xl font-bold text-text-primary">Invite Management</h1>
           <Link
             href="/invites/new"
-            className="bg-primary-500 text-text-inverse px-6 py-2 rounded hover:bg-primary-600"
+            className="bg-primary text-text-inverse px-6 py-2 rounded hover:bg-primary-hover"
           >
             Send New Invite
           </Link>
@@ -141,7 +141,7 @@ export default function InvitesPage() {
                       {status !== 'Used' && (
                         <button
                           onClick={() => handleResend(invite.id)}
-                          className="text-primary-600 hover:text-primary-800"
+                          className="text-primary hover:text-primary-hover"
                         >
                           Resend
                         </button>

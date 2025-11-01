@@ -69,7 +69,7 @@ export default function NewInvitePage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-text-tertiary"
+                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-tertiary"
               required
               disabled={loading}
             />
@@ -79,7 +79,7 @@ export default function NewInvitePage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary-500 text-text-inverse px-6 py-3 rounded hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="bg-primary text-text-inverse px-6 py-3 rounded hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {loading ? 'Sending...' : 'Send Invite'}
             </button>
