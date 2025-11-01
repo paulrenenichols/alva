@@ -17,10 +17,17 @@ export interface User {
 
 export interface AuthClient {
   register: (email: string) => Promise<void>;
-  registerWithInvite: (email: string, inviteToken: string, password: string) => Promise<void>;
+  registerWithInvite: (
+    email: string,
+    inviteToken: string,
+    password: string
+  ) => Promise<void>;
   sendMagicLink: (email: string) => Promise<void>;
   verifyMagicLink: (token: string) => Promise<User>;
-  loginWithPassword: (email: string, password: string) => Promise<{ accessToken: string; user: User }>;
+  loginWithPassword: (
+    email: string,
+    password: string
+  ) => Promise<{ accessToken: string; user: User }>;
 }
 
 /**
@@ -41,7 +48,10 @@ const validateEmail = (email: string): void => {
  * @param defaultMessage - Default error message if response doesn't contain one
  * @throws Error with appropriate message
  */
-const handleApiError = async (response: Response, defaultMessage: string): Promise<never> => {
+const handleApiError = async (
+  response: Response,
+  defaultMessage: string
+): Promise<never> => {
   try {
     const errorData = await response.json();
     throw new Error(errorData.error || errorData.message || defaultMessage);
@@ -80,7 +90,11 @@ export class AuthClientImpl implements AuthClient {
    * @param password - User password
    * @throws Error if registration fails
    */
-  async registerWithInvite(email: string, inviteToken: string, password: string): Promise<void> {
+  async registerWithInvite(
+    email: string,
+    inviteToken: string,
+    password: string
+  ): Promise<void> {
     validateEmail(email);
 
     if (!password || password.length < 8) {
@@ -105,7 +119,10 @@ export class AuthClientImpl implements AuthClient {
    * @returns Access token and user data
    * @throws Error if login fails
    */
-  async loginWithPassword(email: string, password: string): Promise<{ accessToken: string; user: User }> {
+  async loginWithPassword(
+    email: string,
+    password: string
+  ): Promise<{ accessToken: string; user: User }> {
     validateEmail(email);
 
     if (!password) {
