@@ -809,6 +809,167 @@ async function registerUserRoute(
    - Web user invite test
    - Full integration tests
 
+6. **Web App Authentication Pages**
+   - `/login` page with email/password for web users
+   - `/signup` page for invite-based registration with password setup
+   - Updated auth client with proper invite flow
+   - Password login route for web users
+
+---
+
+## Week 3: Web App Authentication Implementation
+
+### Day 1-2: Create Web Login and Signup Pages
+
+#### Task 3.1: Create /login Page for Web App
+
+**File**: `apps/web/app/login/page.tsx` (NEW)
+
+**Objective**: Create password-based login page for web users
+
+**Key Features**:
+- Email and password input fields
+- Proper dark mode styling
+- Error handling
+- Redirect to dashboard on success
+- Link to signup/recovery if needed
+
+**Tasks**:
+- [ ] Create /login page with password form
+- [ ] Add proper dark mode styling
+- [ ] Handle authentication errors
+- [ ] Test login flow end-to-end
+
+#### Task 3.2: Create /signup Page for Invite-Based Registration
+
+**File**: `apps/web/app/signup/page.tsx` (NEW)
+
+**Objective**: Create invite-based signup page with password setup
+
+**Key Features**:
+- Accepts invite token from query params
+- Email and password setup form
+- Password confirmation
+- Validates invite token
+- Marks invite as used on success
+- Redirects to onboarding/dashboard
+
+**Tasks**:
+- [ ] Create /signup page with token validation
+- [ ] Add password setup form
+- [ ] Connect to backend invite validation
+- [ ] Handle expired/invalid invites
+- [ ] Test signup flow end-to-end
+
+### Day 3: Update Auth Service for Web Password Login
+
+#### Task 3.3: Add Web User Password Login Route
+
+**File**: `apps/auth/src/routes/auth.ts` (UPDATE)
+
+**Objective**: Add password-based login for web users
+
+**Key Features**:
+- Separate route from admin login
+- Validates web user credentials
+- Returns JWT with userType='web'
+- Creates refresh token for web users
+
+**Implementation**:
+```typescript
+async function loginWebPasswordRoute(
+  fastify: FastifyInstance,
+  webUserService: WebUserService,
+  tokenService: TokenService
+): Promise<void> {
+  fastify.post('/login-web-password', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['email', 'password'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+          password: { type: 'string' },
+        },
+      },
+    },
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
+    const { email, password } = request.body as { email: string; password: string };
+    
+    try {
+      const user = await webUserService.findWebUserByEmail(email);
+      if (!user || !user.passwordHash) {
+        return reply.code(401).send({ error: 'Invalid credentials' });
+      }
+      
+      const isValid = await bcrypt.compare(password, user.passwordHash);
+      if (!isValid) {
+        return reply.code(401).send({ error: 'Invalid credentials' });
+      }
+      
+      const accessToken = tokenService.generateAccessToken({
+        userId: user.id,
+        email: user.email,
+        userType: 'web',
+      });
+      const refreshToken = tokenService.generateRefreshToken();
+      await webUserService.createWebRefreshToken(user.id, refreshToken);
+      
+      setRefreshTokenCookie(reply, refreshToken);
+      
+      return {
+        accessToken,
+        user: { id: user.id, email: user.email },
+      };
+    } catch (error) {
+      fastify.log.error(error);
+      return reply.code(500).send({ error: 'Internal server error' });
+    }
+  });
+}
+```
+
+**Tasks**:
+- [ ] Add web password login route
+- [ ] Test with web user credentials
+- [ ] Verify JWT includes userType='web'
+- [ ] Test refresh token creation
+
+### Day 4: Update Auth Client and Registration Flow
+
+#### Task 3.4: Update Auth Client for Invite-Based Registration
+
+**File**: `libs/auth-client/src/lib/auth-client.ts` (UPDATE)
+
+**Objective**: Update auth client to support invite-based registration
+
+**Key Changes**:
+- Add `registerWithInvite(email, inviteToken, password)` method
+- Add `loginWithPassword(email, password)` method
+- Update error handling
+
+**Tasks**:
+- [ ] Add invite-based registration method
+- [ ] Add password login method
+- [ ] Update error handling
+- [ ] Test all auth flows
+
+#### Task 3.5: Update Web User Service for Password Management
+
+**File**: `apps/auth/src/services/web-user.service.ts` (UPDATE)
+
+**Objective**: Add password hashing and verification methods
+
+**Key Features**:
+- Hash password on user creation
+- Update password method
+- Verify password on login
+
+**Tasks**:
+- [ ] Add password hashing to user creation
+- [ ] Add password update method
+- [ ] Test password operations
+
 ---
 
 ## Next Steps

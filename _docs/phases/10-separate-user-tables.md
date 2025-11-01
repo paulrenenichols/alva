@@ -189,6 +189,22 @@ if (decoded.userType === 'admin') {
 - Admin can invite themselves (different table)
 - Separate invite tables per user type
 
+### Web App Authentication
+
+**Current Issues**:
+- Magic link auth only - no password-based login
+- Registration doesn't require invite token despite backend expecting it
+- Missing `/signup` page for invite-based registration
+- Missing `/login` page at root for web app
+- No password setup flow from invite links
+
+**Needed Fixes**:
+1. Create `/login` page with email/password login for web users
+2. Create `/signup` page that accepts invite token and allows password setup
+3. Update auth client to support invite-based registration
+4. Add password-based login route for web users in auth service
+5. Update frontend auth flow to use proper invite + password setup
+
 ---
 
 ## Testing Strategy
@@ -205,8 +221,10 @@ if (decoded.userType === 'admin') {
 
 ### End-to-End Tests
 1. Admin invites themselves to web app
-2. New user invited and registers
-3. Both apps function independently
+2. New user invited and registers with password
+3. Web users can login with email/password
+4. Admin users can login with email/password
+5. Both apps function independently
 
 ---
 
@@ -240,6 +258,9 @@ if (decoded.userType === 'admin') {
 - ✅ Separate authentication works for both apps
 - ✅ All existing features preserved
 - ✅ Zero data loss during migration
+- ⏳ Web app password-based login implemented
+- ⏳ Invite-based signup flow with password setup
+- ⏳ Proper login/signup pages at /login and /signup
 
 ### Technical
 - ✅ Clean schema separation
