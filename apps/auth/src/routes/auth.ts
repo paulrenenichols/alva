@@ -45,6 +45,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   await registerUserRoute(fastify, webUserService, emailService, webInviteService);
   await verifyEmailRoute(fastify, webUserService, tokenService);
   await loginPasswordRoute(fastify, adminUserService, tokenService);
+  await loginWebPasswordRoute(fastify, webUserService, tokenService);
   await resetPasswordRoute(fastify, adminUserService);
   await recoveryRequestRoute(fastify, emailService, adminUserService);
   await getCurrentUserRoute(fastify);
@@ -68,16 +69,17 @@ async function registerUserRoute(
       schema: {
         body: {
           type: 'object',
-          required: ['email', 'inviteToken'],
+          required: ['email', 'inviteToken', 'password'],
           properties: {
             email: { type: 'string', format: 'email' },
             inviteToken: { type: 'string' },
+            password: { type: 'string', minLength: 8 },
           },
         },
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, inviteToken } = request.body as { email: string; inviteToken: string };
+      const { email, inviteToken, password } = request.body as { email: string; inviteToken: string; password: string };
 
       try {
         // Validate invite token
@@ -97,16 +99,13 @@ async function registerUserRoute(
           });
         }
 
-        const user = await webUserService.createWebUser(email);
+        const user = await webUserService.createWebUser(email, password);
         
         // Mark invite as used
         await webInviteService.markInviteAsUsed(inviteToken, user.id);
 
-        const token = await webUserService.createWebVerificationToken(user.id);
-        await emailService.sendVerificationEmail(email, token);
-
         return {
-          message: 'User registered successfully. Check your email for verification link.',
+          message: 'User registered successfully.',
           userId: user.id,
         };
       } catch (error) {
@@ -237,6 +236,67 @@ async function loginPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
         });
         const refreshToken = tokenService.generateRefreshToken();
         await adminUserService.createAdminRefreshToken(user.id, refreshToken);
+
+        setRefreshTokenCookie(reply, refreshToken);
+
+        return {
+          accessToken,
+          user: { id: user.id, email: user.email },
+        };
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.code(500).send({ error: 'Internal server error' });
+      }
+    }
+  );
+}
+
+/**
+ * @description Registers the web user password login route
+ * @param fastify - Fastify instance
+ * @param webUserService - Web user service instance
+ * @param tokenService - Token service instance
+ */
+async function loginWebPasswordRoute(
+  fastify: FastifyInstance,
+  webUserService: WebUserService,
+  tokenService: TokenService
+): Promise<void> {
+  fastify.post(
+    '/login-web-password',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email' },
+            password: { type: 'string' },
+          },
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { email, password } = request.body as { email: string; password: string };
+
+      try {
+        const user = await webUserService.findWebUserByEmail(email);
+        if (!user || !user.passwordHash) {
+          return reply.code(401).send({ error: 'Invalid credentials' });
+        }
+
+        const isValid = await bcrypt.compare(password, user.passwordHash);
+        if (!isValid) {
+          return reply.code(401).send({ error: 'Invalid credentials' });
+        }
+
+        const accessToken = tokenService.generateAccessToken({
+          userId: user.id,
+          email: user.email,
+          userType: 'web',
+        });
+        const refreshToken = tokenService.generateRefreshToken();
+        await webUserService.createWebRefreshToken(user.id, refreshToken);
 
         setRefreshTokenCookie(reply, refreshToken);
 

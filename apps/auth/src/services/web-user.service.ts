@@ -7,6 +7,7 @@ import { webUsers, webRefreshTokens, webVerificationTokens } from '@alva/databas
 import { Database } from '@alva/database';
 import { randomBytes } from 'crypto';
 import { createHash } from 'crypto';
+import bcrypt from 'bcrypt';
 
 export class WebUserService {
   constructor(private db: Database) {}
@@ -38,13 +39,19 @@ export class WebUserService {
   /**
    * @description Creates a new web user
    */
-  async createWebUser(email: string) {
+  async createWebUser(email: string, password?: string) {
+    const values: any = {
+      email,
+      emailVerified: false,
+    };
+
+    if (password) {
+      values.passwordHash = await bcrypt.hash(password, 10);
+    }
+
     const [user] = await this.db
       .insert(webUsers)
-      .values({
-        email,
-        emailVerified: false,
-      })
+      .values(values)
       .returning();
     return user;
   }
