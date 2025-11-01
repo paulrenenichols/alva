@@ -158,7 +158,7 @@ export default function InvitesPage() {
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border rounded bg-bg-elevated text-text-primary border-border-default disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
@@ -168,7 +168,7 @@ export default function InvitesPage() {
           <button
             disabled={page >= totalPages}
             onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border rounded bg-bg-elevated text-text-primary border-border-default disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>

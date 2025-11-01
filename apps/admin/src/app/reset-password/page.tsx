@@ -85,7 +85,7 @@ function ResetPasswordForm() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 pr-10 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 pr-10 border rounded bg-bg-elevated text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-text-tertiary"
                 required
                 minLength={8}
               />
@@ -110,7 +110,7 @@ function ResetPasswordForm() {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 pr-10 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 pr-10 border rounded bg-bg-elevated text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-text-tertiary"
                 required
                 minLength={8}
               />
