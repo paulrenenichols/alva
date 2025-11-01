@@ -24,10 +24,12 @@ export async function authenticateToken(
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
+      request.server.log.debug('No token provided in authorization header');
       return reply.code(401).send({ error: 'Access token required' });
     }
 
     const decoded = jwt.verify(token, process.env['JWT_SECRET']!) as any;
+    request.server.log.debug(`Token verified, userType: ${decoded.userType}, userId: ${decoded.userId}`);
     
     // Validate user in appropriate table based on userType
     if (decoded.userType === 'admin') {
@@ -35,21 +37,27 @@ export async function authenticateToken(
         where: eq(adminUsers.id, decoded.userId),
       });
       if (!user) {
+        request.server.log.warn(`Admin user not found for userId: ${decoded.userId}`);
         return reply.code(401).send({ error: 'Invalid token' });
       }
       request.user = { ...user, userType: 'admin' };
+      request.server.log.debug(`Admin user authenticated: ${user.email}`);
     } else if (decoded.userType === 'web') {
       const user = await request.db.query.webUsers.findFirst({
         where: eq(webUsers.id, decoded.userId),
       });
       if (!user) {
+        request.server.log.warn(`Web user not found for userId: ${decoded.userId}`);
         return reply.code(401).send({ error: 'Invalid token' });
       }
       request.user = { ...user, userType: 'web' };
+      request.server.log.debug(`Web user authenticated: ${user.email}`);
     } else {
+      request.server.log.warn(`Invalid userType in token: ${decoded.userType}`);
       return reply.code(401).send({ error: 'Invalid token' });
     }
   } catch (error) {
+    request.server.log.error(error, 'Token verification failed');
     return reply.code(403).send({ error: 'Invalid token' });
   }
 }
