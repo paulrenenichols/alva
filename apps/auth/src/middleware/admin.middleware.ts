@@ -60,7 +60,7 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
 
     return !!userRole;
   } catch (error) {
-    request.server.log.error('Error checking admin status:', error);
+    request.server.log.error(error, 'Error checking admin status');
     return false;
   }
 }
