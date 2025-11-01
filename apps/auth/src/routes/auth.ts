@@ -5,11 +5,12 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
-import { users, verificationTokens, passwordResetTokens, refreshTokens, roles, userRoles } from '@alva/database';
-import { UserService } from '../services/user.service';
+import { adminUsers, adminPasswordResetTokens, adminRoles, adminUserRoles, webUsers } from '@alva/database';
+import { WebUserService } from '../services/web-user.service';
+import { AdminUserService } from '../services/admin-user.service';
 import { EmailService } from '../services/email.service';
 import { TokenService } from '../services/token.service';
-import { InviteService } from '../services/invite.service';
+import { WebInviteService } from '../services/web-invite.service';
 import { authenticateToken } from '../middleware/auth.middleware';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
@@ -35,16 +36,17 @@ const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
  * @param fastify - Fastify instance to register routes with
  */
 export async function authRoutes(fastify: FastifyInstance) {
-  const userService = new UserService(fastify.db);
+  const webUserService = new WebUserService(fastify.db);
+  const adminUserService = new AdminUserService(fastify.db);
   const emailService = new EmailService();
   const tokenService = new TokenService();
-  const inviteService = new InviteService(fastify.db);
+  const webInviteService = new WebInviteService(fastify.db);
 
-  await registerUserRoute(fastify, userService, emailService, inviteService);
-  await verifyEmailRoute(fastify, userService, tokenService);
-  await loginPasswordRoute(fastify, userService, tokenService);
-  await resetPasswordRoute(fastify);
-  await recoveryRequestRoute(fastify, emailService);
+  await registerUserRoute(fastify, webUserService, emailService, webInviteService);
+  await verifyEmailRoute(fastify, webUserService, tokenService);
+  await loginPasswordRoute(fastify, adminUserService, tokenService);
+  await resetPasswordRoute(fastify, adminUserService);
+  await recoveryRequestRoute(fastify, emailService, adminUserService);
   await getCurrentUserRoute(fastify);
 }
 
@@ -56,9 +58,9 @@ export async function authRoutes(fastify: FastifyInstance) {
  */
 async function registerUserRoute(
   fastify: FastifyInstance,
-  userService: UserService,
+  webUserService: WebUserService,
   emailService: EmailService,
-  inviteService: InviteService
+  webInviteService: WebInviteService
 ): Promise<void> {
   fastify.post(
     '/register',
@@ -79,7 +81,7 @@ async function registerUserRoute(
 
       try {
         // Validate invite token
-        const validation = await inviteService.validateInvite(inviteToken);
+        const validation = await webInviteService.validateInvite(inviteToken);
         if (!validation.valid) {
           return reply.code(400).send({
             error: validation.error,
@@ -87,7 +89,7 @@ async function registerUserRoute(
           });
         }
 
-        const existingUser = await checkExistingUser(fastify, email);
+        const existingUser = await webUserService.findWebUserByEmail(email);
         if (existingUser) {
           return reply.code(400).send({
             error: 'User already exists',
@@ -95,12 +97,12 @@ async function registerUserRoute(
           });
         }
 
-        const user = await userService.createUser(email);
+        const user = await webUserService.createWebUser(email);
         
         // Mark invite as used
-        await inviteService.markInviteAsUsed(inviteToken, user.id);
+        await webInviteService.markInviteAsUsed(inviteToken, user.id);
 
-        const token = await userService.createVerificationToken(user.id);
+        const token = await webUserService.createWebVerificationToken(user.id);
         await emailService.sendVerificationEmail(email, token);
 
         return {
@@ -123,7 +125,7 @@ async function registerUserRoute(
  */
 async function verifyEmailRoute(
   fastify: FastifyInstance,
-  userService: UserService,
+  webUserService: WebUserService,
   tokenService: TokenService
 ): Promise<void> {
   fastify.post(
@@ -146,23 +148,29 @@ async function verifyEmailRoute(
       const { token } = request.body;
 
       try {
-        const userId = await userService.verifyToken(token);
+        const userId = await webUserService.verifyWebToken(token);
         if (!userId) {
           return reply.code(400).send({ error: 'Invalid or expired token' });
         }
 
+        const webUser = await webUserService.findWebUserById(userId);
+        if (!webUser) {
+          return reply.code(400).send({ error: 'User not found' });
+        }
+
         const accessToken = tokenService.generateAccessToken({
           userId,
-          email: '',
+          email: webUser.email,
+          userType: 'web',
         });
         const refreshToken = tokenService.generateRefreshToken();
 
-        await userService.createRefreshToken(userId, refreshToken);
+        await webUserService.createWebRefreshToken(userId, refreshToken);
         setRefreshTokenCookie(reply, refreshToken);
 
         return {
           accessToken,
-          user: { id: userId },
+          user: { id: userId, email: webUser.email },
         };
       } catch (error) {
         fastify.log.error(error);
@@ -178,7 +186,7 @@ async function verifyEmailRoute(
  * @param userService - User service instance
  * @param tokenService - Token service instance
  */
-async function loginPasswordRoute(fastify: FastifyInstance, userService: UserService, tokenService: TokenService): Promise<void> {
+async function loginPasswordRoute(fastify: FastifyInstance, adminUserService: AdminUserService, tokenService: TokenService): Promise<void> {
   fastify.post(
     '/login-password',
     {
@@ -197,8 +205,8 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
       const { email, password } = request.body as { email: string; password: string };
 
       try {
-        // Find user
-        const [user] = await fastify.db.select().from(users).where(eq(users.email, email)).limit(1);
+        // Find admin user
+        const [user] = await fastify.db.select().from(adminUsers).where(eq(adminUsers.email, email)).limit(1);
 
         if (!user || !user.passwordHash) {
           return reply.code(401).send({ error: 'Invalid credentials' });
@@ -212,13 +220,7 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
 
         // Check if password reset required
         if (user.mustResetPassword) {
-          const resetToken = crypto.randomBytes(32).toString('hex');
-
-          await fastify.db.insert(passwordResetTokens).values({
-            userId: user.id,
-            token: resetToken,
-            expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
-          });
+          const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
 
           return reply.code(403).send({
             error: 'Password reset required',
@@ -231,9 +233,10 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
         const accessToken = tokenService.generateAccessToken({
           userId: user.id,
           email: user.email,
+          userType: 'admin',
         });
         const refreshToken = tokenService.generateRefreshToken();
-        await userService.createRefreshToken(user.id, refreshToken);
+        await adminUserService.createAdminRefreshToken(user.id, refreshToken);
 
         setRefreshTokenCookie(reply, refreshToken);
 
@@ -253,7 +256,7 @@ async function loginPasswordRoute(fastify: FastifyInstance, userService: UserSer
  * @description Registers the password reset route
  * @param fastify - Fastify instance
  */
-async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
+async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: AdminUserService): Promise<void> {
   fastify.post(
     '/reset-password',
     {
@@ -275,8 +278,8 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
         // Validate token
         const [resetToken] = await fastify.db
           .select()
-          .from(passwordResetTokens)
-          .where(eq(passwordResetTokens.token, token))
+          .from(adminPasswordResetTokens)
+          .where(eq(adminPasswordResetTokens.token, token))
           .limit(1);
 
         if (!resetToken) {
@@ -294,27 +297,26 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
         // Hash new password
         const passwordHash = await bcrypt.hash(newPassword, 10);
 
-        // Update user
-        await fastify.db.update(users)
-          .set({
-            passwordHash,
-            mustResetPassword: false,
-          })
-          .where(eq(users.id, resetToken.userId));
+        // Update admin user
+        await adminUserService.updateAdminUserPassword(resetToken.adminUserId, passwordHash);
 
         // Mark token as used
-        await fastify.db.update(passwordResetTokens)
+        await fastify.db.update(adminPasswordResetTokens)
           .set({ usedAt: new Date() })
-          .where(eq(passwordResetTokens.token, token));
+          .where(eq(adminPasswordResetTokens.token, token));
 
         // Generate tokens and set refresh cookie
         const tokenService = new TokenService();
-        const accessToken = tokenService.generateAccessToken({ userId: resetToken.userId, email: '' });
+        const adminUser = await adminUserService.findAdminUserById(resetToken.adminUserId);
+        const accessToken = tokenService.generateAccessToken({ 
+          userId: resetToken.adminUserId, 
+          email: adminUser?.email || '',
+          userType: 'admin',
+        });
         const refreshToken = tokenService.generateRefreshToken();
 
         // Store hashed refresh token via service helper (handles hashing/tokenHash column)
-        const userService = new UserService(fastify.db);
-        await userService.createRefreshToken(resetToken.userId, refreshToken);
+        await adminUserService.createAdminRefreshToken(resetToken.adminUserId, refreshToken);
         setRefreshTokenCookie(reply, refreshToken);
 
         return { message: 'Password reset successful', accessToken };
@@ -329,7 +331,7 @@ async function resetPasswordRoute(fastify: FastifyInstance): Promise<void> {
 /**
  * @description Admin recovery request route (no auth). Sends password reset email if admin user exists.
  */
-async function recoveryRequestRoute(fastify: FastifyInstance, emailService: EmailService): Promise<void> {
+async function recoveryRequestRoute(fastify: FastifyInstance, emailService: EmailService, adminUserService: AdminUserService): Promise<void> {
   fastify.post(
     '/recovery-request',
     {
@@ -344,23 +346,22 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { email } = request.body as { email: string };
       try {
-        // Lookup user
-        const [user] = await fastify.db.select().from(users).where(eq(users.email, email)).limit(1);
+        // Lookup admin user
+        const user = await adminUserService.findAdminUserByEmail(email);
 
         if (user) {
           // Check admin role
-          const [adminRole] = await fastify.db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
+          const [adminRole] = await fastify.db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
           if (adminRole) {
             const [userRole] = await fastify.db
               .select()
-              .from(userRoles)
-              .where(and(eq(userRoles.userId, user.id), eq(userRoles.roleId, adminRole.id)))
+              .from(adminUserRoles)
+              .where(and(eq(adminUserRoles.adminUserId, user.id), eq(adminUserRoles.roleId, adminRole.id)))
               .limit(1);
 
             if (userRole) {
               // Create reset token (1 hour expiry)
-              const resetToken = crypto.randomBytes(32).toString('hex');
-              await fastify.db.insert(passwordResetTokens).values({ userId: user.id, token: resetToken, expiresAt: new Date(Date.now() + 60 * 60 * 1000) });
+              const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
               // Send recovery email
               await emailService.sendPasswordResetEmail(email, resetToken);
             }
@@ -394,18 +395,6 @@ async function getCurrentUserRoute(fastify: FastifyInstance): Promise<void> {
       };
     }
   );
-}
-
-/**
- * @description Checks if a user with the given email already exists
- * @param fastify - Fastify instance
- * @param email - Email address to check
- * @returns User object if exists, null otherwise
- */
-async function checkExistingUser(fastify: FastifyInstance, email: string) {
-  return await fastify.db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
 }
 
 /**

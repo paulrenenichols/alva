@@ -4,17 +4,20 @@
 
 import { eq } from 'drizzle-orm';
 import { createDbPool } from '../../libs/database/src/lib/database';
-import { roles } from '../../libs/database/src/schemas';
+import { adminRoles, webRoles } from '../../libs/database/src/schemas';
 
 const db = createDbPool(process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/alva');
 
-export const INITIAL_ROLES = [
+export const INITIAL_ADMIN_ROLES = [
   {
     name: 'admin',
     description: 'Administrator with full system access',
   },
+];
+
+export const INITIAL_WEB_ROLES = [
   {
-    name: 'app_user',
+    name: 'user',
     description: 'Regular application user',
   },
 ];
@@ -25,22 +28,42 @@ export const INITIAL_ROLES = [
 export async function seedRoles() {
   console.log('🌱 Seeding user roles...');
 
-  for (const roleData of INITIAL_ROLES) {
+  // Seed admin roles
+  for (const roleData of INITIAL_ADMIN_ROLES) {
     // Check if role exists
     const [existing] = await db
       .select()
-      .from(roles)
-      .where(eq(roles.name, roleData.name))
+      .from(adminRoles)
+      .where(eq(adminRoles.name, roleData.name))
       .limit(1);
 
     if (existing) {
-      console.log(`Role "${roleData.name}" already exists, skipping...`);
+      console.log(`Admin role "${roleData.name}" already exists, skipping...`);
       continue;
     }
 
     // Create role
-    await db.insert(roles).values(roleData);
-    console.log(`✅ Created role: ${roleData.name}`);
+    await db.insert(adminRoles).values(roleData);
+    console.log(`✅ Created admin role: ${roleData.name}`);
+  }
+
+  // Seed web roles
+  for (const roleData of INITIAL_WEB_ROLES) {
+    // Check if role exists
+    const [existing] = await db
+      .select()
+      .from(webRoles)
+      .where(eq(webRoles.name, roleData.name))
+      .limit(1);
+
+    if (existing) {
+      console.log(`Web role "${roleData.name}" already exists, skipping...`);
+      continue;
+    }
+
+    // Create role
+    await db.insert(webRoles).values(roleData);
+    console.log(`✅ Created web role: ${roleData.name}`);
   }
 
   console.log('🎉 Role seeding complete!');

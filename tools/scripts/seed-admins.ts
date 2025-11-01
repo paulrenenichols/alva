@@ -5,7 +5,7 @@
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { createDbPool } from '../../libs/database/src/lib/database';
-import { users, roles, userRoles } from '../../libs/database/src/schemas';
+import { adminUsers, adminRoles, adminUserRoles } from '../../libs/database/src/schemas';
 
 const db = createDbPool(process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/alva');
 
@@ -25,8 +25,8 @@ export async function seedAdmins() {
   // Get admin role
   const [adminRole] = await db
     .select()
-    .from(roles)
-    .where(eq(roles.name, 'admin'))
+    .from(adminRoles)
+    .where(eq(adminRoles.name, 'admin'))
     .limit(1);
 
   if (!adminRole) {
@@ -37,31 +37,31 @@ export async function seedAdmins() {
 
   // Create each admin
   for (const email of ADMIN_EMAILS) {
-    // Check if user exists
+    // Check if admin user exists
     const [existing] = await db
       .select()
-      .from(users)
-      .where(eq(users.email, email))
+      .from(adminUsers)
+      .where(eq(adminUsers.email, email))
       .limit(1);
 
     if (existing) {
-      console.log(`User "${email}" already exists, checking admin role...`);
+      console.log(`Admin user "${email}" already exists, checking admin role...`);
 
       // Ensure user has admin role
       const [userRole] = await db
         .select()
-        .from(userRoles)
-        .where(and(eq(userRoles.userId, existing.id), eq(userRoles.roleId, adminRole.id)))
+        .from(adminUserRoles)
+        .where(and(eq(adminUserRoles.adminUserId, existing.id), eq(adminUserRoles.roleId, adminRole.id)))
         .limit(1);
 
       if (!userRole) {
-        await db.insert(userRoles).values({
-          userId: existing.id,
+        await db.insert(adminUserRoles).values({
+          adminUserId: existing.id,
           roleId: adminRole.id,
         });
-        console.log(`✅ Added admin role to existing user: ${email}`);
+        console.log(`✅ Added admin role to existing admin user: ${email}`);
       } else {
-        console.log(`User "${email}" already has admin role`);
+        console.log(`Admin user "${email}" already has admin role`);
       }
       continue;
     }
@@ -69,9 +69,9 @@ export async function seedAdmins() {
     // Hash password
     const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
-    // Create user
+    // Create admin user
     const [user] = await db
-      .insert(users)
+      .insert(adminUsers)
       .values({
         email,
         passwordHash,
@@ -81,8 +81,8 @@ export async function seedAdmins() {
       .returning();
 
     // Assign admin role
-    await db.insert(userRoles).values({
-      userId: user.id,
+    await db.insert(adminUserRoles).values({
+      adminUserId: user.id,
       roleId: adminRole.id,
     });
 

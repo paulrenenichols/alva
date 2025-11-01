@@ -3,7 +3,7 @@
  */
 
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { userRoles, roles } from '@alva/database';
+import { adminUserRoles, adminRoles } from '@alva/database';
 import { eq, and } from 'drizzle-orm';
 
 // Uses the user property declared in auth.middleware
@@ -15,7 +15,7 @@ import { eq, and } from 'drizzle-orm';
 export async function requireAdmin(request: FastifyRequest, reply: FastifyReply) {
   const user = request.user;
 
-  if (!user) {
+  if (!user || user.userType !== 'admin') {
     return reply.code(401).send({ error: 'Unauthorized' });
   }
 
@@ -36,7 +36,7 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
   try {
     const db = request.server.db;
     // Get admin role
-    const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
+    const [adminRole] = await db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
 
     if (!adminRole) {
       return false;
@@ -45,8 +45,8 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
     // Check if user has admin role
     const [userRole] = await db
       .select()
-      .from(userRoles)
-      .where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, adminRole.id)))
+      .from(adminUserRoles)
+      .where(and(eq(adminUserRoles.adminUserId, userId), eq(adminUserRoles.roleId, adminRole.id)))
       .limit(1);
 
     return !!userRole;

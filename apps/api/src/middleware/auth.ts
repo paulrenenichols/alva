@@ -9,6 +9,7 @@ export interface AuthenticatedRequest extends FastifyRequest {
   user?: {
     userId: string;
     email: string;
+    userType: 'admin' | 'web';
   };
 }
 
@@ -26,7 +27,13 @@ export async function authMiddleware(fastify: FastifyInstance) {
       const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as {
         userId: string;
         email: string;
+        userType: 'admin' | 'web';
       };
+
+      // For API routes, only web users should have access
+      if (decoded.userType !== 'web') {
+        return reply.code(403).send({ error: 'Web app access only' });
+      }
 
       request.user = decoded;
     } catch (error) {
