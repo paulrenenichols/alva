@@ -85,7 +85,7 @@ export class EmailService {
   private async sendViaMailpit(email: string, subject: string, html: string) {
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      host: 'mailhog',  // Docker service name (kept as 'mailhog' for backward compatibility)
+      host: 'mailpit',  // Docker service name
       port: 1025,
       secure: false,
     });

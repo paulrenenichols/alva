@@ -44,7 +44,7 @@ services:
     networks:
       - alva-network
 
-  mailhog:
+  mailpit:
     image: axllent/mailpit:latest
     ports:
       - '1025:1025' # SMTP server
