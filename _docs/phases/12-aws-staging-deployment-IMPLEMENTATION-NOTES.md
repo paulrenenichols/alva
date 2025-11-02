@@ -19,8 +19,8 @@
 
 2. **Resend API Key Configured**: 
    - API key stored in AWS Secrets Manager: `alva-staging-resend-api-key`
-   - Script: `scripts/setup-aws-secrets.sh` handles setting up the key
-   - Key: `re_3figf35c_C6FcBzwbpiiRxHXN1hhALavx`
+   - Script: `scripts/setup-aws-secrets.sh` prompts for the API key
+   - ⚠️ **SECURITY**: Never commit API keys to git - always use Secrets Manager or environment variables
 
 3. **Automatic Selection**: No code changes needed in services - EmailClient automatically chooses the right provider based on environment
 
