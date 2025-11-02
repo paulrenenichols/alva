@@ -4,7 +4,7 @@
 
 import { EmailProvider, SendEmailOptions, SendEmailResult } from './providers/types';
 import { MailpitProvider } from './providers/mailpit.provider';
-import { ResendProvider } from './providers/resend.provider';
+// ResendProvider is kept for future production email implementation
 import {
   getVerificationEmailTemplate,
   getInviteEmailTemplate,
@@ -19,12 +19,9 @@ export class EmailClient {
     if (provider) {
       this.provider = provider;
     } else {
-      // Select provider based on environment
-      if (process.env['NODE_ENV'] === 'development') {
-        this.provider = new MailpitProvider();
-      } else {
-        this.provider = new ResendProvider();
-      }
+      // Use MailpitProvider for all environments until production email is implemented
+      // TODO: Switch to ResendProvider in production once production email is set up
+      this.provider = new MailpitProvider();
     }
   }
 

@@ -5,7 +5,6 @@
 import { EmailClient } from './email-client';
 import { EmailProvider, SendEmailOptions, SendEmailResult } from './providers/types';
 import { MailpitProvider } from './providers/mailpit.provider';
-import { ResendProvider } from './providers/resend.provider';
 
 describe('EmailClient', () => {
   let mockProvider: jest.Mocked<EmailProvider>;
@@ -27,16 +26,6 @@ describe('EmailClient', () => {
     it('should use MailpitProvider in development', () => {
       const originalEnv = process.env['NODE_ENV'];
       process.env['NODE_ENV'] = 'development';
-
-      const client = new EmailClient();
-      expect(client).toBeInstanceOf(EmailClient);
-
-      process.env['NODE_ENV'] = originalEnv;
-    });
-
-    it('should use ResendProvider in production', () => {
-      const originalEnv = process.env['NODE_ENV'];
-      process.env['NODE_ENV'] = 'production';
 
       const client = new EmailClient();
       expect(client).toBeInstanceOf(EmailClient);

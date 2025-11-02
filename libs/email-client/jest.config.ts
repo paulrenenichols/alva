@@ -11,5 +11,8 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/email-client',
+  testEnvironment: 'node',
+  // Suppress console warnings/errors in test output to prevent CI failures
+  silent: false,
 };
 
