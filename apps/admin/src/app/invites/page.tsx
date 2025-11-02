@@ -78,11 +78,11 @@ export default function InvitesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Used':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-muted text-success';
       case 'Expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-danger-muted text-danger';
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-muted text-warning';
       default:
         return 'bg-bg-secondary text-text-primary';
     }

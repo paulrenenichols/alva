@@ -52,12 +52,12 @@ export default function NewInvitePage() {
         <h1 className="text-3xl font-bold mb-6 text-text-primary">Send New Invite</h1>
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded p-4 mb-4">
+          <div className="bg-success-muted border border-success rounded p-4 mb-4 text-success">
             Invite sent successfully! Redirecting...
           </div>
         )}
 
-        {error && <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>}
+        {error && <div className="bg-danger-muted border border-danger rounded p-4 mb-4 text-danger">{error}</div>}
 
         <form onSubmit={handleSubmit} className="bg-bg-elevated rounded-lg shadow-lg p-6">
           <div className="mb-4">

@@ -91,13 +91,13 @@ export default function QuickWinsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Daily Quick Wins</h1>
-          <p className="text-gray-600">Loading your quick wins...</p>
+          <h1 className="text-2xl font-bold text-text-primary">Daily Quick Wins</h1>
+          <p className="text-text-secondary">Loading your quick wins...</p>
         </div>
         <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
-          <div className="h-24 bg-gray-200 rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
+          <div className="h-24 bg-bg-tertiary rounded-lg"></div>
         </div>
       </div>
     );
@@ -106,8 +106,8 @@ export default function QuickWinsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Daily Quick Wins</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold text-text-primary">Daily Quick Wins</h1>
+        <p className="text-text-secondary">
           High-impact tasks you can complete in 30 minutes or less
         </p>
       </div>
@@ -132,7 +132,7 @@ export default function QuickWinsPage() {
       <div className="grid gap-4">
         {filteredWins.length === 0 ? (
           <Card className="p-8 text-center">
-            <div className="text-gray-500">
+            <div className="text-text-tertiary">
               <p className="text-lg mb-2">No quick wins found</p>
               <p className="text-sm">
                 Complete your onboarding to generate personalized quick wins!
@@ -145,7 +145,7 @@ export default function QuickWinsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-text-primary">
                       {win.title}
                     </h3>
                     <span
@@ -163,8 +163,8 @@ export default function QuickWinsPage() {
                       {win.status.replace('-', ' ')}
                     </span>
                   </div>
-                  <p className="text-gray-600 mb-3">{win.description}</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <p className="text-text-secondary mb-3">{win.description}</p>
+                  <div className="flex items-center gap-4 text-sm text-text-tertiary">
                     <span>⏱️ {win.estimatedTime} minutes</span>
                     {win.category && <span>📂 {win.category}</span>}
                   </div>

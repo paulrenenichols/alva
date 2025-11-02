@@ -345,6 +345,91 @@ if (decoded.userType === 'admin') {
 
 ---
 
+## Additional Work Completed
+
+During implementation of Phase 10, additional work was completed to ensure proper functionality and user experience:
+
+### Authentication Fixes
+
+**JWT_SECRET Configuration**:
+- Added `JWT_SECRET` generation to `.env` for development
+- Auth service was failing due to missing JWT secret
+- Token validation now works correctly in all environments
+
+**TokenService Integration**:
+- Updated auth middleware to use `TokenService` instead of direct `jsonwebtoken` calls
+- Ensures consistent token generation and validation across the application
+- Proper support for both RS256 and HS256 algorithms
+
+**Database Access in Middleware**:
+- Fixed incorrect `request.db` usage in auth middleware (should be `request.server.db`)
+- Middleware now properly accesses database for user validation
+- Admin authentication working correctly
+
+**WEB_URL Configuration**:
+- Added `WEB_URL` environment variable to auth service in `docker-compose.dev.yml`
+- Invite emails now contain proper signup links (`http://localhost:3000/signup?token=...`)
+- Previously showed `undefined/signup?token=...`
+
+### Dark Mode Styling Fixes
+
+**Dashboard Background**:
+- Replaced `bg-gray-50` with semantic `bg-bg-primary` in dashboard layout
+- Consistent dark mode backgrounds across all dashboard pages
+- Removed duplicate `MainLayout` wrapper causing header duplication
+
+**Input Field Styling**:
+- Added `--color-bg-input` CSS variable to web and admin apps
+- Input backgrounds properly contrasted in dark mode
+- All form inputs and textareas use semantic `bg-bg-input` color
+
+**Error and Success Messages**:
+- Replaced hardcoded red/green colors with semantic `danger` and `success` colors
+- Error messages: `bg-danger-muted border-danger text-danger`
+- Success messages: `bg-success-muted border-success text-success`
+- Works correctly in both light and dark modes
+
+**Status Badges**:
+- Updated invite status badges to use semantic colors
+- Used: `bg-success-muted text-success`
+- Expired: `bg-danger-muted text-danger`
+- Pending: `bg-warning-muted text-warning`
+
+### Semantic Color Audit
+
+**Web App**:
+- Replaced all `text-gray-*` with `text-text-primary`, `text-text-secondary`, or `text-text-tertiary`
+- Replaced all `bg-gray-*` with semantic background colors
+- Fixed login/signup error messages to use `danger` colors
+- Updated settings, quick-wins, and modules pages to use semantic colors
+- Removed `primary-500/600` references, using `primary` and `primary-hover`
+
+**Admin App**:
+- Fixed error messages in login, recovery, and invite pages
+- Updated status badges to use semantic colors
+- All alerts and notifications now theme-aware
+
+**Component Updates**:
+- ProgressBar, ModuleCard, and OnboardingCard use semantic colors
+- No hardcoded color values remaining in UI components
+
+### Code Quality Improvements
+
+**Logging**:
+- Added detailed logging to admin and authentication middleware
+- Fixed Fastify error logging order (error first, then message)
+- Better debugging information for authentication failures
+
+**Error Handling**:
+- Updated auth client to handle both `error` and `message` properties in API responses
+- Improved error messages throughout authentication flow
+- Better user feedback when operations fail
+
+**Code Organization**:
+- Fixed function hoisting issues in auth routes
+- Reordered route definitions for better code clarity
+- Consistent error handling patterns
+
 ## Next Steps
 
 After Phase 10 completion:
