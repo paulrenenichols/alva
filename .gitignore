@@ -60,3 +60,12 @@ node_modules
 # Storybook build output
 storybook-static
 apps/web/storybook-static
+
+# CDK generated files (may contain account-specific context)
+infrastructure/cdk.out/
+infrastructure/cdk.context.json
+
+# Accidentally created directories
+~/
+~
+_docs/phases/infrastructure/

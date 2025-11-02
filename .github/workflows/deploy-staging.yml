@@ -1,0 +1,203 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [staging]
+    # Triggers when PR is merged to staging (direct pushes prevented by branch protection)
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: '20'
+
+jobs:
+  build-and-push-images:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    # Runs on push to staging (PR merges trigger push events)
+    # or manual workflow dispatch
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Get AWS Account ID
+        id: get-account-id
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "AWS_ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
+          echo "ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com" >> $GITHUB_ENV
+
+      - name: Build and push Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/web/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/alva-web:latest
+            ${{ env.ECR_REGISTRY }}/alva-web:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/alva-api:latest
+            ${{ env.ECR_REGISTRY }}/alva-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Auth image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/auth/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/alva-auth:latest
+            ${{ env.ECR_REGISTRY }}/alva-auth:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Admin image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/admin/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/alva-admin:latest
+            ${{ env.ECR_REGISTRY }}/alva-admin:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-infrastructure:
+    name: Deploy CDK Infrastructure
+    runs-on: ubuntu-latest
+    needs: build-and-push-images
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Install CDK CLI globally
+        run: npm install -g aws-cdk
+
+      - name: Install CDK dependencies
+        working-directory: ./infrastructure
+        run: npm ci
+
+      - name: Get AWS Account ID
+        id: get-account-id
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "AWS_ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
+          echo "CDK_DEFAULT_ACCOUNT=$ACCOUNT_ID" >> $GITHUB_ENV
+          echo "CDK_DEFAULT_REGION=${{ env.AWS_REGION }}" >> $GITHUB_ENV
+
+      - name: Build CDK
+        working-directory: ./infrastructure
+        run: npm run build
+
+      - name: CDK Synth (verify)
+        working-directory: ./infrastructure
+        run: |
+          export CDK_DEFAULT_ACCOUNT=${{ env.AWS_ACCOUNT_ID }}
+          export CDK_DEFAULT_REGION=${{ env.AWS_REGION }}
+          cdk synth --all
+
+      - name: CDK Deploy (all stacks)
+        working-directory: ./infrastructure
+        run: |
+          export CDK_DEFAULT_ACCOUNT=${{ env.AWS_ACCOUNT_ID }}
+          export CDK_DEFAULT_REGION=${{ env.AWS_REGION }}
+          cdk deploy --all --require-approval never
+
+  update-services:
+    name: Update ECS Services
+    runs-on: ubuntu-latest
+    needs: deploy-infrastructure
+    permissions:
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Force new deployment of ECS services
+        run: |
+          # Update all services to use new images
+          aws ecs update-service \
+            --cluster alva-staging-cluster \
+            --service alva-web \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+          aws ecs update-service \
+            --cluster alva-staging-cluster \
+            --service alva-api \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+          aws ecs update-service \
+            --cluster alva-staging-cluster \
+            --service alva-auth \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+          aws ecs update-service \
+            --cluster alva-staging-cluster \
+            --service alva-admin \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Wait for services to stabilize
+        run: |
+          echo "Waiting for services to stabilize..."
+          for service in alva-web alva-api alva-auth alva-admin; do
+            aws ecs wait services-stable \
+              --cluster alva-staging-cluster \
+              --services $service \
+              --region ${{ env.AWS_REGION }}
+            echo "$service is stable"
+          done
+
