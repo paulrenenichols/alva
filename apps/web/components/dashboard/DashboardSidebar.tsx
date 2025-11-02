@@ -27,7 +27,7 @@ const SIDEBAR_CONTAINER_CLASSES = 'w-64 bg-bg-elevated shadow-sm border-r min-h-
 const SIDEBAR_CONTENT_CLASSES = 'p-6';
 const NAVIGATION_CONTAINER_CLASSES = 'space-y-2';
 const NAVIGATION_LINK_BASE_CLASSES = 'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors';
-const NAVIGATION_LINK_ACTIVE_CLASSES = 'bg-primary-50 text-primary-700';
+const NAVIGATION_LINK_ACTIVE_CLASSES = 'bg-primary-muted text-primary';
 const NAVIGATION_LINK_INACTIVE_CLASSES = 'text-text-secondary hover:bg-bg-secondary';
 const NAVIGATION_ICON_CLASSES = 'text-lg';
 
