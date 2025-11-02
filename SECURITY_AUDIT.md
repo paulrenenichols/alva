@@ -106,8 +106,8 @@ If this repository was/is public on GitHub:
 - ✅ .env files removed from git tracking
 - ✅ .gitignore updated
 - ✅ **NEW JWT KEYS GENERATED** (2025-01-27)
-- ⚠️ **Action Required**: Update local .env files with new keys
-- ⚠️ **Action Required**: Update AWS Secrets Manager with new keys
+- ✅ **Local .env files updated** with new keys
+- ⚠️ **Action Required**: Update AWS Secrets Manager with new keys (when infrastructure deploys)
 - ⚠️ **Action Required**: Invalidate all existing JWT tokens (all users will need to re-authenticate)
 
 ## Next Steps
