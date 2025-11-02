@@ -104,6 +104,9 @@ describe('MailpitProvider', () => {
     it('should handle send errors gracefully', async () => {
       const error = new Error('SMTP connection failed');
       mockSendMail.mockRejectedValue(error);
+      
+      // Mock console.error to prevent test failures in CI
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const result = await provider.sendEmail({
         to: 'test@example.com',
@@ -113,6 +116,9 @@ describe('MailpitProvider', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Failed to send email');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Mailpit email error:', error);
+      
+      consoleErrorSpy.mockRestore();
     });
 
     it('should log email sent message on success', async () => {

@@ -137,6 +137,9 @@ describe('ResendProvider', () => {
     it('should handle send errors gracefully', async () => {
       const error = new Error('Resend API error');
       mockSendEmail.mockRejectedValue(error);
+      
+      // Mock console.error to prevent test failures in CI
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const result = await provider.sendEmail({
         to: 'test@example.com',
@@ -146,6 +149,9 @@ describe('ResendProvider', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Failed to send email');
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Email send error:', error);
+      
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle missing message ID gracefully', async () => {
