@@ -49,13 +49,16 @@ JWT_SECRET=$(openssl rand -hex 32)
 echo "✅ Cookie secret and JWT secret generated"
 echo ""
 
-# Secrets to set (prompt for API keys)
+# Secrets to set (prompt for API keys, with defaults)
 echo "📝 Please provide the following API keys:"
 read -p "OpenAI API Key: " OPENAI_API_KEY
-read -p "Resend API Key: " RESEND_API_KEY
 
-if [ -z "$OPENAI_API_KEY" ] || [ -z "$RESEND_API_KEY" ]; then
-  echo "⚠️  Warning: Some API keys are empty. You can set them later."
+# Use provided Resend API key (default from environment or hardcoded)
+RESEND_API_KEY=${RESEND_API_KEY:-"re_3figf35c_C6FcBzwbpiiRxHXN1hhALavx"}
+echo "📧 Using Resend API Key: ${RESEND_API_KEY:0:10}..." # Show first 10 chars for verification
+
+if [ -z "$OPENAI_API_KEY" ]; then
+  echo "⚠️  Warning: OpenAI API key is empty. You can set it later."
 fi
 
 echo ""

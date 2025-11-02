@@ -28,9 +28,13 @@
    - RDS PostgreSQL vs Container vs EC2
    - ✅ **Decision**: AWS RDS PostgreSQL (managed service)
 
+6. **`12-email-service-comparison.md`**
+   - AWS SES vs Resend
+   - ✅ **Decision**: Resend (implemented, EmailClient auto-selects in production)
+
 ### Final Summary
 
-6. **`12-final-decisions-summary.md`**
+7. **`12-final-decisions-summary.md`**
    - Complete summary of all decisions
    - Architecture overview
    - Implementation roadmap

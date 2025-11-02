@@ -271,7 +271,7 @@ JWT_PRIVATE_KEY=<from Secrets Manager>
 JWT_PUBLIC_KEY=<from Secrets Manager>
 RESEND_API_KEY=<from Secrets Manager>
 CORS_ORIGINS=<ALB DNS name>
-NODE_ENV=production
+NODE_ENV=production  # Enables ResendProvider (EmailClient auto-selects)
 ```
 
 **Admin Service:**

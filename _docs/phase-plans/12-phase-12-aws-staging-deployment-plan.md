@@ -26,6 +26,7 @@
 6. **Domain**: Deferred (using ALB DNS name initially)
 7. **SSL**: ACM (can add later)
 8. **Admin Portal**: Public initially (security deferred)
+9. **Email Service**: Resend (configured, EmailClient auto-selects in production)
 
 ### Services to Deploy
 
@@ -796,7 +797,7 @@ infrastructure/
 4. **JWT Secret**: `alva-staging-jwt-secret`
 5. **Cookie Secret**: `alva-staging-cookie-secret`
 6. **OpenAI API Key**: `alva-staging-openai-api-key`
-7. **Resend API Key**: `alva-staging-resend-api-key`
+7. **Resend API Key**: `alva-staging-resend-api-key` ✅ (Configured - EmailClient auto-selects in production/staging)
 
 ### ECS Task Environment Variables
 
@@ -818,6 +819,7 @@ infrastructure/
 - `JWT_PUBLIC_KEY` (from Secrets Manager)
 - `RESEND_API_KEY` (from Secrets Manager)
 - `CORS_ORIGINS` (ALB DNS name)
+- `NODE_ENV=production` (enables ResendProvider in EmailClient)
 
 **Admin Service:**
 - `NEXT_PUBLIC_API_URL` (internal service discovery)
