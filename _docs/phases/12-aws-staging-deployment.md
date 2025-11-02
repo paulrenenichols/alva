@@ -1,4 +1,4 @@
-# Phase 11: AWS Staging Deployment
+# Phase 12: AWS Staging Deployment
 
 **@fileoverview** Implementation plan for AWS infrastructure setup and staging environment deployment.
 
@@ -15,7 +15,7 @@ This phase implements:
 
 **Estimated Duration**: 1-2 weeks
 
-**Builds On**: Phase 10 - requires separated user tables and optimized docker compose local development setup
+**Builds On**: Phase 11 - requires shared email library and separated user tables
 
 ---
 
@@ -26,7 +26,7 @@ This phase implements:
 1. **Local Development**: MailHog, Docker Compose, all services running locally ✅
 2. **Invite System**: Database schema, invite service, registration flow ✅
 3. **Admin App**: Invite management interface ✅
-4. **Email Service**: MailHog + Resend integration ✅
+4. **Email Service**: Centralized email library with Mailpit + Resend integration ✅
 
 ### ❌ What's Missing
 
@@ -385,8 +385,8 @@ echo "Deployment complete!"
 
 ## Next Steps
 
-After Phase 11 completion:
-- Move to Phase 12: Critical User Flow Completion
+After Phase 12 completion:
+- Move to Phase 13: Critical User Flow Completion
 - Implement chat functionality
 - Complete email verification flow
 - Enhance task management
