@@ -15,6 +15,13 @@ node_modules
 .env.production.local
 .env.development
 .env.backup
+.env.bak
+apps/**/.env
+apps/**/.env.local
+apps/**/.env.*
+*.env
+!*.env.example
+!.env*.example
 
 # IDEs and editors
 /.idea
