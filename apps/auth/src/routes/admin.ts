@@ -5,18 +5,17 @@
 import { FastifyInstance } from 'fastify';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { requireAdmin } from '../middleware/admin.middleware';
-import { InviteService } from '../services/invite.service';
+import { WebInviteService } from '../services/web-invite.service';
 import { EmailService } from '../services/email.service';
-import { users, invites, roles, userRoles, passwordResetTokens } from '@alva/database';
-import { eq, and } from 'drizzle-orm';
-import crypto from 'crypto';
+import { webInvites } from '@alva/database';
+import { eq } from 'drizzle-orm';
 
 export async function adminRoutes(fastify: FastifyInstance) {
   // Require authentication for all admin routes
   fastify.addHook('preHandler', authenticateToken);
   fastify.addHook('preHandler', requireAdmin);
 
-  const inviteService = new InviteService(fastify.db);
+  const webInviteService = new WebInviteService(fastify.db);
   const emailService = new EmailService();
 
   // Send invite
@@ -42,7 +41,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
           return reply.code(401).send({ error: 'Unauthorized' });
         }
 
-        const invite = await inviteService.createInvite(email, userId);
+        const invite = await webInviteService.createInvite(email, userId);
         await emailService.sendInviteEmail(email, invite.token);
 
         return {
@@ -76,7 +75,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
           page?: string;
           limit?: string;
         };
-        const result = await inviteService.getInvites(
+        const result = await webInviteService.getInvites(
           parseInt(page),
           parseInt(limit)
         );
@@ -109,8 +108,8 @@ export async function adminRoutes(fastify: FastifyInstance) {
 
         const [invite] = await fastify.db
           .select()
-          .from(invites)
-          .where(eq(invites.id, inviteId));
+          .from(webInvites)
+          .where(eq(webInvites.id, inviteId));
 
         if (!invite) {
           return reply.code(404).send({ error: 'Invite not found' });

@@ -559,7 +559,7 @@ services:
 ## Next Steps
 
 After Phase 9 completion:
-- Move to Phase 10: AWS Staging Deployment
+- Move to Phase 10: Separate Admin and Web User Tables
 - Use production docker-compose.yml as reference for staging/production deployments
 - Continue using docker-compose.dev.yml for all local development
 

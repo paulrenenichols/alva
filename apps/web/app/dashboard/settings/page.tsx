@@ -200,7 +200,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setSettings((prev) => ({ ...prev, timezone: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="UTC">UTC</option>
               <option value="America/New_York">Eastern Time</option>
@@ -273,7 +273,7 @@ export default function SettingsPage() {
                 }
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+              <div className="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-bg-elevated after:border-border-default after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
         </div>
@@ -281,18 +281,18 @@ export default function SettingsPage() {
 
       {/* Preferences */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-text-primary mb-4">
           Preferences
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               Theme
             </label>
             <select
               value={settings.preferences.theme}
               onChange={(e) => handlePreferenceChange('theme', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -300,7 +300,7 @@ export default function SettingsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               Language
             </label>
             <select
@@ -308,7 +308,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 handlePreferenceChange('language', e.target.value)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="en">English</option>
               <option value="es">Spanish</option>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary-500 text-white px-8"
+          className="bg-primary text-text-inverse px-8"
         >
           {saving ? 'Saving...' : 'Save Settings'}
         </Button>

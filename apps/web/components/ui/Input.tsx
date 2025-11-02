@@ -11,7 +11,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-const BASE_INPUT_CLASSES = 'block w-full px-3 py-2 h-11 border rounded-md bg-bg-elevated text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-border-focus focus:border-border-focus transition-colors disabled:bg-bg-tertiary disabled:cursor-not-allowed';
+const BASE_INPUT_CLASSES = 'block w-full px-3 py-2 h-11 border rounded-md bg-bg-input text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-border-focus focus:border-border-focus transition-colors disabled:bg-bg-tertiary disabled:cursor-not-allowed';
 
 const ERROR_INPUT_CLASSES = 'border-danger focus:ring-danger focus:border-danger';
 const DEFAULT_INPUT_CLASSES = 'border-border-default';

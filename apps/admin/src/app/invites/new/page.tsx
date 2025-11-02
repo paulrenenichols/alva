@@ -52,16 +52,16 @@ export default function NewInvitePage() {
         <h1 className="text-3xl font-bold mb-6 text-text-primary">Send New Invite</h1>
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded p-4 mb-4">
+          <div className="bg-success-muted border border-success rounded p-4 mb-4 text-success">
             Invite sent successfully! Redirecting...
           </div>
         )}
 
-        {error && <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">{error}</div>}
+        {error && <div className="bg-danger-muted border border-danger rounded p-4 mb-4 text-danger">{error}</div>}
 
         <form onSubmit={handleSubmit} className="bg-bg-elevated rounded-lg shadow-lg p-6">
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 font-medium">
+            <label htmlFor="email" className="block mb-2 font-medium text-text-primary">
               Email Address
             </label>
             <input
@@ -69,7 +69,7 @@ export default function NewInvitePage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-tertiary"
               required
               disabled={loading}
             />
@@ -79,7 +79,7 @@ export default function NewInvitePage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary-500 text-text-inverse px-6 py-3 rounded hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="bg-primary text-text-inverse px-6 py-3 rounded hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
               {loading ? 'Sending...' : 'Send Invite'}
             </button>

@@ -39,19 +39,19 @@ export default function RecoveryPage() {
         </h1>
 
         {submitted ? (
-          <div className="bg-green-50 border border-green-200 rounded p-4">
+          <div className="bg-success-muted border border-success rounded p-4 text-success">
             If an account exists for that email, a recovery link has been sent.
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
+              <div className="bg-danger-muted border border-danger rounded p-4 mb-4 text-danger">
                 {error}
               </div>
             )}
 
             <div className="mb-4">
-              <label htmlFor="email" className="block mb-2 font-medium">
+              <label htmlFor="email" className="block mb-2 font-medium text-text-primary">
                 Email
               </label>
               <input
@@ -59,7 +59,7 @@ export default function RecoveryPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)]"
+                className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] placeholder:text-text-tertiary"
                 required
                 disabled={loading}
               />

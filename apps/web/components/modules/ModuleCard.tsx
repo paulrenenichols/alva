@@ -30,7 +30,7 @@ const DESCRIPTION_CLASSES = 'text-sm text-text-secondary';
 const PROGRESS_CONTAINER_CLASSES = 'mb-4';
 const PROGRESS_HEADER_CLASSES = 'flex justify-between text-sm text-text-secondary mb-1';
 const PROGRESS_TRACK_CLASSES = 'w-full bg-bg-tertiary rounded-full h-2';
-const PROGRESS_FILL_CLASSES = 'bg-primary-500 h-2 rounded-full transition-all';
+const PROGRESS_FILL_CLASSES = 'bg-primary h-2 rounded-full transition-all';
 const BUTTON_CLASSES = 'w-full';
 
 /**

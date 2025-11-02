@@ -15,10 +15,11 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 | **Phase 7** | **Landing Experience & Root Page** | Root page, marketing copy, auth integration | 2-3 weeks | **Critical** |
 | **Phase 8** | **Invite System & Local Development** | Invite system, admin app, local dev setup | 3-4 weeks | **Critical** |
 | Phase 9 | Docker Compose Local Dev | Production/dev separation, hot reload | 1 week | Important |
-| Phase 10 | AWS Staging Deployment | Infrastructure, CI/CD, staging env | 1-2 weeks | Important |
-| Phase 11 | Critical User Flow Completion | Chat, verification, section routing, Kanban | 3-4 weeks | **Critical** |
-| Phase 12 | Scale & Growth | Multi-tenant, analytics, enterprise features | 8-10 weeks | Important |
-| Phase 13 | AI Enhancement | Advanced AI models, predictive analytics | 10-12 weeks | Important |
+| Phase 10 | Separate User Tables | Admin/web user separation, self-invite testing | 2-3 weeks | Important |
+| Phase 11 | AWS Staging Deployment | Infrastructure, CI/CD, staging env | 1-2 weeks | Important |
+| Phase 12 | Critical User Flow Completion | Chat, verification, section routing, Kanban | 3-4 weeks | **Critical** |
+| Phase 13 | Scale & Growth | Multi-tenant, analytics, enterprise features | 8-10 weeks | Important |
+| Phase 14 | AI Enhancement | Advanced AI models, predictive analytics | 10-12 weeks | Important |
 
 ---
 
@@ -63,7 +64,7 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 
 ---
 
-## Phase 11: Critical User Flow Completion (Originally Planned as Phase 8)
+## Phase 12: Critical User Flow Completion (Originally Planned as Phase 8)
 
 ### **Priority: Critical**
 
@@ -110,7 +111,7 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 
 ---
 
-## Phase 12: Scale & Growth (Previously Phase 7)
+## Phase 13: Scale & Growth (Previously Phase 7)
 
 ### **Priority: Important**
 
@@ -127,7 +128,7 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 
 ---
 
-## Phase 13: AI Enhancement (Previously Phase 8)
+## Phase 14: AI Enhancement (Previously Phase 8)
 
 ### **Priority: Important**
 
@@ -183,25 +184,30 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 - Production/dev separation
 - Hot reload setup
 
-**Weeks 9-10: Phase 10 - AWS Staging Deployment**
+**Weeks 9-11: Phase 10 - Separate User Tables**
+- Database schema separation
+- JWT token updates
+- Admin self-invite capability
+
+**Weeks 12-13: Phase 11 - AWS Staging Deployment**
 - Infrastructure setup
 - CI/CD pipeline
 
-**Weeks 11-14: Phase 11 - Critical Flow Completion**
+**Weeks 14-17: Phase 12 - Critical Flow Completion**
 - Chat functionality implementation
 - Email verification flow
 - Section-based routing
 - Enhanced task management
 - Mobile optimization and error handling
 
-### Future Phases (Weeks 15+)
+### Future Phases (Weeks 18+)
 
-**Phase 12: Scale & Growth** (Weeks 15-24)
+**Phase 13: Scale & Growth** (Weeks 18-27)
 - Multi-tenant architecture
 - Advanced analytics
 - Enterprise features
 
-**Phase 13: AI Enhancement** (Weeks 25-36)
+**Phase 14: AI Enhancement** (Weeks 28-39)
 - Advanced AI models
 - Predictive analytics
 - Automated optimization
@@ -216,7 +222,7 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 - **Brand Perception**: Professional, trustworthy appearance
 - **Technical**: < 2 second page load time
 
-### Phase 11 Success Metrics (Originally Planned as Phase 8)
+### Phase 12 Success Metrics (Originally Planned as Phase 8)
 - **User Flow Compliance**: 90%+ compliance with documented flow
 - **Feature Adoption**: 80%+ adoption of chat and Kanban features
 - **Mobile Experience**: 60%+ of sessions on mobile devices
@@ -246,8 +252,8 @@ Based on the post-phase-6 user flow analysis, we've identified critical gaps tha
 
 ## Conclusion
 
-This reorganization prioritizes completing the core user experience before adding advanced features. By focusing on Phase 7 (Landing Experience) and Phase 11 (Critical Flow Completion, originally planned as Phase 8), we ensure that Alva has a solid foundation for user acquisition and retention before scaling to enterprise features and advanced AI capabilities.
+This reorganization prioritizes completing the core user experience before adding advanced features. By focusing on Phase 7 (Landing Experience) and Phase 12 (Critical Flow Completion, originally planned as Phase 8), we ensure that Alva has a solid foundation for user acquisition and retention before scaling to enterprise features and advanced AI capabilities.
 
-The new phase structure addresses the critical gaps identified in the post-phase-6 analysis while maintaining the long-term vision for scale and AI enhancement in phases 12 and 13.
+The new phase structure addresses the critical gaps identified in the post-phase-6 analysis while maintaining the long-term vision for scale and AI enhancement in phases 13 and 14.
 
-**Note**: This document was updated after Phase 9 (Docker Compose Local Dev) was inserted and phases were renumbered. The current structure includes Phase 9 (Docker Compose), Phase 10 (AWS Staging), Phase 11 (Critical User Flow Completion), Phase 12 (Scale & Growth), and Phase 13 (AI Enhancement).
+**Note**: This document was updated after Phase 9 (Docker Compose Local Dev) and Phase 10 (Separate User Tables) were inserted and phases were renumbered. The current structure includes Phase 9 (Docker Compose), Phase 10 (Separate User Tables), Phase 11 (AWS Staging), Phase 12 (Critical User Flow Completion), Phase 13 (Scale & Growth), and Phase 14 (AI Enhancement).

@@ -76,7 +76,7 @@ function ResetPasswordForm() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="password" className="block mb-2 font-medium">
+            <label htmlFor="password" className="block mb-2 font-medium text-text-primary">
               New Password
             </label>
             <div className="relative">
@@ -85,7 +85,7 @@ function ResetPasswordForm() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 pr-10 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 pr-10 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-tertiary"
                 required
                 minLength={8}
               />
@@ -101,7 +101,7 @@ function ResetPasswordForm() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="confirmPassword" className="block mb-2 font-medium">
+            <label htmlFor="confirmPassword" className="block mb-2 font-medium text-text-primary">
               Confirm Password
             </label>
             <div className="relative">
@@ -110,7 +110,7 @@ function ResetPasswordForm() {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 pr-10 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 pr-10 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-tertiary"
                 required
                 minLength={8}
               />

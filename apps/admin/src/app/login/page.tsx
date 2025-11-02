@@ -22,11 +22,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3002/auth/login-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        'http://localhost:3002/auth/login-password',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
@@ -54,17 +57,22 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary p-4">
       <div className="bg-bg-elevated rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center text-text-primary">Admin Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-text-primary">
+          Admin Login
+        </h1>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded p-4 mb-4">
+          <div className="bg-danger-muted border border-danger rounded p-4 mb-4 text-danger">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 font-medium">
+            <label
+              htmlFor="email"
+              className="block mb-2 font-medium text-text-primary"
+            >
               Email
             </label>
             <input
@@ -72,14 +80,17 @@ export default function LoginPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)]"
+              className="w-full px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] placeholder:text-text-tertiary"
               required
               disabled={loading}
             />
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block mb-2 font-medium">
+            <label
+              htmlFor="password"
+              className="block mb-2 font-medium text-text-primary"
+            >
               Password
             </label>
             <div className="relative">
@@ -88,7 +99,7 @@ export default function LoginPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 pr-10 border rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)]"
+                className="w-full px-4 py-2 pr-10 border rounded bg-bg-elevated text-text-primary border-border-default focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] placeholder:text-text-tertiary"
                 required
                 disabled={loading}
               />
@@ -113,10 +124,11 @@ export default function LoginPage() {
         </form>
 
         <div className="text-sm text-text-secondary mt-4 text-center">
-          <a href="/recovery" className="text-primary hover:underline">Forgot password? Request a recovery link</a>
+          <a href="/recovery" className="text-primary hover:underline">
+            Forgot password? Request a recovery link
+          </a>
         </div>
       </div>
     </div>
   );
 }
-

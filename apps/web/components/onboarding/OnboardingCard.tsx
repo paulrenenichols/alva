@@ -110,7 +110,7 @@ export function OnboardingCard({
             <Button
               onClick={handleNext}
               disabled={!isValid}
-              className="bg-primary-500 hover:bg-primary-600"
+              className="bg-primary hover:bg-primary-hover"
             >
               {currentProgress.current === currentProgress.total
                 ? 'Complete'

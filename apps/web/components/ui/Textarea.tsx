@@ -8,7 +8,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   className?: string;
 }
 
-const BASE_TEXTAREA_CLASSES = 'block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+const BASE_TEXTAREA_CLASSES = 'block w-full px-3 py-2 border border-border-default rounded-lg bg-bg-input text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-border-focus focus:border-border-focus transition-colors';
 
 /**
  * @description Renders a textarea input with consistent styling

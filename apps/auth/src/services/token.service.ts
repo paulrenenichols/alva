@@ -8,6 +8,7 @@ import { randomBytes } from 'crypto';
 export interface TokenPayload {
   userId: string;
   email: string;
+  userType: 'admin' | 'web';
 }
 
 export class TokenService {

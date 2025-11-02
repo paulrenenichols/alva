@@ -3,7 +3,7 @@
  */
 
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { userRoles, roles } from '@alva/database';
+import { adminUserRoles, adminRoles } from '@alva/database';
 import { eq, and } from 'drizzle-orm';
 
 // Uses the user property declared in auth.middleware
@@ -15,7 +15,8 @@ import { eq, and } from 'drizzle-orm';
 export async function requireAdmin(request: FastifyRequest, reply: FastifyReply) {
   const user = request.user;
 
-  if (!user) {
+  if (!user || user.userType !== 'admin') {
+    request.server.log.info(`Admin access denied: ${!user ? 'no user' : `wrong userType: ${user.userType}`}`);
     return reply.code(401).send({ error: 'Unauthorized' });
   }
 
@@ -23,8 +24,11 @@ export async function requireAdmin(request: FastifyRequest, reply: FastifyReply)
   const isAdmin = await checkAdminStatus(request, user.id);
 
   if (!isAdmin) {
+    request.server.log.info(`Admin role check failed for user ${user.id} (${user.email})`);
     return reply.code(403).send({ error: 'Admin access required' });
   }
+
+  request.server.log.info(`Admin access granted for user ${user.id} (${user.email})`);
 }
 
 /**
@@ -36,22 +40,27 @@ async function checkAdminStatus(request: FastifyRequest, userId: string): Promis
   try {
     const db = request.server.db;
     // Get admin role
-    const [adminRole] = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
+    const [adminRole] = await db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
 
     if (!adminRole) {
+      request.server.log.warn('Admin role not found in database');
       return false;
     }
 
     // Check if user has admin role
     const [userRole] = await db
       .select()
-      .from(userRoles)
-      .where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, adminRole.id)))
+      .from(adminUserRoles)
+      .where(and(eq(adminUserRoles.adminUserId, userId), eq(adminUserRoles.roleId, adminRole.id)))
       .limit(1);
+
+    if (!userRole) {
+      request.server.log.debug(`No admin role found for user ${userId}`);
+    }
 
     return !!userRole;
   } catch (error) {
-    console.error('Error checking admin status:', error);
+    request.server.log.error(error, 'Error checking admin status');
     return false;
   }
 }

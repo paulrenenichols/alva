@@ -17,7 +17,6 @@ import {
   Caption,
 } from '@/components/ui/Typography';
 import { Grid, Stack } from '@/components/ui/Layout';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { apiClient } from '@alva/api-client';
 
 interface QuickWin {
@@ -209,42 +208,40 @@ export default function DashboardPage() {
   );
 
   return (
-    <MainLayout>
-      <div className={PAGE_CONTAINER_CLASSES}>
-        <Stack spacing="lg">
-          <div>
-            <HeadingPage>Dashboard</HeadingPage>
-            <BodyDefault className="mt-2">
-              Welcome back! Here's what's on your agenda today.
-            </BodyDefault>
+    <div className={PAGE_CONTAINER_CLASSES}>
+      <Stack spacing="lg">
+        <div>
+          <HeadingPage>Dashboard</HeadingPage>
+          <BodyDefault className="mt-2">
+            Welcome back! Here's what's on your agenda today.
+          </BodyDefault>
+        </div>
+
+        <Grid cols={3} gap="lg">
+          {/* Quick Wins Card */}
+          <div className={QUICK_WINS_CARD_SPAN}>
+            <Card variant="elevated">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <HeadingCard>Daily Quick Wins</HeadingCard>
+                  <Badge variant="primary">⚡ High Impact</Badge>
+                </div>
+              </CardHeader>
+
+              <CardBody>
+                <Stack spacing="md">
+                  {isLoading
+                    ? renderLoadingSkeleton()
+                    : quickWins.map(renderQuickWinCard)}
+                </Stack>
+              </CardBody>
+            </Card>
           </div>
 
-          <Grid cols={3} gap="lg">
-            {/* Quick Wins Card */}
-            <div className={QUICK_WINS_CARD_SPAN}>
-              <Card variant="elevated">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <HeadingCard>Daily Quick Wins</HeadingCard>
-                    <Badge variant="primary">⚡ High Impact</Badge>
-                  </div>
-                </CardHeader>
-
-                <CardBody>
-                  <Stack spacing="md">
-                    {isLoading
-                      ? renderLoadingSkeleton()
-                      : quickWins.map(renderQuickWinCard)}
-                  </Stack>
-                </CardBody>
-              </Card>
-            </div>
-
-            {/* Plan Overview */}
-            <div>{renderPlanOverview()}</div>
-          </Grid>
-        </Stack>
-      </div>
-    </MainLayout>
+          {/* Plan Overview */}
+          <div>{renderPlanOverview()}</div>
+        </Grid>
+      </Stack>
+    </div>
   );
 }

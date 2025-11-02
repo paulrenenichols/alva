@@ -78,11 +78,11 @@ export default function InvitesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Used':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-muted text-success';
       case 'Expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-danger-muted text-danger';
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-muted text-warning';
       default:
         return 'bg-bg-secondary text-text-primary';
     }
@@ -103,7 +103,7 @@ export default function InvitesPage() {
           <h1 className="text-3xl font-bold text-text-primary">Invite Management</h1>
           <Link
             href="/invites/new"
-            className="bg-primary-500 text-text-inverse px-6 py-2 rounded hover:bg-primary-600"
+            className="bg-primary text-text-inverse px-6 py-2 rounded hover:bg-primary-hover"
           >
             Send New Invite
           </Link>
@@ -125,11 +125,11 @@ export default function InvitesPage() {
                 const status = getStatus(invite);
                 return (
                   <tr key={invite.id} className="border-b border-border-subtle hover:bg-bg-secondary">
-                    <td className="px-6 py-4">{invite.email}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-text-primary">{invite.email}</td>
+                    <td className="px-6 py-4 text-text-primary">
                       {new Date(invite.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-text-primary">
                       {new Date(invite.expiresAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
@@ -141,7 +141,7 @@ export default function InvitesPage() {
                       {status !== 'Used' && (
                         <button
                           onClick={() => handleResend(invite.id)}
-                          className="text-primary-600 hover:text-primary-800"
+                          className="text-primary hover:text-primary-hover"
                         >
                           Resend
                         </button>
@@ -158,17 +158,17 @@ export default function InvitesPage() {
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          <span>
+          <span className="text-text-primary">
             Page {page} of {totalPages}
           </span>
           <button
             disabled={page >= totalPages}
             onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border rounded bg-bg-input text-text-primary border-border-default disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>
