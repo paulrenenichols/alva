@@ -9,9 +9,20 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
-  // Set base path for ALB routing (admin service is routed via /admin/*)
-  basePath: '/admin',
-  // trailingSlash: false (default) - Next.js will serve both /admin and /admin/
+  // ALB routes /admin/* to this service
+  // Next.js rewrites strip /admin prefix so routes work correctly
+  async rewrites() {
+    return [
+      {
+        source: '/admin/:path*',
+        destination: '/:path*', // Strip /admin prefix
+      },
+      {
+        source: '/admin',
+        destination: '/', // Root route
+      },
+    ];
+  },
   env: {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],

@@ -39,7 +39,7 @@ export class AlbStack extends cdk.Stack {
 
     for (const [serviceKey, serviceConfig] of Object.entries(SERVICES)) {
       // Health check path: Next.js apps use /api/health, Fastify apps use /health
-      // Admin service has basePath: '/admin', so health endpoint is at /admin/api/health
+      // Admin service uses rewrites, so health endpoint is at /admin/api/health
       const healthCheckPath =
         serviceKey === 'web'
           ? '/api/health'
