@@ -105,6 +105,12 @@ export class EcsStack extends cdk.Stack {
           environment.NEXT_PUBLIC_API_URL = apiUrl;
           environment.NEXT_PUBLIC_AUTH_URL = authUrl;
         }
+
+        // For auth service: Set ADMIN_URL and WEB_URL for email links
+        if (serviceKey === 'auth') {
+          environment.ADMIN_URL = adminUrl;
+          environment.WEB_URL = webUrl;
+        }
       } else {
         // Fallback: Use ALB DNS with path-based routing
         // Note: ALB DNS will be available after ALB stack deployment
@@ -126,6 +132,12 @@ export class EcsStack extends cdk.Stack {
         if (serviceKey === 'web' || serviceKey === 'admin') {
           environment.NEXT_PUBLIC_API_URL = apiUrl;
           environment.NEXT_PUBLIC_AUTH_URL = authUrl;
+        }
+
+        // For auth service: Set ADMIN_URL and WEB_URL for email links
+        if (serviceKey === 'auth') {
+          environment.ADMIN_URL = adminUrl;
+          environment.WEB_URL = webUrl;
         }
       }
 

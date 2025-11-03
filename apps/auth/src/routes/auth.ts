@@ -403,7 +403,18 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
               // Create reset token (1 hour expiry)
               const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
               // Send recovery email
-              await emailService.sendPasswordResetEmail(email, resetToken);
+              const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
+              if (!emailResult.success) {
+                fastify.log.error('[RecoveryRequest] Email send failed', {
+                  email: email.substring(0, 3) + '***', // Log partial email for debugging
+                  error: emailResult.error,
+                });
+              } else {
+                fastify.log.info('[RecoveryRequest] Email sent successfully', {
+                  email: email.substring(0, 3) + '***',
+                  messageId: emailResult.messageId,
+                });
+              }
             }
           }
         }
