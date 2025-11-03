@@ -18,7 +18,7 @@ RUN corepack enable pnpm && pnpm nx reset && pnpm nx build database shared-types
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs

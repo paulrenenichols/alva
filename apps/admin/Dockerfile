@@ -18,7 +18,7 @@ RUN corepack enable pnpm && pnpm nx build admin
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -38,8 +38,8 @@ USER nextjs
 
 EXPOSE 3003
 
-ENV PORT 3003
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3003
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["npx", "next", "start"]
 
