@@ -103,11 +103,30 @@ export class AlbStack extends cdk.Stack {
       action: elbv2.ListenerAction.forward([this.targetGroups.auth]),
     });
 
+    // Redirect /admin (exact, no trailing slash) to /admin/ for Next.js basePath compatibility
+    // Note: ALB path pattern /admin/* doesn't match /admin (exact), so we redirect it
+    httpListener.addAction('AdminRedirect', {
+      priority: 350,
+      conditions: [
+        elbv2.ListenerCondition.pathPatterns(['/admin']),
+      ],
+      action: elbv2.ListenerAction.redirect({
+        protocol: 'HTTP',
+        port: '80',
+        path: '/admin/',
+        permanent: true, // HTTP 301 redirect
+      }),
+    });
+
     httpListener.addAction('AdminTarget', {
       priority: 400,
       // Route admin paths and Next.js static assets for admin service
       conditions: [
-        elbv2.ListenerCondition.pathPatterns(['/admin/*', '/admin/_next/static/*', '/admin/_next/image/*']),
+        elbv2.ListenerCondition.pathPatterns([
+          '/admin/*',    // All admin paths (including /admin/)
+          '/admin/_next/static/*',  // Next.js static assets
+          '/admin/_next/image/*',    // Next.js images
+        ]),
       ],
       action: elbv2.ListenerAction.forward([this.targetGroups.admin]),
     });
