@@ -10,20 +10,10 @@ const nextConfig = {
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
   // ALB routes /admin/* to this service
-  // Next.js rewrites strip /admin prefix internally, so routes work from root
-  // This avoids redirect loops from basePath configuration
-  async rewrites() {
-    return [
-      {
-        source: '/admin/:path*',
-        destination: '/:path*', // Strip /admin prefix internally
-      },
-      {
-        source: '/admin',
-        destination: '/', // Map /admin to root
-      },
-    ];
-  },
+  // basePath ensures static assets are at /admin/_next/static/... (correct ALB routing)
+  basePath: '/admin',
+  // Keep trailingSlash: false (default) - Next.js will serve /admin without redirecting
+  // The redirect loop was from middleware, which we removed
   env: {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],
