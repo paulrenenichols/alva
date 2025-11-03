@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { getAuthUrl } from '@/lib/api-config';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,7 +24,7 @@ export default function LoginPage() {
 
     try {
       const response = await fetch(
-        'http://localhost:3002/auth/login-password',
+        `${getAuthUrl()}/auth/login-password`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

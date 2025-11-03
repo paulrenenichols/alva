@@ -11,16 +11,25 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Account information
-MANAGEMENT_ACCOUNT_ID="148510441541"
-ALVA_ACCOUNT_ID="520297668839"
-PARENT_DOMAIN="paulrenenichols.com"
-SUBDOMAIN_ZONE="alva.paulrenenichols.com"
+# Account information - can be set via environment variables
+MANAGEMENT_ACCOUNT_ID=${MANAGEMENT_ACCOUNT_ID}
+ALVA_ACCOUNT_ID=${ALVA_ACCOUNT_ID}
+PARENT_DOMAIN=${PARENT_DOMAIN:-paulrenenichols.com}
+SUBDOMAIN_ZONE=${SUBDOMAIN_ZONE}
+if [ -z "$SUBDOMAIN_ZONE" ]; then
+  SUBDOMAIN_ZONE="alva.${PARENT_DOMAIN}"
+fi
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Alva Cross-Account DNS Setup${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
+if [ -z "$MANAGEMENT_ACCOUNT_ID" ] || [ -z "$ALVA_ACCOUNT_ID" ]; then
+  echo "❌ Error: MANAGEMENT_ACCOUNT_ID and ALVA_ACCOUNT_ID environment variables are required"
+  echo "Usage: MANAGEMENT_ACCOUNT_ID=<id> ALVA_ACCOUNT_ID=<id> [PARENT_DOMAIN=<domain>] $0"
+  exit 1
+fi
+
 echo "Management Account: $MANAGEMENT_ACCOUNT_ID"
 echo "Alva Account: $ALVA_ACCOUNT_ID"
 echo "Parent Domain: $PARENT_DOMAIN"

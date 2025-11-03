@@ -7,6 +7,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { getAuthUrl } from '@/lib/api-config';
 
 // Force dynamic rendering to prevent prerendering issues with useSearchParams
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,7 @@ function ResetPasswordForm() {
     }
 
     try {
-      const response = await fetch('http://localhost:3002/auth/reset-password', {
+      const response = await fetch(`${getAuthUrl()}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

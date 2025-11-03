@@ -7,8 +7,8 @@
 ## Prerequisites
 
 You need AWS CLI access to **both accounts**:
-- **Management Account**: `148510441541` (for DNS)
-- **Alva Account**: `520297668839` (for application - you already have this)
+- **Management Account**: Your management account (for DNS)
+- **Alva Account**: Your Alva application account
 
 ---
 
@@ -46,7 +46,7 @@ After hosted zone is created, deploy your infrastructure:
 
 ```bash
 # Switch to Alva account
-aws sso login --profile AdministratorAccess-520297668839
+aws sso login --profile <your-alva-profile>
 # Or use your Alva account credentials
 
 cd infrastructure

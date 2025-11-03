@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { getAuthUrl } from '@/lib/api-config';
 
 export default function RecoveryPage() {
   const [email, setEmail] = useState('');
@@ -17,11 +18,16 @@ export default function RecoveryPage() {
     setError(null);
     setLoading(true);
     try {
-      await fetch('http://localhost:3002/auth/recovery-request', {
+      const response = await fetch(`${getAuthUrl()}/auth/recovery-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send recovery request');
+      }
+      
       setSubmitted(true);
     } catch {
       // Show generic success; don't reveal details

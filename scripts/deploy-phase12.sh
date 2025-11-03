@@ -3,7 +3,7 @@
 
 set -e
 
-PROFILE=${AWS_PROFILE:-AdministratorAccess-520297668839}
+PROFILE=${AWS_PROFILE:-default}
 REGION=${AWS_REGION:-us-east-1}
 
 echo "🚀 Phase 12 Deployment Script"

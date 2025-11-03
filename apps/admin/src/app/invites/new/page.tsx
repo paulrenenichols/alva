@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuthUrl } from '@/lib/api-config';
 
 export default function NewInvitePage() {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ export default function NewInvitePage() {
     try {
       const token = localStorage.getItem('accessToken');
 
-      const response = await fetch('http://localhost:3002/admin/invites', {
+      const response = await fetch(`${getAuthUrl()}/admin/invites`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

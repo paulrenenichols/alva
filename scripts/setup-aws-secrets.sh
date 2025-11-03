@@ -8,7 +8,7 @@ echo "🔐 Setting up AWS Secrets Manager for Alva staging..."
 # Get AWS account and region
 ACCOUNT_ID=${AWS_ACCOUNT_ID:-$(aws sts get-caller-identity --query Account --output text)}
 REGION=${AWS_REGION:-us-east-1}
-PROFILE=${AWS_PROFILE:-AdministratorAccess-520297668839}
+PROFILE=${AWS_PROFILE:-default}
 
 echo "Account: $ACCOUNT_ID"
 echo "Region: $REGION"

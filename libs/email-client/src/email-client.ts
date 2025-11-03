@@ -23,10 +23,21 @@ export class EmailClient {
       // Use MailpitProvider for local development
       const nodeEnv = process.env['NODE_ENV'] || 'development';
       const isProduction = nodeEnv === 'production' || nodeEnv === 'staging';
+      const resendApiKey = process.env['RESEND_API_KEY'];
       
-      if (isProduction && process.env['RESEND_API_KEY']) {
+      if (isProduction && resendApiKey) {
+        console.log('[EmailClient] Using ResendProvider', {
+          nodeEnv,
+          hasApiKey: !!resendApiKey,
+          apiKeyPrefix: resendApiKey.substring(0, 7) + '...',
+        });
         this.provider = new ResendProvider();
       } else {
+        console.log('[EmailClient] Using MailpitProvider', {
+          nodeEnv,
+          isProduction,
+          hasApiKey: !!resendApiKey,
+        });
         this.provider = new MailpitProvider();
       }
     }

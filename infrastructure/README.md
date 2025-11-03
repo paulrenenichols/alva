@@ -42,7 +42,7 @@ CDK will automatically use your AWS CLI credentials or SSO session.
 **Option A: AWS CLI Profile**
 ```bash
 aws configure --profile alva-admin
-# Or use SSO: aws sso login --profile AdministratorAccess-520297668839
+# Or use SSO: aws sso login --profile <your-profile>
 ```
 
 **Option B: Environment Variables**
