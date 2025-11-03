@@ -1,6 +1,6 @@
 # Cross-Account DNS Setup Guide
 
-**@fileoverview** Guide for setting up Route53 DNS with a hosted zone in the management account (148510441541) pointing to resources in the Alva account (520297668839).
+**@fileoverview** Guide for setting up Route53 DNS with a hosted zone in the management account pointing to resources in the Alva account.
 
 ---
 
@@ -9,6 +9,7 @@
 This setup allows you to use `staging.alva.paulrenenichols.com` and its subdomains for your Alva application, with the Route53 hosted zone managed in your management account while the application runs in the Alva account.
 
 **Account Information:**
+
 - **Management Account** (DNS): `YOUR_MANAGEMENT_ACCOUNT_ID`
 - **Alva Account** (Application): `YOUR_ALVA_ACCOUNT_ID`
 - **Domain**: `paulrenenichols.com` (in management account)
@@ -74,6 +75,7 @@ aws route53 change-resource-record-sets \
 ```
 
 **Alternatively**, you can do this in the AWS Console:
+
 1. Go to Route53 → Hosted zones → `paulrenenichols.com`
 2. Create record → Simple routing
 3. Record name: `alva`
@@ -229,21 +231,23 @@ After the ALB stack is deployed in the Alva account, manually create DNS records
 ### After ALB Deployment
 
 1. **Get the ALB DNS name** from the CDK output (deploy from Alva account):
+
    ```bash
    # Switch to Alva account
    aws configure --profile alva
    # Or: aws sso login --profile alva-account
-   
+
    # Get ALB DNS name
    ALB_DNS=$(aws cloudformation describe-stacks \
      --stack-name alva-staging-alb \
      --query 'Stacks[0].Outputs[?OutputKey==`LoadBalancerDNS`].OutputValue' \
      --output text)
-   
+
    echo "ALB DNS: $ALB_DNS"
    ```
 
 2. **Get the ALB Zone ID** (this is a constant per region):
+
    - us-east-1: `Z35SXDOTRQ7X7K`
    - See full list: https://docs.aws.amazon.com/general/latest/gr/elb.html
 
@@ -412,6 +416,7 @@ aws route53 change-resource-record-sets \
 ```
 
 **ALB Zone IDs by Region:**
+
 - us-east-1: `Z35SXDOTRQ7X7K`
 - us-west-2: `Z1H1FL5HABSF5`
 - eu-west-1: `Z32O12OCRQLOVW`
@@ -441,6 +446,7 @@ nslookup staging.alva.paulrenenichols.com
 ### Issue: DNS records not creating
 
 **Solution:** Ensure you have the correct permissions. For cross-account, you need to either:
+
 1. Use IAM role assumption
 2. Have credentials that work in both accounts
 3. Create records manually in management account
@@ -448,6 +454,7 @@ nslookup staging.alva.paulrenenichols.com
 ### Issue: DNS not resolving
 
 **Check:**
+
 1. NS record exists in parent zone (`paulrenenichols.com`)
 2. Nameservers match between parent NS record and `alva.paulrenenichols.com` zone
 3. DNS propagation may take up to 48 hours (usually much faster)
@@ -455,9 +462,10 @@ nslookup staging.alva.paulrenenichols.com
 ### Issue: Cross-account role assumption fails
 
 **Check:**
+
 1. Role ARN is correct
 2. External ID matches in trust policy and assume-role call
-3. Alva account (520297668839) is allowed in trust policy
+3. Alva account is allowed in trust policy (check the Principal ARN matches your account ID)
 
 ---
 
@@ -470,8 +478,8 @@ nslookup staging.alva.paulrenenichols.com
 **Application Domain**: `staging.alva.paulrenenichols.com`
 
 **Subdomains:**
+
 - `staging.alva.paulrenenichols.com` → Web app
 - `api.staging.alva.paulrenenichols.com` → API service
 - `auth.staging.alva.paulrenenichols.com` → Auth service
 - `admin.staging.alva.paulrenenichols.com` → Admin app
-
