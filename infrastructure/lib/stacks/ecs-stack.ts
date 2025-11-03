@@ -134,9 +134,10 @@ export class EcsStack extends cdk.Stack {
                 healthCheck: {
                   command: [
                     'CMD-SHELL',
-                    // Use wget instead of curl (Alpine doesn't include curl by default)
-                    // -q: quiet, -O-: output to stdout, --spider: don't download, just check
-                    `wget --no-verbose --tries=1 --spider http://localhost:${healthCheckPort}${healthCheckPath} || exit 1`,
+                    // Use Node.js for health check (no external dependencies like curl/wget)
+                    // This works in all Node.js containers and is more reliable
+                    // Single-line Node.js HTTP request that exits with 0 on success, 1 on failure
+                    `node -e "const http=require('http');const req=http.request({hostname:'localhost',port:${healthCheckPort},path:'${healthCheckPath}',method:'GET',timeout:5000},(r)=>{process.exit(r.statusCode===200?0:1)});req.on('error',()=>process.exit(1));req.on('timeout',()=>{req.destroy();process.exit(1)});req.end()" || exit 1`,
                   ],
                   interval: cdk.Duration.seconds(30),
                   timeout: cdk.Duration.seconds(5),
