@@ -11,6 +11,8 @@ const nextConfig = {
   nx: {},
   // Set base path for ALB routing (admin service is routed via /admin/*)
   basePath: '/admin',
+  // Disable trailing slash redirect to prevent redirect loop with ALB
+  trailingSlash: true,
   env: {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],
