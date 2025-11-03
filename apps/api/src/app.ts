@@ -188,8 +188,9 @@ async function registerDatabase(): Promise<void> {
     }
 
     // Construct PostgreSQL connection string
-    // Format: postgresql://username:password@host:port/database
-    databaseUrl = `postgresql://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${endpoint}:${port}/${database}`;
+    // Format: postgresql://username:password@host:port/database?sslmode=require
+    // RDS PostgreSQL requires SSL connections
+    databaseUrl = `postgresql://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${endpoint}:${port}/${database}?sslmode=require`;
   }
 
   const db = createDbPool(databaseUrl);
