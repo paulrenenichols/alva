@@ -11,6 +11,15 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Accept build arguments for NEXT_PUBLIC_* environment variables
+ARG NEXT_PUBLIC_AUTH_URL
+ARG NEXT_PUBLIC_API_URL
+
+# Set as environment variables for Next.js build
+ENV NEXT_PUBLIC_AUTH_URL=$NEXT_PUBLIC_AUTH_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # Build without standalone output
 RUN corepack enable pnpm && pnpm nx build admin
 
