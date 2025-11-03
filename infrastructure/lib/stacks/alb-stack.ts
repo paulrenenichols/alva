@@ -38,6 +38,12 @@ export class AlbStack extends cdk.Stack {
     this.targetGroups = {};
 
     for (const [serviceKey, serviceConfig] of Object.entries(SERVICES)) {
+      // Health check path: Next.js apps use /api/health, Fastify apps use /health
+      const healthCheckPath =
+        serviceKey === 'web' || serviceKey === 'admin'
+          ? '/api/health'
+          : '/health';
+
       const targetGroup = new elbv2.ApplicationTargetGroup(
         this,
         `${serviceKey}TargetGroup`,
@@ -47,7 +53,7 @@ export class AlbStack extends cdk.Stack {
           protocol: elbv2.ApplicationProtocol.HTTP,
           targetType: elbv2.TargetType.IP,
           healthCheck: {
-            path: '/health',
+            path: healthCheckPath,
             interval: cdk.Duration.seconds(30),
             timeout: cdk.Duration.seconds(5),
             healthyHttpCodes: '200',
