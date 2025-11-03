@@ -30,16 +30,15 @@ echo ""
 SERVICES=("web" "api" "auth" "admin")
 
 for service in "${SERVICES[@]}"; do
-  echo "🏗️  Building alva-${service}..."
-  docker build \
+  echo "🏗️  Building alva-${service} for linux/amd64 (ECS Fargate architecture)..."
+  docker buildx build \
+    --platform linux/amd64 \
     -t ${ECR_REGISTRY}/alva-${service}:latest \
     -f apps/${service}/Dockerfile \
+    --push \
     .
   
-  echo "📤 Pushing alva-${service} to ECR..."
-  docker push ${ECR_REGISTRY}/alva-${service}:latest
-  
-  echo "✅ alva-${service} pushed successfully"
+  echo "✅ alva-${service} built and pushed successfully"
   echo ""
 done
 

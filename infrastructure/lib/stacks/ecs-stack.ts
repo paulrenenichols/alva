@@ -79,6 +79,7 @@ export class EcsStack extends cdk.Stack {
         PORT: serviceConfig.port.toString(),
         DATABASE_ENDPOINT: props.databaseEndpoint,
         DATABASE_NAME: 'alva',
+        DATABASE_PORT: '5432', // PostgreSQL default port
         REDIS_ENDPOINT: props.redisEndpoint,
         REDIS_PORT: props.redisPort,
         NEXT_PUBLIC_API_URL: 'http://localhost:3001', // Will be updated with ALB URL after deployment

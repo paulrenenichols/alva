@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Build shared libraries first, then the Auth service
-RUN corepack enable pnpm && pnpm nx build database shared-types validation utils auth
+RUN corepack enable pnpm && pnpm nx reset && pnpm nx build database shared-types validation utils auth --skip-nx-cache
 
 # Production image
 FROM base AS runner

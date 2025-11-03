@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Build shared libraries first, then the API service with all dependencies
-RUN corepack enable pnpm && pnpm nx build database shared-types validation utils api --configuration=production
+RUN corepack enable pnpm && pnpm nx reset && pnpm nx build database shared-types validation utils api --configuration=production --skip-nx-cache
 
 # Verify the build output exists and show structure
 RUN echo "Checking build output..." && \
