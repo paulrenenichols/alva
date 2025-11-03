@@ -106,6 +106,16 @@ export class AlbStack extends cdk.Stack {
       action: elbv2.ListenerAction.forward([this.targetGroups.auth]),
     });
 
+    // Route /admin (exact) to admin service
+    // Note: /admin/* doesn't match /admin (exact), so we need a separate rule
+    httpListener.addAction('AdminTargetExact', {
+      priority: 350,
+      conditions: [
+        elbv2.ListenerCondition.pathPatterns(['/admin']),
+      ],
+      action: elbv2.ListenerAction.forward([this.targetGroups.admin]),
+    });
+
     httpListener.addAction('AdminTarget', {
       priority: 400,
       // Route admin paths and Next.js static assets for admin service
