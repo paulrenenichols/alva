@@ -200,6 +200,9 @@ async function registerDatabase(): Promise<void> {
  * @description Registers all middleware
  */
 async function registerMiddleware(): Promise<void> {
+  // No path prefix stripping needed - using subdomain-based routing
+  // Each service is accessed via its own subdomain (api.staging.alva.paulrenenichols.com)
+
   await fastify.register(monitoringPlugin);
   await fastify.register(securityPlugin);
   fastify.register(authMiddleware);

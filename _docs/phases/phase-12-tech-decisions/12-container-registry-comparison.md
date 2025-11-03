@@ -95,14 +95,15 @@ aws ecr create-repository --repository-name alva-auth
 aws ecr create-repository --repository-name alva-admin
 
 # Get login token
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 aws ecr get-login-password --region us-east-1 | \
   docker login --username AWS --password-stdin \
-  123456789012.dkr.ecr.us-east-1.amazonaws.com
+  ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
 
 # Push image
 docker tag alva-web:latest \
-  123456789012.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest
+  ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest
+docker push ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest
 ```
 
 **GitHub Actions Integration:**
@@ -387,7 +388,7 @@ aws secretsmanager create-secret \
       "name": "web",
       "image": "ghcr.io/yourusername/alva-web:latest",
       "repositoryCredentials": {
-        "credentialsParameter": "arn:aws:secretsmanager:us-east-1:123456789012:secret:github-container-registry-pat"
+        "credentialsParameter": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:github-container-registry-pat"
       }
     }
   ]
@@ -403,7 +404,7 @@ aws secretsmanager create-secret \
     {
       "Effect": "Allow",
       "Action": ["secretsmanager:GetSecretValue"],
-      "Resource": "arn:aws:secretsmanager:us-east-1:123456789012:secret:github-container-registry-pat*"
+      "Resource": "arn:aws:secretsmanager:us-east-1:YOUR_ACCOUNT_ID:secret:github-container-registry-pat*"
     }
   ]
 }
@@ -446,7 +447,7 @@ const webRepo = new ecr.Repository(this, 'WebRepo', {
   "containerDefinitions": [
     {
       "name": "web",
-      "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest"
+      "image": "YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest"
       // No repositoryCredentials needed! IAM handles it.
     }
   ]

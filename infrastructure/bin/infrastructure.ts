@@ -10,6 +10,7 @@ import { SecretsStack } from '../lib/stacks/secrets-stack';
 import { DatabaseStack } from '../lib/stacks/database-stack';
 import { CacheStack } from '../lib/stacks/cache-stack';
 import { EcsStack } from '../lib/stacks/ecs-stack';
+import { DnsStack } from '../lib/stacks/dns-stack';
 import { AlbStack } from '../lib/stacks/alb-stack';
 
 const app = new cdk.App();
@@ -72,13 +73,38 @@ const ecsStack = new EcsStack(app, `${projectName}-${environment}-ecs`, {
   resendApiKeySecret: secretsStack.resendApiKeySecret,
 });
 
-// 6. ALB Stack - Depends on Network and ECS
+// 6. DNS Stack - Optional, creates Route53 hosted zone if domain is provided
+// Set STAGING_DOMAIN environment variable to enable (e.g., 'staging.alva.paulrenenichols.com')
+// For cross-account DNS (hosted zone in management account), also set:
+//   - HOSTED_ZONE_ID: Route53 hosted zone ID in management account
+//   - HOSTED_ZONE_ACCOUNT_ID: Management account ID
+//   - CROSS_ACCOUNT_DNS_ROLE_ARN: IAM role ARN in management account (optional, if using cross-account)
+const stagingDomain = process.env.STAGING_DOMAIN;
+const hostedZoneId = process.env.HOSTED_ZONE_ID;
+const hostedZoneAccountId = process.env.HOSTED_ZONE_ACCOUNT_ID;
+const crossAccountDnsRoleArn = process.env.CROSS_ACCOUNT_DNS_ROLE_ARN;
+
+const dnsStack = stagingDomain
+  ? new DnsStack(app, `${projectName}-${environment}-dns`, {
+      env,
+      description: 'Route53 DNS for Alva staging',
+      domainName: stagingDomain,
+      createHostedZone: !hostedZoneId, // Don't create if using existing hosted zone
+      existingHostedZoneId: hostedZoneId,
+      hostedZoneAccountId: hostedZoneAccountId,
+      crossAccountDnsRoleArn: crossAccountDnsRoleArn,
+    })
+  : undefined;
+
+// 7. ALB Stack - Depends on Network, ECS, and optionally DNS
 const albStack = new AlbStack(app, `${projectName}-${environment}-alb`, {
   env,
   description: 'Application Load Balancer for Alva staging',
   vpc: networkStack.vpc,
   securityGroup: networkStack.albSecurityGroup,
   services: ecsStack.services,
+  hostedZone: dnsStack?.hostedZone,
+  domainName: stagingDomain,
 });
 
 // Add tags to all stacks

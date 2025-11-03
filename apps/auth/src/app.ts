@@ -196,6 +196,9 @@ async function registerDatabase(): Promise<void> {
  * @description Registers all application routes
  */
 async function registerRoutes(): Promise<void> {
+  // No path prefix stripping needed - using subdomain-based routing
+  // Service is accessed via its own subdomain (auth.staging.alva.paulrenenichols.com)
+
   await fastify.register(authRoutes, { prefix: '/auth' });
   await fastify.register(adminRoutes);
 }

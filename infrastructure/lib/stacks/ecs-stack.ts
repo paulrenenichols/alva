@@ -82,9 +82,52 @@ export class EcsStack extends cdk.Stack {
         DATABASE_PORT: '5432', // PostgreSQL default port
         REDIS_ENDPOINT: props.redisEndpoint,
         REDIS_PORT: props.redisPort,
-        NEXT_PUBLIC_API_URL: 'http://localhost:3001', // Will be updated with ALB URL after deployment
-        NEXT_PUBLIC_AUTH_URL: 'http://localhost:3002', // Will be updated with ALB URL after deployment
       };
+
+      // Construct service URLs based on domain pattern
+      // If STAGING_DOMAIN is set, use subdomains; otherwise use ALB DNS placeholder
+      const stagingDomain = process.env.STAGING_DOMAIN;
+      
+      if (stagingDomain) {
+        // Subdomain-based URLs
+        const webUrl = `http://${stagingDomain}`;
+        const apiUrl = `http://api.${stagingDomain}`;
+        const authUrl = `http://auth.${stagingDomain}`;
+        const adminUrl = `http://admin.${stagingDomain}`;
+
+        // For API and Auth services: Set CORS origins
+        if (serviceKey === 'api' || serviceKey === 'auth') {
+          environment.CORS_ORIGINS = `${webUrl},${adminUrl}`;
+        }
+
+        // For Next.js apps: Set API and Auth URLs
+        if (serviceKey === 'web' || serviceKey === 'admin') {
+          environment.NEXT_PUBLIC_API_URL = apiUrl;
+          environment.NEXT_PUBLIC_AUTH_URL = authUrl;
+        }
+      } else {
+        // Fallback: Use ALB DNS with path-based routing
+        // Note: ALB DNS will be available after ALB stack deployment
+        // URLs will be updated via ECS service update after initial deployment
+        // For now, set placeholder values
+        const baseUrlPlaceholder = 'http://ALB_DNS_PLACEHOLDER';
+        
+        const webUrl = baseUrlPlaceholder;
+        const apiUrl = `${baseUrlPlaceholder}/api`;
+        const authUrl = `${baseUrlPlaceholder}/auth`;
+        const adminUrl = `${baseUrlPlaceholder}/admin`;
+
+        // For API and Auth services: Set CORS origins
+        if (serviceKey === 'api' || serviceKey === 'auth') {
+          environment.CORS_ORIGINS = `${webUrl},${adminUrl}`;
+        }
+
+        // For Next.js apps: Set API and Auth URLs
+        if (serviceKey === 'web' || serviceKey === 'admin') {
+          environment.NEXT_PUBLIC_API_URL = apiUrl;
+          environment.NEXT_PUBLIC_AUTH_URL = authUrl;
+        }
+      }
 
             // Secrets from Secrets Manager
             // Note: DATABASE_URL will be constructed in the application from DATABASE_ENDPOINT and secret values

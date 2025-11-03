@@ -9,11 +9,8 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
-  // ALB routes /admin/* to this service
-  // basePath ensures static assets are at /admin/_next/static/... (correct ALB routing)
-  basePath: '/admin',
-  // Keep trailingSlash: false (default) - Next.js will serve /admin without redirecting
-  // The redirect loop was from middleware, which we removed
+  // No basePath needed - service will be accessible via its own subdomain/URL
+  // Each service gets its own unique URL in deployment
   env: {
     NEXT_PUBLIC_API_URL: process.env['NEXT_PUBLIC_API_URL'],
     NEXT_PUBLIC_AUTH_URL: process.env['NEXT_PUBLIC_AUTH_URL'],
