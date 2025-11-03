@@ -39,9 +39,12 @@ export class AlbStack extends cdk.Stack {
 
     for (const [serviceKey, serviceConfig] of Object.entries(SERVICES)) {
       // Health check path: Next.js apps use /api/health, Fastify apps use /health
+      // Admin service has basePath: '/admin', so health endpoint is at /admin/api/health
       const healthCheckPath =
-        serviceKey === 'web' || serviceKey === 'admin'
+        serviceKey === 'web'
           ? '/api/health'
+          : serviceKey === 'admin'
+          ? '/admin/api/health'
           : '/health';
 
       const targetGroup = new elbv2.ApplicationTargetGroup(
@@ -101,22 +104,6 @@ export class AlbStack extends cdk.Stack {
       priority: 300,
       conditions: [elbv2.ListenerCondition.pathPatterns(['/auth/*'])],
       action: elbv2.ListenerAction.forward([this.targetGroups.auth]),
-    });
-
-    // Redirect /admin (exact, no trailing slash) to /admin/ 
-    // ALB pattern /admin/* doesn't match /admin (exact)
-    // Next.js trailingSlash: true serves /admin/ correctly
-    httpListener.addAction('AdminRedirect', {
-      priority: 350,
-      conditions: [
-        elbv2.ListenerCondition.pathPatterns(['/admin']),
-      ],
-      action: elbv2.ListenerAction.redirect({
-        protocol: 'HTTP',
-        port: '80',
-        path: '/admin/',
-        permanent: true, // HTTP 301 redirect
-      }),
     });
 
     httpListener.addAction('AdminTarget', {
