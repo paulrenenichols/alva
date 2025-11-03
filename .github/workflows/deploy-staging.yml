@@ -9,6 +9,7 @@ on:
 env:
   AWS_REGION: us-east-1
   NODE_VERSION: '20'
+  STAGING_DOMAIN: staging.alva.paulrenenichols.com
 
 jobs:
   build-and-push-images:
@@ -52,6 +53,9 @@ jobs:
           tags: |
             ${{ env.ECR_REGISTRY }}/alva-web:latest
             ${{ env.ECR_REGISTRY }}/alva-web:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_AUTH_URL=http://auth.${{ env.STAGING_DOMAIN }}
+            NEXT_PUBLIC_API_URL=http://api.${{ env.STAGING_DOMAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -88,6 +92,9 @@ jobs:
           tags: |
             ${{ env.ECR_REGISTRY }}/alva-admin:latest
             ${{ env.ECR_REGISTRY }}/alva-admin:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_AUTH_URL=http://auth.${{ env.STAGING_DOMAIN }}
+            NEXT_PUBLIC_API_URL=http://api.${{ env.STAGING_DOMAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
