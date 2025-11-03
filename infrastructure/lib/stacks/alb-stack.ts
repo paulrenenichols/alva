@@ -85,7 +85,8 @@ export class AlbStack extends cdk.Stack {
     httpListener.addAction('WebTarget', {
       priority: 100,
       conditions: [
-        elbv2.ListenerCondition.pathPatterns(['/', '/web/*']),
+        // Route root, web paths, and Next.js static assets to web service
+        elbv2.ListenerCondition.pathPatterns(['/', '/web/*', '/_next/static/*', '/_next/image/*', '/favicon.ico']),
       ],
       action: elbv2.ListenerAction.forward([this.targetGroups.web]),
     });
@@ -104,7 +105,10 @@ export class AlbStack extends cdk.Stack {
 
     httpListener.addAction('AdminTarget', {
       priority: 400,
-      conditions: [elbv2.ListenerCondition.pathPatterns(['/admin/*'])],
+      // Route admin paths and Next.js static assets for admin service
+      conditions: [
+        elbv2.ListenerCondition.pathPatterns(['/admin/*', '/admin/_next/static/*', '/admin/_next/image/*']),
+      ],
       action: elbv2.ListenerAction.forward([this.targetGroups.admin]),
     });
 
