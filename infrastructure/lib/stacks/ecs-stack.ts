@@ -134,7 +134,9 @@ export class EcsStack extends cdk.Stack {
                 healthCheck: {
                   command: [
                     'CMD-SHELL',
-                    `curl -f http://localhost:${healthCheckPort}${healthCheckPath} || exit 1`,
+                    // Use wget instead of curl (Alpine doesn't include curl by default)
+                    // -q: quiet, -O-: output to stdout, --spider: don't download, just check
+                    `wget --no-verbose --tries=1 --spider http://localhost:${healthCheckPort}${healthCheckPath} || exit 1`,
                   ],
                   interval: cdk.Duration.seconds(30),
                   timeout: cdk.Duration.seconds(5),
