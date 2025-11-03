@@ -10,16 +10,17 @@ const nextConfig = {
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
   // ALB routes /admin/* to this service
-  // Next.js rewrites strip /admin prefix so routes work correctly
+  // Next.js rewrites strip /admin prefix internally, so routes work from root
+  // This avoids redirect loops from basePath configuration
   async rewrites() {
     return [
       {
         source: '/admin/:path*',
-        destination: '/:path*', // Strip /admin prefix
+        destination: '/:path*', // Strip /admin prefix internally
       },
       {
         source: '/admin',
-        destination: '/', // Root route
+        destination: '/', // Map /admin to root
       },
     ];
   },
