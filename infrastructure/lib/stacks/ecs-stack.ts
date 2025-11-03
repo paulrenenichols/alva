@@ -86,53 +86,63 @@ export class EcsStack extends cdk.Stack {
         NEXT_PUBLIC_AUTH_URL: 'http://localhost:3002', // Will be updated with ALB URL after deployment
       };
 
-      // Secrets from Secrets Manager
-      // Note: DATABASE_URL will be constructed in the application from DATABASE_ENDPOINT and secret values
-      const secrets: Record<string, ecs.Secret> = {
-        DATABASE_USERNAME: ecs.Secret.fromSecretsManager(
-          props.databaseSecret,
-          'username'
-        ),
-        DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(
-          props.databaseSecret,
-          'password'
-        ),
-        JWT_PRIVATE_KEY: ecs.Secret.fromSecretsManager(
-          props.jwtPrivateKeySecret
-        ),
-        JWT_PUBLIC_KEY: ecs.Secret.fromSecretsManager(
-          props.jwtPublicKeySecret
-        ),
-        JWT_SECRET: ecs.Secret.fromSecretsManager(props.jwtSecret),
-        COOKIE_SECRET: ecs.Secret.fromSecretsManager(props.cookieSecret),
-        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(
-          props.openaiApiKeySecret
-        ),
-        RESEND_API_KEY: ecs.Secret.fromSecretsManager(
-          props.resendApiKeySecret
-        ),
-      };
+            // Secrets from Secrets Manager
+            // Note: DATABASE_URL will be constructed in the application from DATABASE_ENDPOINT and secret values
+            const secrets: Record<string, ecs.Secret> = {
+              DATABASE_USERNAME: ecs.Secret.fromSecretsManager(
+                props.databaseSecret,
+                'username'
+              ),
+              DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(
+                props.databaseSecret,
+                'password'
+              ),
+              JWT_PRIVATE_KEY: ecs.Secret.fromSecretsManager(
+                props.jwtPrivateKeySecret
+              ),
+              JWT_PUBLIC_KEY: ecs.Secret.fromSecretsManager(
+                props.jwtPublicKeySecret
+              ),
+              JWT_SECRET: ecs.Secret.fromSecretsManager(props.jwtSecret),
+              COOKIE_SECRET: ecs.Secret.fromSecretsManager(props.cookieSecret),
+              OPENAI_API_KEY: ecs.Secret.fromSecretsManager(
+                props.openaiApiKeySecret
+              ),
+              RESEND_API_KEY: ecs.Secret.fromSecretsManager(
+                props.resendApiKeySecret
+              ),
+            };
 
-      // Add container to task definition
-      const container = taskDefinition.addContainer(
-        `${serviceKey}Container`,
-        {
-          image: ecs.ContainerImage.fromEcrRepository(ecrRepo, 'latest'),
-          logging: ecs.LogDrivers.awsLogs({
-            streamPrefix: serviceConfig.name,
-            logGroup: logGroup,
-          }),
-          environment,
-          secrets,
-          healthCheck: {
-            command: ['CMD-SHELL', 'curl -f http://localhost:${PORT}/health || exit 1'],
-            interval: cdk.Duration.seconds(30),
-            timeout: cdk.Duration.seconds(5),
-            retries: 3,
-            startPeriod: cdk.Duration.seconds(60),
-          },
-        }
-      );
+            // Health check path: Next.js apps use /api/health, Fastify apps use /health
+            const healthCheckPath =
+              serviceKey === 'web' || serviceKey === 'admin'
+                ? '/api/health'
+                : '/health';
+            const healthCheckPort = serviceConfig.port.toString();
+
+            // Add container to task definition
+            const container = taskDefinition.addContainer(
+              `${serviceKey}Container`,
+              {
+                image: ecs.ContainerImage.fromEcrRepository(ecrRepo, 'latest'),
+                logging: ecs.LogDrivers.awsLogs({
+                  streamPrefix: serviceConfig.name,
+                  logGroup: logGroup,
+                }),
+                environment,
+                secrets,
+                healthCheck: {
+                  command: [
+                    'CMD-SHELL',
+                    `curl -f http://localhost:${healthCheckPort}${healthCheckPath} || exit 1`,
+                  ],
+                  interval: cdk.Duration.seconds(30),
+                  timeout: cdk.Duration.seconds(5),
+                  retries: 3,
+                  startPeriod: cdk.Duration.seconds(60),
+                },
+              }
+            );
 
       container.addPortMappings({
         containerPort: serviceConfig.port,
