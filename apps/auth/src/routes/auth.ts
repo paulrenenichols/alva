@@ -313,9 +313,29 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { token, newPassword } = request.body as { token: string; newPassword: string };
+      const tokenPrefix = token ? token.substring(0, 8) + '***' : 'missing';
+
+      fastify.log.info(
+        {
+          route: 'reset-password',
+          tokenPrefix,
+          step: 'request_received',
+          passwordLength: newPassword?.length || 0,
+        },
+        '[ResetPassword] Reset password request received'
+      );
 
       try {
         // Validate token
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'token_validation_start',
+          },
+          '[ResetPassword] Validating reset token'
+        );
+
         const [resetToken] = await fastify.db
           .select()
           .from(adminPasswordResetTokens)
@@ -323,27 +343,109 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
           .limit(1);
 
         if (!resetToken) {
+          fastify.log.warn(
+            {
+              route: 'reset-password',
+              tokenPrefix,
+              step: 'token_not_found',
+            },
+            '[ResetPassword] Invalid reset token'
+          );
           return reply.code(400).send({ error: 'Invalid reset token' });
         }
 
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'token_found',
+            userId: resetToken.adminUserId,
+            expiresAt: resetToken.expiresAt.toISOString(),
+            usedAt: resetToken.usedAt?.toISOString() || null,
+          },
+          '[ResetPassword] Token found, checking validity'
+        );
+
         if (resetToken.usedAt) {
+          fastify.log.warn(
+            {
+              route: 'reset-password',
+              tokenPrefix,
+              step: 'token_already_used',
+              userId: resetToken.adminUserId,
+              usedAt: resetToken.usedAt.toISOString(),
+            },
+            '[ResetPassword] Token has already been used'
+          );
           return reply.code(400).send({ error: 'Token has already been used' });
         }
 
-        if (new Date(resetToken.expiresAt) < new Date()) {
+        const now = new Date();
+        if (new Date(resetToken.expiresAt) < now) {
+          fastify.log.warn(
+            {
+              route: 'reset-password',
+              tokenPrefix,
+              step: 'token_expired',
+              userId: resetToken.adminUserId,
+              expiresAt: resetToken.expiresAt.toISOString(),
+              currentTime: now.toISOString(),
+            },
+            '[ResetPassword] Token has expired'
+          );
           return reply.code(400).send({ error: 'Token has expired' });
         }
+
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'hashing_password',
+            userId: resetToken.adminUserId,
+          },
+          '[ResetPassword] Token valid, hashing new password'
+        );
 
         // Hash new password
         const passwordHash = await bcrypt.hash(newPassword, 10);
 
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'updating_password',
+            userId: resetToken.adminUserId,
+          },
+          '[ResetPassword] Updating admin user password'
+        );
+
         // Update admin user
         await adminUserService.updateAdminUserPassword(resetToken.adminUserId, passwordHash);
+
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'marking_token_used',
+            userId: resetToken.adminUserId,
+          },
+          '[ResetPassword] Marking reset token as used'
+        );
 
         // Mark token as used
         await fastify.db.update(adminPasswordResetTokens)
           .set({ usedAt: new Date() })
           .where(eq(adminPasswordResetTokens.token, token));
+
+        fastify.log.debug(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'generating_tokens',
+            userId: resetToken.adminUserId,
+          },
+          '[ResetPassword] Generating access and refresh tokens'
+        );
 
         // Generate tokens and set refresh cookie
         const tokenService = new TokenService();
@@ -359,9 +461,30 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
         await adminUserService.createAdminRefreshToken(resetToken.adminUserId, refreshToken);
         setRefreshTokenCookie(reply, refreshToken);
 
+        fastify.log.info(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'password_reset_success',
+            userId: resetToken.adminUserId,
+            emailPrefix: adminUser?.email ? adminUser.email.substring(0, 3) + '***' : 'unknown',
+          },
+          '[ResetPassword] Password reset successful'
+        );
+
         return { message: 'Password reset successful', accessToken };
       } catch (error) {
-        fastify.log.error(error);
+        fastify.log.error(
+          {
+            route: 'reset-password',
+            tokenPrefix,
+            step: 'error',
+            error: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+            errorType: error instanceof Error ? error.constructor.name : typeof error,
+          },
+          '[ResetPassword] Error processing password reset'
+        );
         return reply.code(500).send({ error: 'Internal server error' });
       }
     }
@@ -385,50 +508,153 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { email } = request.body as { email: string };
+      const emailPrefix = email.substring(0, 3) + '***';
+      
+      fastify.log.info(
+        {
+          route: 'recovery-request',
+          emailPrefix,
+          step: 'request_received',
+        },
+        '[RecoveryRequest] Recovery request received'
+      );
+
       try {
         // Lookup admin user
+        fastify.log.debug(
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'user_lookup_start',
+          },
+          '[RecoveryRequest] Looking up admin user by email'
+        );
+
         const user = await adminUserService.findAdminUserByEmail(email);
 
-        if (user) {
-          // Check admin role
-          const [adminRole] = await fastify.db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
-          if (adminRole) {
-            const [userRole] = await fastify.db
-              .select()
-              .from(adminUserRoles)
-              .where(and(eq(adminUserRoles.adminUserId, user.id), eq(adminUserRoles.roleId, adminRole.id)))
-              .limit(1);
+        if (!user) {
+          fastify.log.info(
+            {
+              route: 'recovery-request',
+              emailPrefix,
+              step: 'user_not_found',
+            },
+            '[RecoveryRequest] User not found (returning generic success)'
+          );
+          return { message: 'If an account exists, a recovery link has been sent.' };
+        }
 
-            if (userRole) {
-              // Create reset token (1 hour expiry)
-              const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
-              // Send recovery email
-              const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
-              if (!emailResult.success) {
-                fastify.log.error(
-                  {
-                    email: email.substring(0, 3) + '***', // Log partial email for debugging
-                    error: emailResult.error,
-                  },
-                  '[RecoveryRequest] Email send failed'
-                );
-              } else {
-                fastify.log.info(
-                  {
-                    email: email.substring(0, 3) + '***',
-                    messageId: emailResult.messageId,
-                  },
-                  '[RecoveryRequest] Email sent successfully'
-                );
-              }
-            }
-          }
+        fastify.log.debug(
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'user_found',
+            userId: user.id,
+          },
+          '[RecoveryRequest] User found, checking admin role'
+        );
+
+        // Check admin role
+        const [adminRole] = await fastify.db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
+        
+        if (!adminRole) {
+          fastify.log.warn(
+            {
+              route: 'recovery-request',
+              emailPrefix,
+              step: 'admin_role_not_found',
+              userId: user.id,
+            },
+            '[RecoveryRequest] Admin role not found in database'
+          );
+          return { message: 'If an account exists, a recovery link has been sent.' };
+        }
+
+        const [userRole] = await fastify.db
+          .select()
+          .from(adminUserRoles)
+          .where(and(eq(adminUserRoles.adminUserId, user.id), eq(adminUserRoles.roleId, adminRole.id)))
+          .limit(1);
+
+        if (!userRole) {
+          fastify.log.info(
+            {
+              route: 'recovery-request',
+              emailPrefix,
+              step: 'user_not_admin',
+              userId: user.id,
+            },
+            '[RecoveryRequest] User does not have admin role (returning generic success)'
+          );
+          return { message: 'If an account exists, a recovery link has been sent.' };
+        }
+
+        fastify.log.debug(
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'creating_reset_token',
+            userId: user.id,
+          },
+          '[RecoveryRequest] User has admin role, creating reset token'
+        );
+
+        // Create reset token (1 hour expiry)
+        const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
+        
+        fastify.log.info(
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'reset_token_created',
+            userId: user.id,
+            tokenPrefix: resetToken.substring(0, 8) + '***',
+          },
+          '[RecoveryRequest] Reset token created, sending email'
+        );
+
+        // Send recovery email
+        const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
+        
+        if (!emailResult.success) {
+          fastify.log.error(
+            {
+              route: 'recovery-request',
+              emailPrefix,
+              step: 'email_send_failed',
+              userId: user.id,
+              error: emailResult.error,
+              errorType: typeof emailResult.error,
+            },
+            '[RecoveryRequest] Email send failed'
+          );
+        } else {
+          fastify.log.info(
+            {
+              route: 'recovery-request',
+              emailPrefix,
+              step: 'email_sent_success',
+              userId: user.id,
+              messageId: emailResult.messageId,
+            },
+            '[RecoveryRequest] Recovery email sent successfully'
+          );
         }
 
         // Always return success (no enumeration)
         return { message: 'If an account exists, a recovery link has been sent.' };
       } catch (error) {
-        fastify.log.error(error);
+        fastify.log.error(
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'error',
+            error: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+            errorType: error instanceof Error ? error.constructor.name : typeof error,
+          },
+          '[RecoveryRequest] Error processing recovery request'
+        );
         // Still return success to avoid leaking state
         return { message: 'If an account exists, a recovery link has been sent.' };
       }

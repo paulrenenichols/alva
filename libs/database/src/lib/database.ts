@@ -22,7 +22,10 @@ export const createDbPool = (connectionString: string) => {
   const sslModeMatch = connectionString.match(/[?&]sslmode=([^&]+)/);
   const sslMode = sslModeMatch ? sslModeMatch[1] : null;
   
-  console.log('[Database] SSL mode detected:', sslMode);
+  console.log('[Database] SSL mode detected:', {
+    sslMode,
+    connectionStringPreview: maskedConnectionString.substring(0, 100),
+  });
   
   // Build base pool configuration
   const poolConfig: any = {
@@ -63,22 +66,57 @@ export const createDbPool = (connectionString: string) => {
         hasSsl: !!poolConfig.ssl,
         sslMode,
         hasConnectionString: !!poolConfig.connectionString, // Should be false
+        sslConfig: {
+          rejectUnauthorized: poolConfig.ssl.rejectUnauthorized,
+        },
       });
     } catch (error) {
       // If parsing fails, this is a critical error - throw it
       console.error('[Database] CRITICAL: Failed to parse connection string for SSL configuration', {
         error: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
         connectionStringPreview: connectionString.substring(0, 50) + '...',
+        sslMode,
       });
       throw new Error(`Failed to configure SSL for database connection: ${error instanceof Error ? error.message : String(error)}`);
     }
   } else {
     // No SSL required, use connection string as-is
     poolConfig.connectionString = connectionString;
-    console.log('[Database] Using connection string without SSL');
+    console.log('[Database] Using connection string without SSL', {
+      hasConnectionString: !!poolConfig.connectionString,
+      sslMode,
+    });
   }
 
   const pool = new Pool(poolConfig);
+
+  // Add connection event logging for debugging SSL issues
+  pool.on('connect', (client) => {
+    console.log('[Database] Client connected', {
+      totalCount: pool.totalCount,
+      idleCount: pool.idleCount,
+      waitingCount: pool.waitingCount,
+    });
+  });
+
+  pool.on('error', (err, client) => {
+    console.error('[Database] Pool error', {
+      error: err.message,
+      errorCode: (err as any).code,
+      errorStack: err.stack,
+      totalCount: pool.totalCount,
+      idleCount: pool.idleCount,
+      waitingCount: pool.waitingCount,
+    });
+  });
+
+  console.log('[Database] Pool created successfully', {
+    sslMode,
+    hasSsl: !!poolConfig.ssl,
+    host: poolConfig.host || 'from-connection-string',
+  });
 
   return drizzle(pool, { schema });
 };
