@@ -40,6 +40,14 @@ export const createDbPool = (connectionString: string) => {
       poolConfig.ssl = {
         rejectUnauthorized: false, // RDS uses self-signed certificates, so we don't verify the certificate
       };
+      
+      console.log('[Database] SSL configured for RDS connection:', {
+        host: poolConfig.host,
+        port: poolConfig.port,
+        database: poolConfig.database,
+        user: poolConfig.user,
+        hasSsl: !!poolConfig.ssl,
+      });
     } catch (error) {
       // Fallback: If URL parsing fails, try to use connectionString with ssl option
       // Note: This may not work if pg Pool ignores ssl when connectionString is provided
