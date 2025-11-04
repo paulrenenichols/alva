@@ -5,7 +5,13 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
-import { adminUsers, adminPasswordResetTokens, adminRoles, adminUserRoles, webUsers } from '@alva/database';
+import {
+  adminUsers,
+  adminPasswordResetTokens,
+  adminRoles,
+  adminUserRoles,
+  webUsers,
+} from '@alva/database';
 import { WebUserService } from '../services/web-user.service';
 import { AdminUserService } from '../services/admin-user.service';
 import { EmailService } from '../services/email.service';
@@ -59,7 +65,11 @@ async function registerUserRoute(
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, inviteToken, password } = request.body as { email: string; inviteToken: string; password: string };
+      const { email, inviteToken, password } = request.body as {
+        email: string;
+        inviteToken: string;
+        password: string;
+      };
 
       try {
         // Validate invite token
@@ -80,7 +90,7 @@ async function registerUserRoute(
         }
 
         const user = await webUserService.createWebUser(email, password);
-        
+
         // Mark invite as used
         await webInviteService.markInviteAsUsed(inviteToken, user.id);
 
@@ -165,7 +175,11 @@ async function verifyEmailRoute(
  * @param userService - User service instance
  * @param tokenService - Token service instance
  */
-async function loginPasswordRoute(fastify: FastifyInstance, adminUserService: AdminUserService, tokenService: TokenService): Promise<void> {
+async function loginPasswordRoute(
+  fastify: FastifyInstance,
+  adminUserService: AdminUserService,
+  tokenService: TokenService
+): Promise<void> {
   fastify.post(
     '/login-password',
     {
@@ -181,11 +195,18 @@ async function loginPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, password } = request.body as { email: string; password: string };
+      const { email, password } = request.body as {
+        email: string;
+        password: string;
+      };
 
       try {
         // Find admin user
-        const [user] = await fastify.db.select().from(adminUsers).where(eq(adminUsers.email, email)).limit(1);
+        const [user] = await fastify.db
+          .select()
+          .from(adminUsers)
+          .where(eq(adminUsers.email, email))
+          .limit(1);
 
         if (!user || !user.passwordHash) {
           return reply.code(401).send({ error: 'Invalid credentials' });
@@ -199,7 +220,8 @@ async function loginPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
 
         // Check if password reset required
         if (user.mustResetPassword) {
-          const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
+          const resetToken =
+            await adminUserService.createAdminPasswordResetToken(user.id);
 
           return reply.code(403).send({
             error: 'Password reset required',
@@ -257,7 +279,10 @@ async function loginWebPasswordRoute(
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { email, password } = request.body as { email: string; password: string };
+      const { email, password } = request.body as {
+        email: string;
+        password: string;
+      };
 
       try {
         const user = await webUserService.findWebUserByEmail(email);
@@ -296,7 +321,10 @@ async function loginWebPasswordRoute(
  * @description Registers the password reset route
  * @param fastify - Fastify instance
  */
-async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: AdminUserService): Promise<void> {
+async function resetPasswordRoute(
+  fastify: FastifyInstance,
+  adminUserService: AdminUserService
+): Promise<void> {
   fastify.post(
     '/reset-password',
     {
@@ -312,7 +340,10 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { token, newPassword } = request.body as { token: string; newPassword: string };
+      const { token, newPassword } = request.body as {
+        token: string;
+        newPassword: string;
+      };
       const tokenPrefix = token ? token.substring(0, 8) + '***' : 'missing';
 
       fastify.log.info(
@@ -420,7 +451,10 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
         );
 
         // Update admin user
-        await adminUserService.updateAdminUserPassword(resetToken.adminUserId, passwordHash);
+        await adminUserService.updateAdminUserPassword(
+          resetToken.adminUserId,
+          passwordHash
+        );
 
         fastify.log.debug(
           {
@@ -433,7 +467,8 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
         );
 
         // Mark token as used
-        await fastify.db.update(adminPasswordResetTokens)
+        await fastify.db
+          .update(adminPasswordResetTokens)
           .set({ usedAt: new Date() })
           .where(eq(adminPasswordResetTokens.token, token));
 
@@ -449,16 +484,21 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
 
         // Generate tokens and set refresh cookie
         const tokenService = new TokenService();
-        const adminUser = await adminUserService.findAdminUserById(resetToken.adminUserId);
-        const accessToken = tokenService.generateAccessToken({ 
-          userId: resetToken.adminUserId, 
+        const adminUser = await adminUserService.findAdminUserById(
+          resetToken.adminUserId
+        );
+        const accessToken = tokenService.generateAccessToken({
+          userId: resetToken.adminUserId,
           email: adminUser?.email || '',
           userType: 'admin',
         });
         const refreshToken = tokenService.generateRefreshToken();
 
         // Store hashed refresh token via service helper (handles hashing/tokenHash column)
-        await adminUserService.createAdminRefreshToken(resetToken.adminUserId, refreshToken);
+        await adminUserService.createAdminRefreshToken(
+          resetToken.adminUserId,
+          refreshToken
+        );
         setRefreshTokenCookie(reply, refreshToken);
 
         fastify.log.info(
@@ -467,7 +507,9 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
             tokenPrefix,
             step: 'password_reset_success',
             userId: resetToken.adminUserId,
-            emailPrefix: adminUser?.email ? adminUser.email.substring(0, 3) + '***' : 'unknown',
+            emailPrefix: adminUser?.email
+              ? adminUser.email.substring(0, 3) + '***'
+              : 'unknown',
           },
           '[ResetPassword] Password reset successful'
         );
@@ -481,7 +523,8 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
             step: 'error',
             error: error instanceof Error ? error.message : String(error),
             errorStack: error instanceof Error ? error.stack : undefined,
-            errorType: error instanceof Error ? error.constructor.name : typeof error,
+            errorType:
+              error instanceof Error ? error.constructor.name : typeof error,
           },
           '[ResetPassword] Error processing password reset'
         );
@@ -494,7 +537,11 @@ async function resetPasswordRoute(fastify: FastifyInstance, adminUserService: Ad
 /**
  * @description Admin recovery request route (no auth). Sends password reset email if admin user exists.
  */
-async function recoveryRequestRoute(fastify: FastifyInstance, emailService: EmailService, adminUserService: AdminUserService): Promise<void> {
+async function recoveryRequestRoute(
+  fastify: FastifyInstance,
+  emailService: EmailService,
+  adminUserService: AdminUserService
+): Promise<void> {
   fastify.post(
     '/recovery-request',
     {
@@ -509,7 +556,12 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { email } = request.body as { email: string };
       const emailPrefix = email.substring(0, 3) + '***';
-      
+
+      console.log('[RecoveryRequest] Recovery request received', {
+        route: 'recovery-request',
+        emailPrefix,
+        step: 'request_received',
+      });
       fastify.log.info(
         {
           route: 'recovery-request',
@@ -529,6 +581,7 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
           },
           '[RecoveryRequest] Looking up admin user by email'
         );
+        console.log('[RecoveryRequest] Looking up admin user by email', { route: 'recovery-request', emailPrefix, step: 'user_lookup_start' });
 
         const user = await adminUserService.findAdminUserByEmail(email);
 
@@ -541,7 +594,10 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             },
             '[RecoveryRequest] User not found (returning generic success)'
           );
-          return { message: 'If an account exists, a recovery link has been sent.' };
+          console.log('[RecoveryRequest] User not found (returning generic success)', { route: 'recovery-request', emailPrefix, step: 'user_not_found' });
+          return {
+            message: 'If an account exists, a recovery link has been sent.',
+          };
         }
 
         fastify.log.debug(
@@ -553,10 +609,15 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
           },
           '[RecoveryRequest] User found, checking admin role'
         );
+        console.log('[RecoveryRequest] User found, checking admin role', { route: 'recovery-request', emailPrefix, step: 'user_found', userId: user.id });
 
         // Check admin role
-        const [adminRole] = await fastify.db.select().from(adminRoles).where(eq(adminRoles.name, 'admin')).limit(1);
-        
+        const [adminRole] = await fastify.db
+          .select()
+          .from(adminRoles)
+          .where(eq(adminRoles.name, 'admin'))
+          .limit(1);
+
         if (!adminRole) {
           fastify.log.warn(
             {
@@ -567,13 +628,21 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             },
             '[RecoveryRequest] Admin role not found in database'
           );
-          return { message: 'If an account exists, a recovery link has been sent.' };
+          console.log('[RecoveryRequest] Admin role not found in database', { route: 'recovery-request', emailPrefix, step: 'admin_role_not_found', userId: user.id });
+          return {
+            message: 'If an account exists, a recovery link has been sent.',
+          };
         }
 
         const [userRole] = await fastify.db
           .select()
           .from(adminUserRoles)
-          .where(and(eq(adminUserRoles.adminUserId, user.id), eq(adminUserRoles.roleId, adminRole.id)))
+          .where(
+            and(
+              eq(adminUserRoles.adminUserId, user.id),
+              eq(adminUserRoles.roleId, adminRole.id)
+            )
+          )
           .limit(1);
 
         if (!userRole) {
@@ -586,7 +655,9 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             },
             '[RecoveryRequest] User does not have admin role (returning generic success)'
           );
-          return { message: 'If an account exists, a recovery link has been sent.' };
+          return {
+            message: 'If an account exists, a recovery link has been sent.',
+          };
         }
 
         fastify.log.debug(
@@ -598,10 +669,13 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
           },
           '[RecoveryRequest] User has admin role, creating reset token'
         );
+        console.log('[RecoveryRequest] User has admin role, creating reset token', { route: 'recovery-request', emailPrefix, step: 'creating_reset_token', userId: user.id });
 
         // Create reset token (1 hour expiry)
-        const resetToken = await adminUserService.createAdminPasswordResetToken(user.id);
-        
+        const resetToken = await adminUserService.createAdminPasswordResetToken(
+          user.id
+        );
+
         fastify.log.info(
           {
             route: 'recovery-request',
@@ -612,10 +686,16 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
           },
           '[RecoveryRequest] Reset token created, sending email'
         );
+        console.log('[RecoveryRequest] Reset token created, sending email', { route: 'recovery-request', emailPrefix, step: 'reset_token_created', userId: user.id, tokenPrefix: resetToken.substring(0, 8) + '***' });
 
         // Send recovery email
-        const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
-        
+        console.log('[RecoveryRequest] Calling emailService.sendPasswordResetEmail', { email, tokenPrefix: resetToken.substring(0, 8) + '***' });
+        const emailResult = await emailService.sendPasswordResetEmail(
+          email,
+          resetToken
+        );
+        console.log('[RecoveryRequest] Email service result', { success: emailResult.success, messageId: emailResult.messageId, error: emailResult.error });
+
         if (!emailResult.success) {
           fastify.log.error(
             {
@@ -628,6 +708,7 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             },
             '[RecoveryRequest] Email send failed'
           );
+          console.error('[RecoveryRequest] Email send failed', { route: 'recovery-request', emailPrefix, step: 'email_send_failed', userId: user.id, error: emailResult.error, errorType: typeof emailResult.error });
         } else {
           fastify.log.info(
             {
@@ -638,11 +719,14 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
               messageId: emailResult.messageId,
             },
             '[RecoveryRequest] Recovery email sent successfully'
+          console.log('[RecoveryRequest] Recovery email sent successfully', { route: 'recovery-request', emailPrefix, step: 'email_sent_success', userId: user.id, messageId: emailResult.messageId });
           );
         }
 
         // Always return success (no enumeration)
-        return { message: 'If an account exists, a recovery link has been sent.' };
+        return {
+          message: 'If an account exists, a recovery link has been sent.',
+        };
       } catch (error) {
         fastify.log.error(
           {
@@ -651,12 +735,16 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
             step: 'error',
             error: error instanceof Error ? error.message : String(error),
             errorStack: error instanceof Error ? error.stack : undefined,
-            errorType: error instanceof Error ? error.constructor.name : typeof error,
+            errorType:
+              error instanceof Error ? error.constructor.name : typeof error,
           },
           '[RecoveryRequest] Error processing recovery request'
+        console.error('[RecoveryRequest] Error processing recovery request', { route: 'recovery-request', emailPrefix, step: 'error', error: error instanceof Error ? error.message : String(error), errorStack: error instanceof Error ? error.stack : undefined, errorType: error instanceof Error ? error.constructor.name : typeof error });
         );
         // Still return success to avoid leaking state
-        return { message: 'If an account exists, a recovery link has been sent.' };
+        return {
+          message: 'If an account exists, a recovery link has been sent.',
+        };
       }
     }
   );
@@ -710,7 +798,12 @@ export async function authRoutes(fastify: FastifyInstance) {
   const tokenService = new TokenService();
   const webInviteService = new WebInviteService(fastify.db);
 
-  await registerUserRoute(fastify, webUserService, emailService, webInviteService);
+  await registerUserRoute(
+    fastify,
+    webUserService,
+    emailService,
+    webInviteService
+  );
   await verifyEmailRoute(fastify, webUserService, tokenService);
   await loginPasswordRoute(fastify, adminUserService, tokenService);
   await loginWebPasswordRoute(fastify, webUserService, tokenService);

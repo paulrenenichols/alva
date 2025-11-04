@@ -156,10 +156,181 @@ jobs:
           export CDK_DEFAULT_REGION=${{ env.AWS_REGION }}
           cdk deploy --all --require-approval never
 
+  run-migrations:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: deploy-infrastructure
+    permissions:
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get latest auth task definition
+        id: get-task-def
+        run: |
+          # Get auth service name dynamically (CDK generates names with random suffixes)
+          AUTH_SERVICE=$(aws ecs list-services \
+            --cluster alva-staging-cluster \
+            --region ${{ env.AWS_REGION }} \
+            --query 'serviceArns[?contains(@, `auth`)] | [0]' \
+            --output text | xargs basename)
+
+          TASK_DEF=$(aws ecs describe-services \
+            --cluster alva-staging-cluster \
+            --services "$AUTH_SERVICE" \
+            --region ${{ env.AWS_REGION }} \
+            --query 'services[0].taskDefinition' \
+            --output text)
+
+          echo "TASK_DEF=$TASK_DEF" >> $GITHUB_ENV
+          echo "Auth service: $AUTH_SERVICE"
+          echo "Task definition: $TASK_DEF"
+
+      - name: Get ECS service network configuration
+        id: get-network-config
+        run: |
+          # Get subnet IDs from the auth service (any service will work, they're all in the same VPC)
+          SERVICE_ARN=$(aws ecs list-services \
+            --cluster alva-staging-cluster \
+            --region ${{ env.AWS_REGION }} \
+            --query 'serviceArns[0]' \
+            --output text)
+
+          SUBNETS=$(aws ecs describe-services \
+            --cluster alva-staging-cluster \
+            --services $(basename $SERVICE_ARN) \
+            --region ${{ env.AWS_REGION }} \
+            --query 'services[0].networkConfiguration.awsvpcConfiguration.subnets[]' \
+            --output text | tr '\t' ',')
+
+          SECURITY_GROUPS=$(aws ecs describe-services \
+            --cluster alva-staging-cluster \
+            --services $(basename $SERVICE_ARN) \
+            --region ${{ env.AWS_REGION }} \
+            --query 'services[0].networkConfiguration.awsvpcConfiguration.securityGroups[]' \
+            --output text | tr '\t' ',')
+
+          echo "SUBNETS=$SUBNETS" >> $GITHUB_ENV
+          echo "SECURITY_GROUPS=$SECURITY_GROUPS" >> $GITHUB_ENV
+          echo "Subnets: $SUBNETS"
+          echo "Security Groups: $SECURITY_GROUPS"
+
+      - name: Run database migrations
+        run: |
+          echo "Running database migrations..."
+
+          # Create migration command that runs SQL migrations
+          # Note: This is a simplified migration script. In the future, we should
+          # include migration files in the Docker image and use drizzle-kit migrate
+          MIGRATION_CMD='node -e "
+          const {Pool}=require(\"pg\");
+          const url=`postgresql://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_ENDPOINT}:5432/alva`;
+          const pool=new Pool({connectionString:url,ssl:{rejectUnauthorized:false}});
+          (async()=>{
+            try{
+              const checkTable=async(tableName)=>{
+                const result=await pool.query(`SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = \"public\" AND table_name = $1) as exists`, [tableName]);
+                return result.rows[0].exists;
+              };
+              const addConstraint=async(sql)=>{
+                try{await pool.query(sql);}catch(e){if(!e.message.includes(\"already exists\"))throw e;}
+              };
+              if(!(await checkTable(\"admin_users\"))){
+                console.log(\"Creating admin_users table...\");
+                await pool.query(`CREATE TABLE admin_users (id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, email varchar(255) NOT NULL, password_hash varchar(255) NOT NULL, email_verified boolean DEFAULT true, must_reset_password boolean DEFAULT false, created_at timestamp DEFAULT now() NOT NULL, updated_at timestamp DEFAULT now() NOT NULL, CONSTRAINT admin_users_email_unique UNIQUE(email))`);
+                await pool.query(`CREATE TABLE admin_roles (id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, name varchar(50) NOT NULL, description varchar(255), created_at timestamp DEFAULT now() NOT NULL, CONSTRAINT admin_roles_name_unique UNIQUE(name))`);
+                await pool.query(`CREATE TABLE admin_user_roles (id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, admin_user_id uuid NOT NULL, role_id uuid NOT NULL, created_at timestamp DEFAULT now() NOT NULL)`);
+                await pool.query(`CREATE TABLE admin_password_reset_tokens (id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, token varchar(255) NOT NULL, admin_user_id uuid NOT NULL, expires_at timestamp NOT NULL, used_at timestamp, created_at timestamp DEFAULT now() NOT NULL, CONSTRAINT admin_password_reset_tokens_token_unique UNIQUE(token))`);
+                await addConstraint(`ALTER TABLE admin_user_roles ADD CONSTRAINT admin_user_roles_admin_user_id_admin_users_id_fk FOREIGN KEY (admin_user_id) REFERENCES public.admin_users(id) ON DELETE cascade ON UPDATE no action`);
+                await addConstraint(`ALTER TABLE admin_user_roles ADD CONSTRAINT admin_user_roles_role_id_admin_roles_id_fk FOREIGN KEY (role_id) REFERENCES public.admin_roles(id) ON DELETE cascade ON UPDATE no action`);
+                await addConstraint(`ALTER TABLE admin_password_reset_tokens ADD CONSTRAINT admin_password_reset_tokens_admin_user_id_admin_users_id_fk FOREIGN KEY (admin_user_id) REFERENCES public.admin_users(id) ON DELETE cascade ON UPDATE no action`);
+                console.log(\"✅ Migrations completed\");
+              }else{
+                console.log(\"✅ Tables already exist, skipping migrations\");
+              }
+              await pool.end();
+              process.exit(0);
+            }catch(e){
+              console.error(\"❌ Migration failed:\",e.message);
+              console.error(e.stack);
+              await pool.end();
+              process.exit(1);
+            }
+          })();
+          "'
+
+          TASK_ARN=$(aws ecs run-task \
+            --cluster alva-staging-cluster \
+            --task-definition ${{ env.TASK_DEF }} \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[${{ env.SUBNETS }}],securityGroups=[${{ env.SECURITY_GROUPS }}],assignPublicIp=DISABLED}" \
+            --overrides "{\"containerOverrides\":[{\"name\":\"authContainer\",\"command\":[\"sh\",\"-c\",\"$MIGRATION_CMD\"]}]}" \
+            --region ${{ env.AWS_REGION }} \
+            --query 'tasks[0].taskArn' \
+            --output text)
+
+          echo "Migration task ARN: $TASK_ARN"
+          echo "TASK_ARN=$TASK_ARN" >> $GITHUB_ENV
+
+      - name: Wait for migrations to complete
+        run: |
+          echo "Waiting for migration task to complete..."
+          TIMEOUT=300  # 5 minutes
+          ELAPSED=0
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            STATUS=$(aws ecs describe-tasks \
+              --cluster alva-staging-cluster \
+              --tasks ${{ env.TASK_ARN }} \
+              --region ${{ env.AWS_REGION }} \
+              --query 'tasks[0].lastStatus' \
+              --output text 2>/dev/null || echo "PENDING")
+            
+            if [ "$STATUS" = "STOPPED" ]; then
+              EXIT_CODE=$(aws ecs describe-tasks \
+                --cluster alva-staging-cluster \
+                --tasks ${{ env.TASK_ARN }} \
+                --region ${{ env.AWS_REGION }} \
+                --query 'tasks[0].containers[0].exitCode' \
+                --output text)
+              
+              if [ "$EXIT_CODE" = "0" ]; then
+                echo "✅ Migrations completed successfully!"
+                exit 0
+              else
+                echo "❌ Migration task failed with exit code: $EXIT_CODE"
+                
+                # Get logs for debugging
+                TASK_ID=$(echo ${{ env.TASK_ARN }} | cut -d'/' -f3)
+                echo "Checking logs for task: $TASK_ID"
+                aws logs filter-log-events \
+                  --log-group-name /ecs/alva-staging \
+                  --log-stream-name-prefix "alva-auth/authContainer/$TASK_ID" \
+                  --region ${{ env.AWS_REGION }} \
+                  --output json \
+                  | jq -r '.events[] | .message' \
+                  | tail -20
+                
+                exit 1
+              fi
+            fi
+            
+            echo "Migration status: $STATUS (${ELAPSED}s elapsed)..."
+            sleep 10
+            ELAPSED=$((ELAPSED + 10))
+          done
+
+          echo "❌ Migration task timed out after $TIMEOUT seconds"
+          exit 1
+
   update-services:
     name: Update ECS Services
     runs-on: ubuntu-latest
-    needs: deploy-infrastructure
+    needs: run-migrations
     permissions:
       contents: read
     steps:
@@ -207,4 +378,3 @@ jobs:
               --region ${{ env.AWS_REGION }}
             echo "$service is stable"
           done
-
