@@ -54,6 +54,7 @@ for service in "${SERVICES[@]}"; do
     -t ${ECR_REGISTRY}/alva-${service}:latest \
     -f apps/${service}/Dockerfile \
     ${BUILD_ARGS} \
+    --no-cache \
     --push \
     .
   
