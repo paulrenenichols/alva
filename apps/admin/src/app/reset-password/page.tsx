@@ -7,6 +7,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { getAuthUrl } from '@/lib/api-config';
 
 // Force dynamic rendering to prevent prerendering issues with useSearchParams
 export const dynamic = 'force-dynamic';
@@ -27,18 +28,34 @@ function ResetPasswordForm() {
     e.preventDefault();
     setError(null);
 
+    console.log('[AdminResetPassword] Reset password request initiated', {
+      tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+      passwordLength: password.length,
+      timestamp: new Date().toISOString(),
+    });
+
     if (password !== confirmPassword) {
+      console.warn('[AdminResetPassword] Passwords do not match');
       setError('Passwords do not match');
       return;
     }
 
     if (password.length < 8) {
+      console.warn('[AdminResetPassword] Password too short', {
+        passwordLength: password.length,
+      });
       setError('Password must be at least 8 characters');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3002/auth/reset-password', {
+      const authUrl = getAuthUrl();
+      console.log('[AdminResetPassword] Calling auth service', {
+        url: `${authUrl}/auth/reset-password`,
+        tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+      });
+
+      const response = await fetch(`${authUrl}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,15 +64,38 @@ function ResetPasswordForm() {
         }),
       });
 
+      console.log('[AdminResetPassword] Auth service response', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+      });
+
       const data = await response.json();
 
       if (!response.ok) {
+        console.error('[AdminResetPassword] Auth service error response', {
+          status: response.status,
+          error: data.error,
+          tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+        });
         throw new Error(data.error);
       }
+
+      console.log('[AdminResetPassword] Password reset successful', {
+        message: data.message,
+        hasAccessToken: !!data.accessToken,
+        tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+      });
 
       setSuccess(true);
       setTimeout(() => router.push('/login?message=Password reset successful'), 2000);
     } catch (err: unknown) {
+      console.error('[AdminResetPassword] Password reset failed', {
+        error: err instanceof Error ? err.message : String(err),
+        errorType: err instanceof Error ? err.constructor.name : typeof err,
+        tokenPrefix: token ? token.substring(0, 8) + '***' : 'missing',
+      });
       setError(err instanceof Error ? err.message : 'Password reset failed');
     }
   };

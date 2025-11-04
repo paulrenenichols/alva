@@ -7,15 +7,18 @@
 ## Overview
 
 This phase implements:
-1. **AWS infrastructure** using CloudFormation
+1. **AWS infrastructure** using AWS CDK (TypeScript)
 2. **Staging environment** setup
-3. **CI/CD pipeline** for automated deployment
+3. **CI/CD pipeline** for automated deployment via GitHub Actions
 4. **ECS Fargate** container deployment
 5. **Database and cache** (RDS + ElastiCache)
+6. **DNS** (optional Route53 with cross-account support)
 
 **Estimated Duration**: 1-2 weeks
 
 **Builds On**: Phase 11 - requires shared email library and separated user tables
+
+**Status**: ✅ **COMPLETED** - Infrastructure deployed using CDK, automated via GitHub Actions
 
 ---
 
@@ -28,330 +31,208 @@ This phase implements:
 3. **Admin App**: Invite management interface ✅
 4. **Email Service**: Centralized email library with Mailpit + Resend integration ✅
 
-### ❌ What's Missing
+### ✅ What's Implemented
 
-1. **AWS infrastructure**: No CloudFormation templates
-2. **Staging environment**: No separate staging deployment
-3. **CI/CD pipeline**: No automated deployment
-4. **Database & cache**: No RDS or ElastiCache setup
+1. **AWS infrastructure**: CDK stacks deployed (Network, Database, Cache, ECS, ALB, DNS)
+2. **Staging environment**: Fully deployed and operational
+3. **CI/CD pipeline**: GitHub Actions workflow for automated deployment
+4. **Database & cache**: RDS PostgreSQL and ElastiCache Redis operational
+5. **DNS**: Optional DNS stack with cross-account Route53 support
 
 ---
 
-## Week 1: Infrastructure Setup
+## Implementation Summary
 
-### Day 1-2: CloudFormation Templates
+### Infrastructure as Code: AWS CDK
+
+The infrastructure is implemented using **AWS CDK (Cloud Development Kit)** in TypeScript, not raw CloudFormation templates. This provides:
+- Type-safe infrastructure definitions
+- Better code reuse and modularity
+- Automatic dependency management
+- Easier testing and validation
 
 #### Infrastructure Structure
 
-Create new directory:
-
 ```
 infrastructure/
-  ├── cloudformation/
-  │   ├── network.yml           # VPC, subnets, security groups
-  │   ├── rds.yml               # PostgreSQL RDS
-  │   ├── redis.yml             # ElastiCache Redis
-  │   ├── ecs.yml               # ECS cluster and services
-  │   ├── alb.yml               # Application Load Balancer
-  │   └── parameters.json       # Environment-specific params
-  ├── scripts/
-  │   ├── deploy.sh             # Deployment script
-  │   └── setup-env.sh          # Environment setup
+  ├── bin/
+  │   └── infrastructure.ts    # CDK app entry point
+  ├── lib/
+  │   ├── stacks/
+  │   │   ├── network-stack.ts   # VPC, subnets, security groups
+  │   │   ├── database-stack.ts  # RDS PostgreSQL
+  │   │   ├── cache-stack.ts     # ElastiCache Redis
+  │   │   ├── secrets-stack.ts   # Secrets Manager
+  │   │   ├── ecs-stack.ts       # ECS cluster and services
+  │   │   ├── alb-stack.ts       # Application Load Balancer
+  │   │   └── dns-stack.ts       # Route53 DNS (optional)
+  │   └── config/
+  │       └── services.ts       # Service definitions
+  ├── cdk.json
+  ├── package.json
+  └── tsconfig.json
 ```
 
-**Tasks**:
-- [ ] Create infrastructure directory structure
-- [ ] Initialize CloudFormation templates
-- [ ] Document infrastructure approach
+**Key Features**:
+- ✅ All stacks deployed and operational
+- ✅ Account ID auto-discovered from AWS credentials
+- ✅ Cross-account DNS support for Route53
+- ✅ Secrets Manager integration
+- ✅ CloudWatch logging for all services
 
-#### Network Template
+#### Network Stack
 
-**File**: `infrastructure/cloudformation/network.yml`
+**File**: `infrastructure/lib/stacks/network-stack.ts`
 
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Network infrastructure for Alva'
+The network stack creates:
+- VPC with CIDR 10.0.0.0/16
+- 2 Public subnets (us-east-1a, us-east-1b)
+- 2 Private subnets with egress (us-east-1a, us-east-1b)
+- NAT Gateway for private subnet internet access
+- Security groups for ALB, ECS, RDS, and Redis
 
-Parameters:
-  Environment:
-    Type: String
-    Default: staging
-    AllowedValues: [staging, production]
+**Status**: ✅ Deployed
 
-Resources:
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
-      EnableDnsSupport: true
-      Tags:
-        - Key: Name
-          Value: !Sub 'alva-${Environment}-vpc'
-
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: us-east-1a
-      CidrBlock: 10.0.1.0/24
-      MapPublicIpOnLaunch: true
-
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: us-east-1b
-      CidrBlock: 10.0.2.0/24
-      MapPublicIpOnLaunch: true
-
-Outputs:
-  VpcId:
-    Value: !Ref VPC
-    Export:
-      Name: !Sub 'alva-${Environment}-vpc-id'
-```
-
-**Tasks**:
-- [ ] Create network CloudFormation template
-- [ ] Define VPC, subnets, internet gateway
-- [ ] Add security groups
-- [ ] Test network stack creation
-
-### Day 3-4: Database & Cache
+### Database & Cache
 
 #### RDS PostgreSQL
 
-**File**: `infrastructure/cloudformation/rds.yml`
+**File**: `infrastructure/lib/stacks/database-stack.ts`
 
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'RDS PostgreSQL database for Alva'
+The database stack creates:
+- RDS PostgreSQL 16 instance (db.t3.micro)
+- Auto-generated credentials stored in Secrets Manager
+- Database subnet group in private subnets
+- Security group allowing access from ECS only
 
-Parameters:
-  Environment:
-    Type: String
-    AllowedValues: [staging, production]
-
-Resources:
-  DBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties:
-      DBSubnetGroupDescription: Subnet group for Alva database
-      SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-
-  Database:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      DBInstanceIdentifier: !Sub 'alva-${Environment}-db'
-      DBInstanceClass: db.t3.micro
-      Engine: postgres
-      MasterUsername: ${DB_USERNAME}
-      MasterUserPassword: ${DB_PASSWORD}
-      DBName: alva
-      AllocatedStorage: 20
-      StorageType: gp2
-      VPCSecurityGroups:
-        - !Ref DatabaseSecurityGroup
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      MultiAZ: false
-```
-
-**Tasks**:
-- [ ] Create RDS CloudFormation template
-- [ ] Configure database instance
-- [ ] Set up security groups
-- [ ] Test database creation
+**Status**: ✅ Deployed
 
 #### ElastiCache Redis
 
-**File**: `infrastructure/cloudformation/redis.yml`
+**File**: `infrastructure/lib/stacks/cache-stack.ts`
 
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'ElastiCache Redis for Alva'
+The cache stack creates:
+- ElastiCache Redis cluster (cache.t3.micro)
+- Subnet group in private subnets
+- Security group allowing access from ECS only
 
-Resources:
-  RedisCache:
-    Type: AWS::ElastiCache::ReplicationGroup
-    Properties:
-      ReplicationGroupId: !Sub 'alva-${Environment}-redis'
-      Description: Redis cache for Alva
-      Engine: redis
-      NodeType: cache.t3.micro
-      NumCacheNodes: 1
-      AutomaticFailoverEnabled: false
-      VpcSecurityGroupIds:
-        - !Ref RedisSecurityGroup
-      SubnetGroupName: !Ref RedisSubnetGroup
-```
+**Status**: ✅ Deployed
 
-**Tasks**:
-- [ ] Create Redis CloudFormation template
-- [ ] Configure cache instance
-- [ ] Set up security groups
-- [ ] Test cache creation
+### ECS & Load Balancer
 
-### Day 5: ECS & Load Balancer
+#### ECS Stack
 
-#### ECS Service Template
+**File**: `infrastructure/lib/stacks/ecs-stack.ts`
 
-**File**: `infrastructure/cloudformation/ecs.yml`
+The ECS stack creates:
+- ECS Fargate cluster with Container Insights
+- 4 task definitions (web, api, auth, admin)
+- 4 ECS services with health checks
+- CloudWatch logging for all services
+- Environment variables from Secrets Manager
 
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'ECS services for Alva'
+**Status**: ✅ Deployed
 
-Resources:
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Sub 'alva-${Environment}-cluster'
+#### ALB Stack
 
-  TaskDefinition:
-    Type: AWS::ECS::TaskDefinition
-    Properties:
-      Family: !Sub 'alva-${Environment}-task'
-      NetworkMode: awsvpc
-      RequiresCompatibilities:
-        - FARGATE
-      Cpu: 512
-      Memory: 1024
-      ContainerDefinitions:
-        - Name: web
-          Image: !Sub '${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest'
-          PortMappings:
-            - ContainerPort: 3000
-              Protocol: tcp
-          Environment:
-            - Name: NODE_ENV
-              Value: production
-            - Name: DATABASE_URL
-              ValueFrom: !Ref SecretsManagerSecret
-```
+**File**: `infrastructure/lib/stacks/alb-stack.ts`
 
-**Tasks**:
-- [ ] Create ECS cluster template
-- [ ] Define task definitions for all services
-- [ ] Configure container settings
-- [ ] Test task definitions
+The ALB stack creates:
+- Application Load Balancer (internet-facing)
+- 4 target groups (one per service)
+- Listener with host-header routing (when domain configured)
+- Health checks configured for all services
+
+**Status**: ✅ Deployed
+
+#### DNS Stack (Optional)
+
+**File**: `infrastructure/lib/stacks/dns-stack.ts`
+
+The DNS stack supports:
+- Creating new Route53 hosted zone (if domain provided)
+- Using existing hosted zone (cross-account support)
+- Cross-account DNS via IAM role assumption
+
+**Status**: ✅ Implemented (optional, enabled via environment variables)
 
 ---
 
-## Week 2: Deployment & CI/CD
+## Deployment & CI/CD
 
-### Day 1-3: CI/CD Pipeline
+### GitHub Actions Workflow
 
-#### Update GitHub Actions
+**File**: `.github/workflows/deploy-staging.yml`
 
-**File**: `.github/workflows/ci.yml`
+The deployment workflow consists of three jobs:
 
-Add staging deployment job:
+1. **build-and-push-images**: Builds and pushes Docker images to ECR
+   - Builds all 4 services (web, api, auth, admin)
+   - Tags images with `latest` and commit SHA
+   - Uses Docker Buildx with caching
 
-```yaml
-deploy-staging:
-  runs-on: ubuntu-latest
-  needs: [docker-build]
-  if: github.ref == 'refs/heads/staging'
-  steps:
-    - uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+2. **deploy-infrastructure**: Deploys CDK stacks
+   - Installs CDK CLI and dependencies
+   - Auto-discovers AWS account ID from credentials
+   - Runs `cdk deploy --all` to deploy all stacks
 
-    - name: Deploy to Staging
-      run: ./infrastructure/scripts/deploy.sh staging
-```
+3. **update-services**: Forces ECS service updates
+   - Triggers new deployments for all services
+   - Waits for services to stabilize
 
-**Tasks**:
-- [ ] Update CI/CD workflow
-- [ ] Add AWS credentials to GitHub secrets
-- [ ] Configure staging deployment trigger
-- [ ] Test deployment pipeline
+**Status**: ✅ Operational
 
-### Day 4-5: Deployment Testing
+**Trigger**: Pushes to `staging` branch or manual workflow dispatch
 
-#### Deploy to Staging
+### Manual Deployment
 
-**File**: `infrastructure/scripts/deploy.sh`
+For local deployments, use CDK directly:
 
 ```bash
-#!/bin/bash
+cd infrastructure
+npm install
+npm run build
 
-ENVIRONMENT=${1:-staging}
-STACK_NAME="alva-${ENVIRONMENT}"
+# Get AWS account ID from credentials
+export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+export CDK_DEFAULT_REGION=us-east-1
 
-echo "Deploying to ${ENVIRONMENT} environment..."
+# Deploy all stacks
+cdk deploy --all
 
-# Deploy network
-aws cloudformation deploy \
-  --template-file infrastructure/cloudformation/network.yml \
-  --stack-name ${STACK_NAME}-network \
-  --parameter-overrides Environment=${ENVIRONMENT}
-
-# Deploy database
-aws cloudformation deploy \
-  --template-file infrastructure/cloudformation/rds.yml \
-  --stack-name ${STACK_NAME}-rds \
-  --parameter-overrides Environment=${ENVIRONMENT}
-
-# Deploy cache
-aws cloudformation deploy \
-  --template-file infrastructure/cloudformation/redis.yml \
-  --stack-name ${STACK_NAME}-redis \
-  --parameter-overrides Environment=${ENVIRONMENT}
-
-# Build and push images to ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-
-docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest -f apps/web/Dockerfile .
-docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/alva-web:latest
-
-# Deploy ECS services
-aws cloudformation deploy \
-  --template-file infrastructure/cloudformation/ecs.yml \
-  --stack-name ${STACK_NAME}-ecs \
-  --parameter-overrides Environment=${ENVIRONMENT}
-
-echo "Deployment complete!"
+# Or deploy specific stack
+cdk deploy alva-staging-network
 ```
 
-**Tasks**:
-- [ ] Create deployment script
-- [ ] Set up staging branch
-- [ ] Configure environment variables
-- [ ] Run test deployment
-- [ ] Verify all services are running
+**Account Discovery**: CDK automatically discovers AWS account ID from:
+- AWS CLI credentials (default profile)
+- AWS SSO session
+- Environment variables (`CDK_DEFAULT_ACCOUNT`, `AWS_ACCOUNT_ID`)
+
+See `infrastructure/README.md` for detailed deployment instructions.
 
 ---
 
 ## Implementation Checklist
 
-### Week 1: Infrastructure
+### Infrastructure ✅
 
-- [ ] Create CloudFormation templates
-- [ ] Set up VPC and networking
-- [ ] Configure RDS for PostgreSQL
-- [ ] Configure ElastiCache for Redis
-- [ ] Set up ECS cluster
-- [ ] Create Application Load Balancer
-- [ ] Test infrastructure deployment
+- [x] Create CDK stacks (Network, Database, Cache, ECS, ALB, DNS)
+- [x] Set up VPC and networking
+- [x] Configure RDS for PostgreSQL
+- [x] Configure ElastiCache for Redis
+- [x] Set up ECS cluster with 4 services
+- [x] Create Application Load Balancer
+- [x] Implement DNS stack with cross-account support
 
-### Week 2: Deployment
+### Deployment ✅
 
-- [ ] Update CI/CD pipeline
-- [ ] Configure GitHub secrets
-- [ ] Create staging branch
-- [ ] Set up deployment scripts
-- [ ] Deploy to staging
-- [ ] Verify staging environment
-- [ ] Run smoke tests
+- [x] Create GitHub Actions workflow
+- [x] Configure GitHub secrets (AWS credentials)
+- [x] Set up automated Docker builds
+- [x] Configure CDK deployment
+- [x] Deploy to staging
+- [x] Verify staging environment
 
 ---
 

@@ -210,7 +210,7 @@ After creating CI/CD user:
    - `AWS_REGION` = `us-east-1` (or your preferred region)
 
 3. **Optional:**
-   - `ECR_REGISTRY` = `123456789012.dkr.ecr.us-east-1.amazonaws.com`
+   - `ECR_REGISTRY` = `YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com`
      (Will be auto-detected, but can set explicitly)
 
 ---

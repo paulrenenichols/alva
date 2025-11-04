@@ -15,6 +15,13 @@ node_modules
 .env.production.local
 .env.development
 .env.backup
+.env.bak
+apps/**/.env
+apps/**/.env.local
+apps/**/.env.*
+*.env
+!*.env.example
+!.env*.example
 
 # IDEs and editors
 /.idea
@@ -60,3 +67,12 @@ node_modules
 # Storybook build output
 storybook-static
 apps/web/storybook-static
+
+# CDK generated files (may contain account-specific context)
+infrastructure/cdk.out/
+infrastructure/cdk.context.json
+
+# Accidentally created directories
+~/
+~
+_docs/phases/infrastructure/

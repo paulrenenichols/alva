@@ -4,7 +4,7 @@
 
 import { EmailProvider, SendEmailOptions, SendEmailResult } from './providers/types';
 import { MailpitProvider } from './providers/mailpit.provider';
-// ResendProvider is kept for future production email implementation
+import { ResendProvider } from './providers/resend.provider';
 import {
   getVerificationEmailTemplate,
   getInviteEmailTemplate,
@@ -19,9 +19,27 @@ export class EmailClient {
     if (provider) {
       this.provider = provider;
     } else {
-      // Use MailpitProvider for all environments until production email is implemented
-      // TODO: Switch to ResendProvider in production once production email is set up
-      this.provider = new MailpitProvider();
+      // Use ResendProvider in production/staging environments
+      // Use MailpitProvider for local development
+      const nodeEnv = process.env['NODE_ENV'] || 'development';
+      const isProduction = nodeEnv === 'production' || nodeEnv === 'staging';
+      const resendApiKey = process.env['RESEND_API_KEY'];
+      
+      if (isProduction && resendApiKey) {
+        console.log('[EmailClient] Using ResendProvider', {
+          nodeEnv,
+          hasApiKey: !!resendApiKey,
+          apiKeyPrefix: resendApiKey.substring(0, 7) + '...',
+        });
+        this.provider = new ResendProvider();
+      } else {
+        console.log('[EmailClient] Using MailpitProvider', {
+          nodeEnv,
+          isProduction,
+          hasApiKey: !!resendApiKey,
+        });
+        this.provider = new MailpitProvider();
+      }
     }
   }
 

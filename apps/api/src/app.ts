@@ -172,9 +172,25 @@ async function registerPlugins(): Promise<void> {
  * @description Registers database connection
  */
 async function registerDatabase(): Promise<void> {
-  const databaseUrl = process.env['DATABASE_URL'];
+  // Construct DATABASE_URL from components if not provided directly
+  let databaseUrl = process.env['DATABASE_URL'];
   if (!databaseUrl) {
-    throw new Error('DATABASE_URL environment variable is required');
+    const endpoint = process.env['DATABASE_ENDPOINT'];
+    const username = process.env['DATABASE_USERNAME'];
+    const password = process.env['DATABASE_PASSWORD'];
+    const database = process.env['DATABASE_NAME'] || 'alva';
+    const port = process.env['DATABASE_PORT'] || '5432';
+
+    if (!endpoint || !username || !password) {
+      throw new Error(
+        'DATABASE_URL or (DATABASE_ENDPOINT, DATABASE_USERNAME, DATABASE_PASSWORD) environment variables are required'
+      );
+    }
+
+    // Construct PostgreSQL connection string
+    // Format: postgresql://username:password@host:port/database?sslmode=require
+    // RDS PostgreSQL requires SSL connections
+    databaseUrl = `postgresql://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${endpoint}:${port}/${database}?sslmode=require`;
   }
 
   const db = createDbPool(databaseUrl);
@@ -185,6 +201,9 @@ async function registerDatabase(): Promise<void> {
  * @description Registers all middleware
  */
 async function registerMiddleware(): Promise<void> {
+  // No path prefix stripping needed - using subdomain-based routing
+  // Each service is accessed via its own subdomain (api.staging.alva.paulrenenichols.com)
+
   await fastify.register(monitoringPlugin);
   await fastify.register(securityPlugin);
   fastify.register(authMiddleware);

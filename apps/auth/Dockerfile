@@ -12,13 +12,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Build shared libraries first, then the Auth service
-RUN corepack enable pnpm && pnpm nx build database shared-types validation utils auth
+RUN corepack enable pnpm && pnpm nx reset && pnpm nx build database shared-types validation utils auth --skip-nx-cache
 
 # Production image
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs

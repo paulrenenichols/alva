@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { getAuthUrl } from '@/lib/api-config';
 
 export default function RecoveryPage() {
   const [email, setEmail] = useState('');
@@ -16,14 +17,56 @@ export default function RecoveryPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    // Client-side logging for debugging
+    console.log('[AdminRecovery] Recovery request initiated', {
+      email: email.substring(0, 3) + '***',
+      timestamp: new Date().toISOString(),
+    });
+
     try {
-      await fetch('http://localhost:3002/auth/recovery-request', {
+      const authUrl = getAuthUrl();
+      console.log('[AdminRecovery] Calling auth service', {
+        url: `${authUrl}/auth/recovery-request`,
+        emailPrefix: email.substring(0, 3) + '***',
+      });
+
+      const response = await fetch(`${authUrl}/auth/recovery-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
+
+      console.log('[AdminRecovery] Auth service response', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        emailPrefix: email.substring(0, 3) + '***',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[AdminRecovery] Auth service error response', {
+          status: response.status,
+          errorData,
+          emailPrefix: email.substring(0, 3) + '***',
+        });
+        throw new Error('Failed to send recovery request');
+      }
+
+      const data = await response.json();
+      console.log('[AdminRecovery] Recovery request successful', {
+        message: data.message,
+        emailPrefix: email.substring(0, 3) + '***',
+      });
+
       setSubmitted(true);
-    } catch {
+    } catch (err) {
+      console.error('[AdminRecovery] Recovery request failed', {
+        error: err instanceof Error ? err.message : String(err),
+        errorType: err instanceof Error ? err.constructor.name : typeof err,
+        emailPrefix: email.substring(0, 3) + '***',
+      });
       // Show generic success; don't reveal details
       setSubmitted(true);
     } finally {

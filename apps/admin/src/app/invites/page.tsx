@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { getAuthUrl } from '@/lib/api-config';
 
 interface Invite {
   id: string;
@@ -27,7 +28,7 @@ export default function InvitesPage() {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
 
-      const response = await fetch(`http://localhost:3002/admin/invites?page=${page}&limit=20`, {
+      const response = await fetch(`${getAuthUrl()}/admin/invites?page=${page}&limit=20`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -51,7 +52,7 @@ export default function InvitesPage() {
     try {
       const token = localStorage.getItem('accessToken');
 
-      const response = await fetch(`http://localhost:3002/admin/invites/${inviteId}/resend`, {
+      const response = await fetch(`${getAuthUrl()}/admin/invites/${inviteId}/resend`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
