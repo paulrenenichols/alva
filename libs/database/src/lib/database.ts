@@ -14,9 +14,15 @@ import * as schema from '../schemas';
  * because the pg Pool library ignores the ssl option when connectionString is also provided.
  */
 export const createDbPool = (connectionString: string) => {
+  // Log connection string info for debugging (mask password)
+  const maskedConnectionString = connectionString.replace(/:([^:@]+)@/, ':****@');
+  console.log('[Database] Creating pool with connection string:', maskedConnectionString);
+  
   // Check for SSL mode in connection string
   const sslModeMatch = connectionString.match(/[?&]sslmode=([^&]+)/);
   const sslMode = sslModeMatch ? sslModeMatch[1] : null;
+  
+  console.log('[Database] SSL mode detected:', sslMode);
   
   // Build base pool configuration
   const poolConfig: any = {
@@ -29,24 +35,16 @@ export const createDbPool = (connectionString: string) => {
   // This is necessary because pg Pool ignores ssl option when connectionString is provided
   if (sslMode === 'require' || sslMode === 'prefer') {
     try {
-      // Parse PostgreSQL connection string manually (more reliable than URL constructor)
-      // Format: postgresql://user:password@host:port/database?params
-      const match = connectionString.match(/^postgresql:\/\/(?:([^:@]+)(?::([^@]+))?@)?([^:\/]+)(?::(\d+))?\/([^?]+)(?:\?(.+))?$/);
+      // Use URL parsing - convert postgresql:// to https:// temporarily for parsing
+      // This handles URL-encoded credentials properly
+      const urlString = connectionString.replace(/^postgresql:\/\//, 'https://');
+      const url = new URL(urlString);
       
-      if (!match) {
-        throw new Error('Invalid PostgreSQL connection string format');
-      }
-      
-      const [, username, password, host, port, database, queryString] = match;
-      
-      // Parse query string to get additional parameters
-      const params = new URLSearchParams(queryString || '');
-      
-      poolConfig.host = host;
-      poolConfig.port = port ? parseInt(port, 10) : 5432;
-      poolConfig.database = database;
-      poolConfig.user = username ? decodeURIComponent(username) : undefined;
-      poolConfig.password = password ? decodeURIComponent(password) : undefined;
+      poolConfig.host = url.hostname;
+      poolConfig.port = url.port ? parseInt(url.port, 10) : 5432;
+      poolConfig.database = url.pathname.slice(1); // Remove leading slash
+      poolConfig.user = url.username ? decodeURIComponent(url.username) : undefined;
+      poolConfig.password = url.password ? decodeURIComponent(url.password) : undefined;
       
       // Set SSL configuration
       poolConfig.ssl = {
