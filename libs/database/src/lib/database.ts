@@ -9,15 +9,16 @@ import * as schema from '../schemas';
 /**
  * @description Creates a database connection pool with SSL support
  * Handles both connection strings with sslmode parameter and explicit SSL configuration
+ * 
+ * Note: When SSL is required, we must parse the connection string into individual parameters
+ * because the pg Pool library ignores the ssl option when connectionString is also provided.
  */
 export const createDbPool = (connectionString: string) => {
   // Check for SSL mode in connection string
   const sslModeMatch = connectionString.match(/[?&]sslmode=([^&]+)/);
   const sslMode = sslModeMatch ? sslModeMatch[1] : null;
   
-  // Build pool configuration
-  // When SSL is required, we need to parse the connection string and pass individual options
-  // because pg Pool doesn't properly handle sslmode in connectionString when ssl option is also provided
+  // Build base pool configuration
   const poolConfig: any = {
     max: 20,
     idleTimeoutMillis: 30000,
@@ -25,41 +26,54 @@ export const createDbPool = (connectionString: string) => {
   };
 
   // If SSL is required, parse connection string and use individual parameters
+  // This is necessary because pg Pool ignores ssl option when connectionString is provided
   if (sslMode === 'require' || sslMode === 'prefer') {
-    // Use URL parsing which properly handles URL-encoded credentials
     try {
-      // Replace postgresql:// with https:// for URL parsing (URL constructor doesn't support postgresql://)
-      const urlString = connectionString.replace(/^postgresql:\/\//, 'https://');
-      const url = new URL(urlString);
+      // Parse PostgreSQL connection string manually (more reliable than URL constructor)
+      // Format: postgresql://user:password@host:port/database?params
+      const match = connectionString.match(/^postgresql:\/\/(?:([^:@]+)(?::([^@]+))?@)?([^:\/]+)(?::(\d+))?\/([^?]+)(?:\?(.+))?$/);
       
-      poolConfig.host = url.hostname;
-      poolConfig.port = parseInt(url.port || '5432', 10);
-      poolConfig.database = url.pathname.slice(1); // Remove leading slash
-      poolConfig.user = decodeURIComponent(url.username);
-      poolConfig.password = decodeURIComponent(url.password);
+      if (!match) {
+        throw new Error('Invalid PostgreSQL connection string format');
+      }
+      
+      const [, username, password, host, port, database, queryString] = match;
+      
+      // Parse query string to get additional parameters
+      const params = new URLSearchParams(queryString || '');
+      
+      poolConfig.host = host;
+      poolConfig.port = port ? parseInt(port, 10) : 5432;
+      poolConfig.database = database;
+      poolConfig.user = username ? decodeURIComponent(username) : undefined;
+      poolConfig.password = password ? decodeURIComponent(password) : undefined;
+      
+      // Set SSL configuration
       poolConfig.ssl = {
         rejectUnauthorized: false, // RDS uses self-signed certificates, so we don't verify the certificate
       };
       
-      console.log('[Database] SSL configured for RDS connection:', {
+      // Log SSL configuration (using console.log for visibility in CloudWatch)
+      console.log('[Database] SSL configured for RDS connection', {
         host: poolConfig.host,
         port: poolConfig.port,
         database: poolConfig.database,
-        user: poolConfig.user,
+        user: poolConfig.user ? poolConfig.user.substring(0, 3) + '***' : 'undefined',
         hasSsl: !!poolConfig.ssl,
+        sslMode,
       });
     } catch (error) {
-      // Fallback: If URL parsing fails, try to use connectionString with ssl option
-      // Note: This may not work if pg Pool ignores ssl when connectionString is provided
-      console.error('[Database] Failed to parse connection string for SSL, using fallback:', error);
-      poolConfig.connectionString = connectionString.replace(/[?&]sslmode=[^&]*/, '');
-      poolConfig.ssl = {
-        rejectUnauthorized: false,
-      };
+      // If parsing fails, this is a critical error - throw it
+      console.error('[Database] CRITICAL: Failed to parse connection string for SSL configuration', {
+        error: error instanceof Error ? error.message : String(error),
+        connectionStringPreview: connectionString.substring(0, 50) + '...',
+      });
+      throw new Error(`Failed to configure SSL for database connection: ${error instanceof Error ? error.message : String(error)}`);
     }
   } else {
     // No SSL required, use connection string as-is
     poolConfig.connectionString = connectionString;
+    console.log('[Database] Using connection string without SSL');
   }
 
   const pool = new Pool(poolConfig);
