@@ -46,10 +46,10 @@ export const createDbPool = (connectionString: string) => {
       poolConfig.user = url.username ? decodeURIComponent(url.username) : undefined;
       poolConfig.password = url.password ? decodeURIComponent(url.password) : undefined;
       
-      // Set SSL configuration
-      poolConfig.ssl = {
-        rejectUnauthorized: false, // RDS uses self-signed certificates, so we don't verify the certificate
-      };
+      // Set SSL configuration - use true for RDS (accepts self-signed certs)
+      // IMPORTANT: Only set individual parameters, NOT connectionString
+      // The pg Pool library will ignore ssl if connectionString is also provided
+      poolConfig.ssl = true;
       
       // Log SSL configuration (using console.log for visibility in CloudWatch)
       console.log('[Database] SSL configured for RDS connection', {
@@ -59,6 +59,7 @@ export const createDbPool = (connectionString: string) => {
         user: poolConfig.user ? poolConfig.user.substring(0, 3) + '***' : 'undefined',
         hasSsl: !!poolConfig.ssl,
         sslMode,
+        hasConnectionString: !!poolConfig.connectionString, // Should be false
       });
     } catch (error) {
       // If parsing fails, this is a critical error - throw it
