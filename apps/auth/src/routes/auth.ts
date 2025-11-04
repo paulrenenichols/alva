@@ -405,15 +405,21 @@ async function recoveryRequestRoute(fastify: FastifyInstance, emailService: Emai
               // Send recovery email
               const emailResult = await emailService.sendPasswordResetEmail(email, resetToken);
               if (!emailResult.success) {
-                fastify.log.error('[RecoveryRequest] Email send failed', {
-                  email: email.substring(0, 3) + '***', // Log partial email for debugging
-                  error: emailResult.error,
-                });
+                fastify.log.error(
+                  {
+                    email: email.substring(0, 3) + '***', // Log partial email for debugging
+                    error: emailResult.error,
+                  },
+                  '[RecoveryRequest] Email send failed'
+                );
               } else {
-                fastify.log.info('[RecoveryRequest] Email sent successfully', {
-                  email: email.substring(0, 3) + '***',
-                  messageId: emailResult.messageId,
-                });
+                fastify.log.info(
+                  {
+                    email: email.substring(0, 3) + '***',
+                    messageId: emailResult.messageId,
+                  },
+                  '[RecoveryRequest] Email sent successfully'
+                );
               }
             }
           }

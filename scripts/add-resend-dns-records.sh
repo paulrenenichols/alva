@@ -201,3 +201,4 @@ echo "Verify in Resend dashboard: https://resend.com/domains"
 
 rm "$TEMP_FILE"
 
+
