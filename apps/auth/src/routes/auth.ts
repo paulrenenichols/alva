@@ -581,7 +581,11 @@ async function recoveryRequestRoute(
           },
           '[RecoveryRequest] Looking up admin user by email'
         );
-        console.log('[RecoveryRequest] Looking up admin user by email', { route: 'recovery-request', emailPrefix, step: 'user_lookup_start' });
+        console.log('[RecoveryRequest] Looking up admin user by email', {
+          route: 'recovery-request',
+          emailPrefix,
+          step: 'user_lookup_start',
+        });
 
         const user = await adminUserService.findAdminUserByEmail(email);
 
@@ -594,7 +598,10 @@ async function recoveryRequestRoute(
             },
             '[RecoveryRequest] User not found (returning generic success)'
           );
-          console.log('[RecoveryRequest] User not found (returning generic success)', { route: 'recovery-request', emailPrefix, step: 'user_not_found' });
+          console.log(
+            '[RecoveryRequest] User not found (returning generic success)',
+            { route: 'recovery-request', emailPrefix, step: 'user_not_found' }
+          );
           return {
             message: 'If an account exists, a recovery link has been sent.',
           };
@@ -609,7 +616,12 @@ async function recoveryRequestRoute(
           },
           '[RecoveryRequest] User found, checking admin role'
         );
-        console.log('[RecoveryRequest] User found, checking admin role', { route: 'recovery-request', emailPrefix, step: 'user_found', userId: user.id });
+        console.log('[RecoveryRequest] User found, checking admin role', {
+          route: 'recovery-request',
+          emailPrefix,
+          step: 'user_found',
+          userId: user.id,
+        });
 
         // Check admin role
         const [adminRole] = await fastify.db
@@ -628,7 +640,12 @@ async function recoveryRequestRoute(
             },
             '[RecoveryRequest] Admin role not found in database'
           );
-          console.log('[RecoveryRequest] Admin role not found in database', { route: 'recovery-request', emailPrefix, step: 'admin_role_not_found', userId: user.id });
+          console.log('[RecoveryRequest] Admin role not found in database', {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'admin_role_not_found',
+            userId: user.id,
+          });
           return {
             message: 'If an account exists, a recovery link has been sent.',
           };
@@ -669,7 +686,15 @@ async function recoveryRequestRoute(
           },
           '[RecoveryRequest] User has admin role, creating reset token'
         );
-        console.log('[RecoveryRequest] User has admin role, creating reset token', { route: 'recovery-request', emailPrefix, step: 'creating_reset_token', userId: user.id });
+        console.log(
+          '[RecoveryRequest] User has admin role, creating reset token',
+          {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'creating_reset_token',
+            userId: user.id,
+          }
+        );
 
         // Create reset token (1 hour expiry)
         const resetToken = await adminUserService.createAdminPasswordResetToken(
@@ -686,15 +711,28 @@ async function recoveryRequestRoute(
           },
           '[RecoveryRequest] Reset token created, sending email'
         );
-        console.log('[RecoveryRequest] Reset token created, sending email', { route: 'recovery-request', emailPrefix, step: 'reset_token_created', userId: user.id, tokenPrefix: resetToken.substring(0, 8) + '***' });
+        console.log('[RecoveryRequest] Reset token created, sending email', {
+          route: 'recovery-request',
+          emailPrefix,
+          step: 'reset_token_created',
+          userId: user.id,
+          tokenPrefix: resetToken.substring(0, 8) + '***',
+        });
 
         // Send recovery email
-        console.log('[RecoveryRequest] Calling emailService.sendPasswordResetEmail', { email, tokenPrefix: resetToken.substring(0, 8) + '***' });
+        console.log(
+          '[RecoveryRequest] Calling emailService.sendPasswordResetEmail',
+          { email, tokenPrefix: resetToken.substring(0, 8) + '***' }
+        );
         const emailResult = await emailService.sendPasswordResetEmail(
           email,
           resetToken
         );
-        console.log('[RecoveryRequest] Email service result', { success: emailResult.success, messageId: emailResult.messageId, error: emailResult.error });
+        console.log('[RecoveryRequest] Email service result', {
+          success: emailResult.success,
+          messageId: emailResult.messageId,
+          error: emailResult.error,
+        });
 
         if (!emailResult.success) {
           fastify.log.error(
@@ -708,7 +746,14 @@ async function recoveryRequestRoute(
             },
             '[RecoveryRequest] Email send failed'
           );
-          console.error('[RecoveryRequest] Email send failed', { route: 'recovery-request', emailPrefix, step: 'email_send_failed', userId: user.id, error: emailResult.error, errorType: typeof emailResult.error });
+          console.error('[RecoveryRequest] Email send failed', {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'email_send_failed',
+            userId: user.id,
+            error: emailResult.error,
+            errorType: typeof emailResult.error,
+          });
         } else {
           fastify.log.info(
             {
@@ -719,8 +764,14 @@ async function recoveryRequestRoute(
               messageId: emailResult.messageId,
             },
             '[RecoveryRequest] Recovery email sent successfully'
-          console.log('[RecoveryRequest] Recovery email sent successfully', { route: 'recovery-request', emailPrefix, step: 'email_sent_success', userId: user.id, messageId: emailResult.messageId });
           );
+          console.log('[RecoveryRequest] Recovery email sent successfully', {
+            route: 'recovery-request',
+            emailPrefix,
+            step: 'email_sent_success',
+            userId: user.id,
+            messageId: emailResult.messageId,
+          });
         }
 
         // Always return success (no enumeration)
@@ -739,8 +790,16 @@ async function recoveryRequestRoute(
               error instanceof Error ? error.constructor.name : typeof error,
           },
           '[RecoveryRequest] Error processing recovery request'
-        console.error('[RecoveryRequest] Error processing recovery request', { route: 'recovery-request', emailPrefix, step: 'error', error: error instanceof Error ? error.message : String(error), errorStack: error instanceof Error ? error.stack : undefined, errorType: error instanceof Error ? error.constructor.name : typeof error });
         );
+        console.error('[RecoveryRequest] Error processing recovery request', {
+          route: 'recovery-request',
+          emailPrefix,
+          step: 'error',
+          error: error instanceof Error ? error.message : String(error),
+          errorStack: error instanceof Error ? error.stack : undefined,
+          errorType:
+            error instanceof Error ? error.constructor.name : typeof error,
+        });
         // Still return success to avoid leaking state
         return {
           message: 'If an account exists, a recovery link has been sent.',
