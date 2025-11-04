@@ -28,18 +28,37 @@ export const createDbPool = (connectionString: string) => {
   }
   
   // Build pool configuration
+  // When SSL is required, we need to parse the connection string and pass individual options
+  // because pg Pool doesn't properly handle sslmode in connectionString when ssl option is also provided
   const poolConfig: any = {
-    connectionString,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
   };
 
-  // Explicitly configure SSL if sslmode is require or prefer
+  // If SSL is required, parse connection string and use individual parameters
   if (sslMode === 'require' || sslMode === 'prefer') {
-    poolConfig.ssl = {
-      rejectUnauthorized: false, // RDS uses self-signed certificates, so we don't verify the certificate
-    };
+    try {
+      const url = new URL(urlString);
+      poolConfig.host = url.hostname;
+      poolConfig.port = parseInt(url.port || '5432', 10);
+      poolConfig.database = url.pathname.slice(1); // Remove leading slash
+      poolConfig.user = decodeURIComponent(url.username);
+      poolConfig.password = decodeURIComponent(url.password);
+      poolConfig.ssl = {
+        rejectUnauthorized: false, // RDS uses self-signed certificates, so we don't verify the certificate
+      };
+    } catch (error) {
+      // Fallback: use connectionString but explicitly set ssl
+      // This might not work, but it's better than nothing
+      poolConfig.connectionString = connectionString.replace(/[?&]sslmode=[^&]*/, ''); // Remove sslmode from string
+      poolConfig.ssl = {
+        rejectUnauthorized: false,
+      };
+    }
+  } else {
+    // No SSL required, use connection string as-is
+    poolConfig.connectionString = connectionString;
   }
 
   const pool = new Pool(poolConfig);
